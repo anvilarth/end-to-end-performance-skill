@@ -1,4 +1,0 @@
-interface:
-  display_name: "End-to-End Performance"
-  short_description: "Optimize PyTorch and CUDA systems end to end"
-  default_prompt: "Use $end-to-end-performance-skill to profile and optimize this PyTorch workload for its real deployment setup while preserving correctness."
