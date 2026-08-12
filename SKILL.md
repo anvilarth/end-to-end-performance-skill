@@ -29,10 +29,11 @@ Establish the target environment:
 If the intended setup is unknown, ask for it. If it cannot be reproduced, label
 the chosen setup as a proxy and state exactly what it cannot prove.
 
-Treat scale and topology as part of the optimization. A change validated on one
-node or 8 GPUs is not validated for a multi-node 32-GPU workload. Communication,
-sharding, recomputation, memory pressure, stragglers, and overlap can reverse the
-result. Require a final gate on the intended setup before promotion.
+Treat scale and topology as part of the optimization. State exactly which setup
+the evidence covers, and revalidate when the intended environment materially
+changes. Communication, sharding, recomputation, memory pressure, stragglers,
+and overlap can change or reverse the result. Use smaller setups for screening
+when useful, then run the promotion gate on the intended setup.
 
 ## Core principles
 

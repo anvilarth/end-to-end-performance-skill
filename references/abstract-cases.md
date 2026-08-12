@@ -5,9 +5,9 @@ reusable lessons, not results for any particular model or organization.
 
 ## A small-scale win that reverses at target scale
 
-A training optimization improves step time on one node with 8 GPUs. At 32 GPUs
-across multiple nodes, the same change exposes more communication, disrupts
-overlap, and regresses the complete step.
+For example, a training optimization improves step time on one node with 8 GPUs.
+At 32 GPUs across multiple nodes, the same change exposes more communication,
+disrupts overlap, and regresses the complete step.
 
 **Verdict:** reject for the 32-GPU target. Preserve the 8-GPU result only as a
 setup-specific finding; do not generalize it.
