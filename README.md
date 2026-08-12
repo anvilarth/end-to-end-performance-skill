@@ -13,21 +13,20 @@ Its central rule is simple:
 
 > Optimize the delivered workload, not an isolated component.
 
-## What it covers
+## How to use it
 
-- PyTorch and CUDA training and inference
-- Startup time, steady-state throughput, latency, tails, memory, and cost
-- Single-GPU and distributed execution
-- Data loading, compilation, communication, synchronization, model execution,
-  checkpointing, postprocessing, serialization, and serving overhead
-- Exact and numerically different behavior-preserving optimizations
-- Explicit quality-performance trade-offs when authorized
-- Paired end-to-end benchmarking and promote, reject, or inconclusive verdicts
+Install the skill, then invoke it on a PyTorch or CUDA training or inference
+workload:
 
-The skill is model-agnostic and can be applied to language, diffusion, vision,
-and multimodal workloads.
+```text
+Use $end-to-end-performance-skill to profile and optimize this PyTorch workload.
+```
 
-## How it works
+Provide the repository or code path and describe the real usage setup when it is
+known. The skill will ask for any missing details needed to define a
+representative benchmark and correctness contract.
+
+The workflow is:
 
 ```text
 Establish the real usage setup
@@ -41,11 +40,6 @@ Establish the real usage setup
 -> Promote, reject, or mark inconclusive
 -> Re-profile because the bottleneck may have moved
 ```
-
-Small or convenient setups may be used to screen a mechanism, but the evidence
-is reported as setup-specific. For example, an optimization that wins on 8 GPUs
-may regress on a multi-node 32-GPU topology because communication, sharding,
-memory pressure, stragglers, and overlap have changed.
 
 ## Kernel-level escalation
 
@@ -70,12 +64,6 @@ Codex, a user-level installation can be created with:
 
 ```bash
 git clone <repository-url> ~/.codex/skills/end-to-end-performance-skill
-```
-
-Then invoke it explicitly:
-
-```text
-Use $end-to-end-performance-skill to profile and optimize this PyTorch workload.
 ```
 
 The exact installation location may differ between Agent Skills-compatible
