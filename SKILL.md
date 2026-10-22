@@ -113,7 +113,20 @@ when useful, then run the promotion gate on the intended setup.
     metrics, deviation metrics, limit, verdict, and reason. Prevent future agents
     from repeating invalid or low-headroom ideas.
 
+17. **Log as you go.** Keep a local, append-only experiment log and write each
+    contract, baseline, profile, hypothesis, gate result, and verdict when it
+    happens. An unlogged hypothesis result is lost to the next session.
+
 ## Optimization workflow
+
+### 0. Load the experiment log
+
+Read [references/experiment-log.md](references/experiment-log.md). Open
+`.perf-log/log.jsonl` in the workload repository, or create it. If earlier
+events exist, summarize the active contract, latest baseline, promoted changes,
+rejected and inconclusive hypotheses, and open next actions before doing
+anything else. Do not re-propose a rejected hypothesis unless the setup,
+contract, or bottleneck has changed.
 
 ### 1. Freeze the contract
 
@@ -130,12 +143,17 @@ Record:
 Ask for approval before expensive, long-running, or production-affecting runs.
 Do not invent a quality trade-off that the user did not authorize.
 
+Log the frozen contract as a `contract` event.
+
 ### 2. Establish the baseline
 
 Instrument the complete path with low-overhead stage timings and memory metrics.
 Warm up compilation, allocators, caches, and kernels as required by the target
 mode, while measuring cold behavior separately when it matters. Verify that the
 baseline itself is stable enough to resolve the desired effect.
+
+Log the baseline and the stage map as `baseline` and `profile` events, with raw
+profiles and benchmark output under the event's artifact directory.
 
 Read [references/measurement-and-parity.md](references/measurement-and-parity.md)
 when designing the benchmark or correctness gates.
@@ -150,6 +168,10 @@ capacity. Rank candidates by:
 
 State the best-case end-to-end gain before implementation. Prefer cheap,
 reversible, behavior-preserving changes with a large measured budget.
+
+Log every ranked candidate as a `hypothesis` event, including those
+deprioritized before implementation, with its mechanism, attacked budget,
+best-case gain, and rank score.
 
 ### 4. Implement one candidate
 
@@ -172,11 +194,17 @@ Run the cheapest decisive gates first:
 
 Kill an arm immediately when it crosses a predeclared rejection boundary.
 
+Append a `gate` event after every gate, whether it passes, fails, or errors,
+before starting the next one.
+
 ### 6. Decide and iterate
 
 Return exactly one verdict: `promote`, `reject`, or `inconclusive`. If promoted,
 re-profile before selecting the next candidate. If composing passed changes,
 repeat parity and end-to-end gates on the combined stack.
+
+Log the decision as a `verdict` event with the reason, headroom captured,
+transfer boundary, and next action.
 
 Consider reduced precision or algorithmic approximation only after the
 lossless-first search is documented, unless the user explicitly chooses a
@@ -230,6 +258,8 @@ Report:
     verdict.
 12. **Next action:** re-profile, validate at target scale, compose passed changes,
     investigate a new bottleneck, or stop.
+13. **Log:** ids of the logged hypothesis, gate, and verdict events and the log
+    path.
 
 Read [references/abstract-cases.md](references/abstract-cases.md) for generalized
 examples of correct promotion and rejection decisions.

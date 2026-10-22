@@ -41,6 +41,11 @@ Establish the real usage setup
 -> Re-profile because the bottleneck may have moved
 ```
 
+Every contract, baseline, hypothesis, gate result, and verdict is appended to a
+local experiment log (`.perf-log/log.jsonl` in the workload repository) as it
+happens. A new session reads the log first, so rejected and inconclusive ideas
+are not repeated and open next actions are picked up.
+
 ## Kernel-level escalation
 
 This is intentionally a higher-level skill. It does not begin by writing custom
@@ -76,6 +81,7 @@ end-to-end-performance-skill/
 ├── SKILL.md
 ├── references/
 │   ├── measurement-and-parity.md
+│   ├── experiment-log.md
 │   └── abstract-cases.md
 ├── README.md
 └── LICENSE
@@ -85,6 +91,8 @@ end-to-end-performance-skill/
   required result format.
 - `references/measurement-and-parity.md` defines benchmark, parity, topology,
   and verdict guidance.
+- `references/experiment-log.md` defines the local append-only log of
+  hypotheses, gate results, and verdicts.
 - `references/abstract-cases.md` contains generalized examples of promotion,
   rejection, and inconclusive decisions.
 
