@@ -1,6 +1,6 @@
 ---
 name: end-to-end-performance-skill
-description: Optimize PyTorch and CUDA training or inference workloads end to end. Use when asked to profile, diagnose, benchmark, or accelerate model execution; reduce step time, startup time, latency, memory, or cost; validate a performance change; investigate distributed or compilation bottlenecks; or decide whether an optimization should be promoted. Start by establishing the real usage setup, apply a lossless-first strategy, require measured correctness and numerical parity, and consult KernelWiki only when profiling proves that a custom GPU kernel is warranted.
+description: Optimize PyTorch and CUDA training or inference workloads end to end. Use when asked to profile, diagnose, benchmark, or accelerate model execution; reduce step time, startup time, latency, memory, or cost; validate a performance change; investigate distributed or compilation bottlenecks; raise GPU utilization or share a GPU between processes (CUDA MPS); or decide whether an optimization should be promoted. Start by establishing the real usage setup, apply a lossless-first strategy, require measured correctness and numerical parity, and consult KernelWiki only when profiling proves that a custom GPU kernel is warranted.
 ---
 
 # End-to-End Performance
@@ -61,7 +61,9 @@ when useful, then run the promotion gate on the intended setup.
    order unless evidence justifies a different order:
 
    1. remove unnecessary work;
-   2. improve scheduling, overlap, caching, locality, or topology;
+   2. improve scheduling, overlap, caching, locality, or topology, including
+      several processes per GPU under a CUDA MPS daemon and more smaller
+      replicas instead of wider tensor parallelism;
    3. select a better equivalent PyTorch implementation;
    4. use compilation, fusion, or layout changes;
    5. introduce a custom CUDA or Triton kernel;
@@ -168,6 +170,14 @@ capacity. Rank candidates by:
 
 State the best-case end-to-end gain before implementation. Prefer cheap,
 reversible, behavior-preserving changes with a large measured budget.
+
+Read [references/playbooks/README.md](references/playbooks/README.md) and pick
+the playbook for the workload class (LLM and VLM serving, small filter models,
+request servers) plus the shared `common.md`. They list the levers that repeatedly paid off on inference and serving workloads
+(in-process decode, local-disk runtimes, launch-bound encoder fixes, CUDA MPS
+with several processes per GPU, serving admission caps, replica layout), the
+gain each one delivered, how to prove it activated, and the parity trap of
+each. Use it to size headroom and to avoid re-deriving known ceilings.
 
 Log every ranked candidate as a `hypothesis` event, including those
 deprioritized before implementation, with its mechanism, attacked budget,

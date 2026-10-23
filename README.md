@@ -81,6 +81,12 @@ end-to-end-performance-skill/
 ├── SKILL.md
 ├── references/
 │   ├── measurement-and-parity.md
+│   ├── playbooks/
+│   │   ├── README.md
+│   │   ├── common.md
+│   │   ├── llm-serving.md
+│   │   ├── small-filters.md
+│   │   └── request-servers.md
 │   ├── experiment-log.md
 │   └── abstract-cases.md
 ├── README.md
@@ -91,6 +97,13 @@ end-to-end-performance-skill/
   required result format.
 - `references/measurement-and-parity.md` defines benchmark, parity, topology,
   and verdict guidance.
+- `references/playbooks/` is a library of measured levers by workload class:
+  `common.md` (in-process decode, local-disk runtimes, CUDA MPS with several
+  processes per GPU, ceilings, precision rungs, measurement traps),
+  `llm-serving.md` (admission caps, ingestion payloads, replicas versus tensor
+  parallelism), `small-filters.md` (workers per GPU, launch-bound encoder
+  fixes, host staging), `request-servers.md` (servers per GPU, engine
+  concurrency, persistent servers). `README.md` there picks the class.
 - `references/experiment-log.md` defines the local append-only log of
   hypotheses, gate results, and verdicts.
 - `references/abstract-cases.md` contains generalized examples of promotion,

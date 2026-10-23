@@ -1,0 +1,188 @@
+# Playbook: shared levers
+
+Levers that apply to every workload class in this library: host-side work
+removal, several processes per GPU under CUDA MPS, knowing the ceiling,
+precision rungs, and measurement traps. Read this file together with the
+class playbook chosen in [README.md](README.md) (LLM and VLM serving, small
+filter models, request servers). The class files add their own levers and
+numbers and refer back here by section number.
+
+Each entry names the symptom that justifies it, the mechanism, the ladder rung
+it belongs to (core principle 5), the gain range that was actually observed,
+how to prove the change activated, and the parity trap. The ranges are prior
+expectations for sizing headroom, not promises. Every lever still goes through
+the contract, parity, and paired end-to-end gates.
+
+## Quick triage
+
+Before picking a lever, read the stage map and answer:
+
+| Observation | Likely bound | First levers |
+| --- | --- | --- |
+| GPU utilization well below 80% while the host is busy | host work, decode, process spawn, network file system | 1, 2, 3 |
+| GPU busy but with gaps between kernels; many small launches | launch overhead, single-process serialization | 4; small-filters.md lever 2 |
+| Serving engine reports few running requests although the GPU has memory | admission or cache-slot cap, ingestion payloads | llm-serving.md |
+| Compute pipe utilization above 80 to 85% in a kernel profile, or the GPU at its power cap | the exact-output ceiling | stop, or precision rung 5 |
+
+## 1. Replace per-item process spawn with in-process decode
+
+**Symptom:** host CPU saturated by a decoder or media tool launched once per
+item; GPU idle between batches.
+
+**Mechanism:** each spawn pays `exec` plus dynamic linking of hundreds of
+shared libraries. Observed cost was on the order of 100 ms of CPU per item,
+which caps a 192-core node at roughly a thousand items per second regardless of
+GPU count. Decoding in process through a library binding removes that cost
+entirely.
+
+**Rung:** 1, remove work.
+
+**Observed gain:** 2x per GPU on an audio tagging stage once combined with
+lever 4; host CPU per clip halved on a video encoder.
+
+**Activation check:** process creation rate drops to zero in the stage map;
+per-item CPU time falls by the spawn cost.
+
+**Parity trap:** keep the same resampler and sample format. Route container
+formats the library does not decode identically back to the original tool so
+the fast path stays bitwise.
+
+## 2. Decode once per group of adjacent segments
+
+**Symptom:** many segments cut from the same source file, each decoded from
+scratch.
+
+**Mechanism:** one decoder invocation over the covering range and a slice per
+segment. Output is bit-identical to per-segment decoding when the segment
+boundaries land on the same decoded samples.
+
+**Rung:** 1, remove work.
+
+**Observed gain:** about 2.6x less host CPU on a transcription stage; part of a
+26x node-level improvement when combined with levers 3 and 4.
+
+**Parity trap:** verify sample alignment at every segment boundary, not only on
+the first segment.
+
+## 3. Keep runtimes, libraries, and shared inputs on local disk
+
+**Symptom:** workers stall for minutes at import or at start of each task;
+stalls grow with the number of hosts.
+
+**Mechanism:** a Python environment or a decoder wrapper that loads libraries
+from a network file system pays a remote lookup per file; many workers on many
+hosts reading the same index file amplify it. Copy the environment, the model
+cache, and shared index inputs to local disk once per host under a lock, and
+point the runtime at the copy.
+
+**Rung:** 2, locality.
+
+**Observed gain:** import stalls from minutes to seconds; a transcription stage
+went from preprocessing-bound to GPU-bound.
+
+**Activation check:** no remote paths in the process's open file list after
+warm-up; start-up time per worker is flat as hosts are added.
+
+## 4. Run several processes per GPU under a real MPS daemon
+
+**Symptom:** one process per GPU, GPU utilization 50 to 80%, kernels separated
+by host gaps (decode, Python scheduling, serialization, a single-threaded
+request scheduler). Adding threads inside the process does not help because of
+the interpreter lock or thread oversubscription.
+
+**Mechanism:** the NVIDIA Multi-Process Service lets kernels from several
+processes execute concurrently on one GPU instead of time-slicing. Two to four
+independent worker processes per GPU fill the host gaps of each other. The
+gain is largest when the per-item host work is comparable to the GPU work.
+
+**Rung:** 2, scheduling and overlap. It does not change arithmetic, so outputs
+are bitwise when each process is deterministic on its own.
+
+**Observed gain:** +13 to 30% at two processes per GPU and +16 to 33% at
+three across video encoders, frame rankers, speech servers, and audio
+taggers; 2x per GPU on an audio tagger when paired with lever 1 (the spawn cost
+had hidden the GPU idle time). Beyond three to four processes the gain
+flattens or reverses.
+
+**Observed zero:** a GPU whose compute pipe is already above 85% busy in the
+kernel profile, or a node sitting at its power cap, gains nothing from MPS.
+Check the ceiling first (section 6).
+
+**How to run it:**
+
+- Start one control daemon per GPU, before any client, with the pipe and log
+  directories unique per GPU, and `CUDA_VISIBLE_DEVICES` set for the daemon
+  only.
+- Clients must not set `CUDA_VISIBLE_DEVICES` themselves; a client that masks
+  devices bypasses the daemon and runs time-sliced, which looks like "MPS does
+  nothing".
+- One daemon serves at most 48 clients. Count every CUDA context, including
+  helper processes, and keep processes per GPU at or below six.
+- Give each client process fewer host threads than before (for example 16
+  instead of 64) so the processes do not oversubscribe the cores.
+- Verify activation: the daemon log lists each client connection, and
+  `nvidia-smi` shows the compute mode and the MPS server process.
+
+**Costs and risks:**
+
+- Host CPU per item rises with the number of clients (observed 0.31 to
+  0.39 CPU-seconds per item from one to several clients); budget cores.
+- Memory is divided among the clients; size per-process memory fractions so
+  the sum fits with headroom.
+- A faulting client can take the daemon down with it; one rare MMU fault was
+  observed under MPS. Keep a restart path for the daemon.
+- When sharing a GPU between a serving engine and its own preprocessing
+  workers, the preprocessing memory lives outside the engine's budget (see
+  the llm-serving playbook, lever 4).
+
+## 5. Precision rungs as an authorized Pareto, not a default
+
+**Symptom:** the exact-output ceiling is reached (section 6) and the user has
+authorized a quality trade-off.
+
+**Mechanism and observed positions:**
+
+- fp32 matmul emulated with three bf16 products: 1.35 to 1.4x on an fp32
+  pipeline with deviation below the fp32-versus-fp64 error itself; one trap:
+  a fused bias can route a tall GEMM to a legacy kernel that is 2x slower, so
+  unfuse the bias and re-measure.
+- TF32 matmul: a further 10 to 15%, deviation around 1e-3.
+- bf16 recurrent state in a serving engine: +12% steady state.
+- Hardware video decode: halves host CPU per window but changes pixels by one
+  or two LSB.
+
+**Rung:** 6, reduce precision.
+
+**Parity trap:** measure decision flips with the trained production head on
+the production input mix. A surrogate head underestimated flips by an order
+of magnitude. Report absolute flips and mean logit deviation, never only a
+paired delta.
+
+## 6. Know the ceiling before spending more
+
+Stop criteria that closed campaigns honestly:
+
+- the dominant kernel sits above 80 to 85% on its compute pipe in a kernel
+  profile and the outputs must stay exact;
+- the GPU is at its power cap with clocks already reduced under load;
+- steady-state GPU idle is below about 5% with the exact model.
+
+At that point the remaining exact-output levers are host-side (levers 1 to 3)
+or precision (lever 5). Record the ceiling as negative knowledge with the
+evidence.
+
+## Measurement traps seen in practice
+
+- Sharding a benchmark across processes by interleaved rows changed the
+  allocation history and therefore the matmul kernel variant, producing
+  one-ulp differences that are not the candidate's fault. Shard by contiguous
+  blocks.
+- Short runs overstate or understate per-process layouts because workers
+  start skewed. Compare against a same-length baseline and report a steady
+  window (for example the 25 to 75% quantile of the run) for serving.
+- A full-run average for a serving benchmark loses about 40% to ramp and
+  tail; report steady state and the full run separately.
+- Health probes to a loaded engine time out and under-report healthy
+  replicas; do not treat probe failures as replica failures.
+- A benchmark that masks devices per client while a daemon is running is
+  measuring time-slicing, not MPS.

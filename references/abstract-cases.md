@@ -101,6 +101,33 @@ do not record the candidate as slower or incorrect.
 **Principle:** separate implementation verdicts from harness and environment
 failures.
 
+## A compile win that loses in the real entry point
+
+Graph compilation makes a static-shape benchmark 10% faster with clean
+parity. In the production CLI the input mix spans dozens of resolutions and
+partial last batches, so recompilation per shape dominates and throughput
+falls below the uncompiled baseline.
+
+**Verdict:** reject for the production path. Keep the benchmark number as a
+setup-specific finding.
+
+**Principle:** benchmark the real entry point with the real shape mix, not a
+convenient static proxy.
+
+## GPU sharing that helps one stage and does nothing on another
+
+Running three worker processes per GPU under a CUDA MPS daemon raises a
+launch-bound encoder stage by 16% with bitwise outputs. The same layout on a
+frame-ranking stage whose dominant kernels already keep the tensor pipe above
+85% busy, on a GPU at its power cap, changes nothing.
+
+**Verdict:** promote on the first stage; record the second as a measured
+ceiling and stop tuning process count there.
+
+**Principle:** GPU sharing recovers host gaps and launch gaps. When the kernel
+profile shows the compute pipe saturated, the remaining headroom is host-side
+or in precision, not in scheduling.
+
 ## Removing work beats optimizing it
 
 Profiling reveals an unused model call in every inference request. Removing it
