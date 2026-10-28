@@ -7,7 +7,7 @@ every file; the classes have different bottleneck shapes and the ranges do not
 transfer across them.
 
 Each entry in a playbook has the same skeleton: symptom in the stage map,
-mechanism, ladder rung (core principle 5), observed gain range, activation
+mechanism, ladder rung (SKILL.md step 4), observed gain range, activation
 check, and parity trap. The ranges are priors for sizing headroom, not
 promises; every lever still passes the contract, parity, and paired gates.
 

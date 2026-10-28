@@ -48,11 +48,13 @@ are not repeated and open next actions are picked up.
 
 ## Kernel-level escalation
 
-This is intentionally a higher-level skill. It does not begin by writing custom
-CUDA kernels.
-
-When end-to-end profiling proves that a specific kernel has enough recoverable
-budget to matter, use:
+The skill does not begin with custom kernels, but it descends to them as soon
+as a kernel profile shows recoverable end-to-end budget.
+[references/kernel-dsls.md](references/kernel-dsls.md) picks the path from the
+profile evidence: swap an existing library backend, Triton for memory-bound
+fusion, TileLang for tile-level GEMM, attention, and recurrence variants, CuTe
+DSL when the ceiling needs architecture-specific tensor-core features. It also
+uses:
 
 - [ncu-report-skill](https://github.com/mit-han-lab/ncu-report-skill) to collect
   and interpret Nsight Compute evidence;
@@ -93,8 +95,11 @@ end-to-end-performance-skill/
 └── LICENSE
 ```
 
-- `SKILL.md` contains the core principles, workflow, escalation rules, and
-  required result format.
+- `SKILL.md` contains the step loop (each step with its output and exit
+  condition), the rules that apply at every step, kernel escalation, and the
+  reporting format.
+- `references/kernel-dsls.md` chooses between a library backend swap, Triton,
+  TileLang, and CuTe DSL from kernel-profile evidence.
 - `references/measurement-and-parity.md` defines benchmark, parity, topology,
   and verdict guidance.
 - `references/playbooks/` is a library of measured levers by workload class:

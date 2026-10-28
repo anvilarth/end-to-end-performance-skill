@@ -1,6 +1,6 @@
 ---
 name: end-to-end-performance-skill
-description: Optimize PyTorch and CUDA training or inference workloads end to end. Use when asked to profile, diagnose, benchmark, or accelerate model execution; reduce step time, startup time, latency, memory, or cost; validate a performance change; investigate distributed or compilation bottlenecks; raise GPU utilization or share a GPU between processes (CUDA MPS); or decide whether an optimization should be promoted. Start by establishing the real usage setup, apply a lossless-first strategy, require measured correctness and numerical parity, and consult KernelWiki only when profiling proves that a custom GPU kernel is warranted.
+description: Optimize PyTorch and CUDA training or inference workloads end to end. Use when asked to profile, diagnose, benchmark, or accelerate model execution; reduce step time, startup time, latency, memory, or cost; validate a performance change; investigate distributed or compilation bottlenecks; raise GPU utilization or share a GPU between processes (CUDA MPS); or decide whether an optimization should be promoted. Start by establishing the real usage setup, apply a lossless-first strategy, require measured correctness and numerical parity, and write or swap in custom kernels (Triton, TileLang, CuTe DSL) once a kernel profile shows recoverable budget.
 ---
 
 # End-to-End Performance
@@ -9,277 +9,212 @@ Optimize the delivered workload, not an isolated component. Treat a complete
 training step, startup sequence, batch, generation, or served request as the
 unit of success.
 
-## Start with the real usage setup
+Run the loop below in order. Each step has an output and an exit condition;
+do not start a step before the previous step's output exists, and post the
+step's output to the user when the step says so. When the user asks for
+progress, answer from the latest outputs in the reporting format.
 
-Before proposing optimizations, ask how the code is actually used. Do not begin
-from a convenient local setup and assume that its result transfers.
+## The loop
 
-Establish the target environment:
-
-- training or inference, and the exact end-to-end boundary;
-- GPU model, GPU count, nodes, interconnect, and distributed topology;
-- model, checkpoint, dtype, attention backend, and compiler settings;
-- batch size, gradient accumulation, sequence lengths, resolutions, and input
-  distribution;
-- serving concurrency, batching, cache state, and latency or throughput target;
-- important modes, adapters, conditioning paths, and tail cases;
-- cold-start, warm steady-state, or both;
-- memory, cost, quality, and operational constraints.
-
-If the intended setup is unknown, ask for it. If it cannot be reproduced, label
-the chosen setup as a proxy and state exactly what it cannot prove.
-
-Treat scale and topology as part of the optimization. State exactly which setup
-the evidence covers, and revalidate when the intended environment materially
-changes. Communication, sharding, recomputation, memory pressure, stragglers,
-and overlap can change or reverse the result. Use smaller setups for screening
-when useful, then run the promotion gate on the intended setup.
-
-## Core principles
-
-1. **Optimize the real deliverable.** Name one primary end-to-end metric, the
-   fixed workload, the correctness contract, and the promotion threshold before
-   changing code. Treat throughput, latency, memory, quality, startup, and cost
-   as distinct metrics rather than interchangeable claims.
-
-2. **Measure before proposing.** Build a full stage map covering CPU work, input
-   processing, transfers, synchronization, GPU execution, communication,
-   serialization, and output handling. Do not infer the bottleneck from model
-   architecture alone.
-
-3. **Find the available headroom.** Estimate a physical, mathematical, or
-   empirical limit. For every candidate, identify the measured budget it attacks
-   and its maximum possible end-to-end contribution. Reject work whose best-case
-   impact is below measurement noise or the promotion threshold.
-
-4. **Remove work before accelerating work.** Prefer eliminating unused model
-   calls, redundant recomputation, synchronization, copies, conversions,
-   serialization, initialization, or repeated I/O before tuning an operation
-   that need not run.
-
-5. **Use the least behavior-changing lever first.** Explore candidates in this
-   order unless evidence justifies a different order:
-
-   1. remove unnecessary work;
-   2. improve scheduling, overlap, caching, locality, or topology, including
-      several processes per GPU under a CUDA MPS daemon and more smaller
-      replicas instead of wider tensor parallelism;
-   3. select a better equivalent PyTorch implementation;
-   4. use compilation, fusion, or layout changes;
-   5. introduce a custom CUDA or Triton kernel;
-   6. reduce precision;
-   7. change the algorithm or accept approximation.
-
-6. **Treat lossless as a measured property.** Distinguish exact equivalence from
-   numerically different but parity-preserving behavior. Measure deviations even
-   when a change is intended to be lossless.
-
-7. **Run parity before performance.** Invalidate performance claims from an arm
-   that fails representation, sample-order, RNG, loss, gradient, output, or
-   quality gates. Correctness is a prerequisite, not a speed result.
-
-8. **Benchmark real shapes, modes, scale, and topology.** Cover production batch
-   sizes, sequence lengths, resolutions, conditioning modes, precision, gradient
-   accumulation, concurrency, distributed layout, memory pressure, and important
-   tails. A convenient subset can screen candidates but cannot promote them.
-
-9. **Make measurements admissible.** Compare candidate and control on the same
-   hardware allocation, interleave them when possible, separate cold and warm
-   behavior, repeat enough times to resolve the target effect, and report both
-   absolute values and deltas. Prefer paired distributions over isolated means.
-
-10. **Change one causal mechanism at a time.** Keep screening arms attributable.
-    Combine changes only after each component has independently passed its gate.
-
-11. **Assume interactions.** Re-measure the complete stack because individually
-    useful optimizations may overlap, compete for memory, alter scheduling, or
-    become antagonistic when composed.
-
-12. **Re-profile after material wins.** A successful optimization changes the
-    bottleneck. Rebuild the end-to-end stage map before choosing the next target.
-
-13. **Treat memory as performance.** Record allocated and reserved peaks,
-    fragmentation, host memory, communication buffers, and OOM margin. Include
-    any batch-size or topology opportunity enabled by a memory reduction.
-
-14. **Separate verdicts from failures.** Distinguish an optimization regression
-    from an invalid harness, dependency problem, compilation failure, unhealthy
-    worker, or unsupported backend. Report `inconclusive`, not `reject`, when the
-    candidate was never validly measured.
-
-15. **Be willing to stop.** Reject elegant implementations, large local wins,
-    and sunk work when they fail the end-to-end contract. A well-supported no-go
-    decision is a successful performance result.
-
-16. **Record negative knowledge.** Preserve the baseline, conditions, absolute
-    metrics, deviation metrics, limit, verdict, and reason. Prevent future agents
-    from repeating invalid or low-headroom ideas.
-
-17. **Log as you go.** Keep a local, append-only experiment log and write each
-    contract, baseline, profile, hypothesis, gate result, and verdict when it
-    happens. An unlogged hypothesis result is lost to the next session.
-
-## Optimization workflow
-
-### 0. Load the experiment log
+### Step 0. Load the log
 
 Read [references/experiment-log.md](references/experiment-log.md). Open
-`.perf-log/log.jsonl` in the workload repository, or create it. If earlier
-events exist, summarize the active contract, latest baseline, promoted changes,
-rejected and inconclusive hypotheses, and open next actions before doing
-anything else. Do not re-propose a rejected hypothesis unless the setup,
-contract, or bottleneck has changed.
+`.perf-log/log.jsonl` in the workload repository, or create it.
 
-### 1. Freeze the contract
+- **Output:** a short summary of the active contract, latest baseline,
+  promoted changes, rejected and inconclusive hypotheses, and open next actions.
+- **Exit:** summary written. Do not re-propose a rejected hypothesis unless the
+  setup, contract, or bottleneck has changed.
 
-Record:
+### Step 1. Real setup and contract
 
-- the real usage setup and complete deliverable being optimized;
-- one primary performance metric and relevant secondary metrics;
-- representative inputs, shapes, modes, seeds, scale, and topology;
-- the control revision, environment, hardware, and software versions;
-- exact-equivalence or numerical and quality tolerances;
-- promotion, rejection, and stop conditions;
-- the maximum authorized runtime or compute budget.
+Establish how the code is actually used, asking once for everything missing:
+training or inference and the exact end-to-end boundary; GPU model and count,
+nodes, interconnect, topology; model, checkpoint, dtype, attention backend,
+compiler settings; batch, sequence lengths, resolutions, input distribution;
+serving concurrency and caching; important modes and tails; cold or warm;
+memory, cost, quality, and operational constraints. If the setup cannot be
+reproduced, label the chosen one a proxy and state what it cannot prove.
 
-Ask for approval before expensive, long-running, or production-affecting runs.
-Do not invent a quality trade-off that the user did not authorize.
+Then freeze: one primary metric and its target, secondary metrics, fixed
+representative inputs and seeds, control revision and versions, exact or
+numerical and quality tolerances, promotion threshold, and the hardware and
+time budget.
 
-Log the frozen contract as a `contract` event.
+- **Output:** a `contract` event and one line to the user: `now ? -> target X,
+  metric M, budget B, lossless unless you say otherwise`.
+- **Exit:** contract logged.
 
-### 2. Establish the baseline
+### Step 2. Baseline
 
-Instrument the complete path with low-overhead stage timings and memory metrics.
-Warm up compilation, allocators, caches, and kernels as required by the target
-mode, while measuring cold behavior separately when it matters. Verify that the
-baseline itself is stable enough to resolve the desired effect.
+Instrument the full path with low-overhead stage timings and memory metrics.
+Warm up as the target mode requires; measure cold separately when it matters.
+Repeat until the variance resolves the promotion threshold. Read
+[references/measurement-and-parity.md](references/measurement-and-parity.md)
+for the benchmark and gate design.
 
-Log the baseline and the stage map as `baseline` and `profile` events, with raw
-profiles and benchmark output under the event's artifact directory.
+- **Output:** `baseline` event with absolute value, variance, and memory peaks.
+- **Exit:** baseline stable enough to resolve the threshold.
 
-Read [references/measurement-and-parity.md](references/measurement-and-parity.md)
-when designing the benchmark or correctness gates.
+### Step 3. Time budget and ceilings
 
-### 3. Rank bottlenecks and candidates
+Profile the baseline: a timeline (CPU, input, transfers, sync, GPU, comms,
+output) first, then a kernel profile of a production-shaped window as soon as
+GPU-bound time is concentrated in a few kernel classes (see Custom-kernel
+escalation). For every stage classify the bound (compute, bandwidth, launch,
+sync, communication, host, I/O, capacity) and estimate its ceiling.
 
-For each material stage, classify the likely bound: compute, memory bandwidth,
-launch overhead, synchronization, communication, host work, I/O, or memory
-capacity. Rank candidates by:
+- **Output:** `profile` event and, to the user, the budget table:
 
-`expected end-to-end impact x confidence / implementation and validation cost`
+  | Stage or kernel class | Share of e2e | Bound | Achieved vs ceiling | Recoverable e2e |
+  | --- | --- | --- | --- | --- |
 
-State the best-case end-to-end gain before implementation. Prefer cheap,
-reversible, behavior-preserving changes with a large measured budget.
+  plus one sentence: whether the target is reachable losslessly, from the sum
+  of recoverable budgets.
+- **Exit:** every stage above the promotion threshold has a bound and a
+  recoverable estimate.
 
-Read [references/playbooks/README.md](references/playbooks/README.md) and pick
-the playbook for the workload class (LLM and VLM serving, small filter models,
-request servers) plus the shared `common.md`. They list the levers that repeatedly paid off on inference and serving workloads
-(in-process decode, local-disk runtimes, launch-bound encoder fixes, CUDA MPS
-with several processes per GPU, serving admission caps, replica layout), the
-gain each one delivered, how to prove it activated, and the parity trap of
-each. Use it to size headroom and to avoid re-deriving known ceilings.
+### Step 4. Lever table
 
-Log every ranked candidate as a `hypothesis` event, including those
-deprioritized before implementation, with its mechanism, attacked budget,
-best-case gain, and rank score.
+Read [references/playbooks/README.md](references/playbooks/README.md), the
+class playbook, and `common.md`; for kernel rows read
+[references/kernel-dsls.md](references/kernel-dsls.md). For each budget row
+list candidate levers, ordered by the least behavior-changing rung first:
 
-### 4. Implement one candidate
+1. remove unnecessary work;
+2. scheduling, overlap, caching, locality, topology (several processes per GPU
+   under CUDA MPS, more smaller replicas instead of wider tensor parallelism);
+3. an equivalent faster PyTorch implementation;
+4. compilation, fusion, layout;
+5. swap in or write a kernel (library backend, Triton, TileLang, CuTe DSL);
+6. reduced precision;
+7. algorithm change or approximation.
 
-Keep the change independently switchable when practical. Preserve a clean
-control path. Add only the instrumentation needed to prove activation,
-correctness, and performance. Do not stack speculative changes into one arm.
+Rank by `best-case e2e gain x confidence / cost`. Drop levers whose best case
+is below noise or the threshold.
 
-### 5. Validate in ascending cost
+- **Output:** a `hypothesis` event per lever, and to the user the lever table:
 
-Run the cheapest decisive gates first:
+  | Lever | Rung | Budget attacked | Best-case e2e | Cost | Status |
+  | --- | --- | --- | --- | --- | --- |
+
+- **Exit:** the top levers are assigned to hardware. Run independent arms in
+  parallel; while a long benchmark runs, build or parity-test the next one.
+
+### Step 5. Implement one lever
+
+One causal mechanism per arm, switchable, with a clean control path and only
+the instrumentation needed to prove activation, correctness, and speed.
+
+- **Exit:** the arm runs and its activation is observable.
+
+### Step 6. Gates in ascending cost
 
 1. static and activation checks;
 2. exact representation or invariance checks;
 3. finite loss and gradients;
-4. isolated component timing when useful for diagnosis;
-5. paired end-to-end comparison;
-6. longer loss-curve or quality validation when numerical effects can
-   accumulate;
+4. isolated component timing, for diagnosis only;
+5. paired end-to-end comparison on the same allocation, interleaved;
+6. longer loss-curve or quality validation when numerical effects accumulate;
 7. production-shaped scale and tail validation.
 
-Kill an arm immediately when it crosses a predeclared rejection boundary.
+Kill the arm at the first failed gate. A broken harness, dependency, compile,
+or worker makes it `inconclusive`, not `reject`.
 
-Append a `gate` event after every gate, whether it passes, fails, or errors,
-before starting the next one.
+- **Output:** a `gate` event after every gate, before the next one.
 
-### 6. Decide and iterate
+### Step 7. Verdict and status
 
-Return exactly one verdict: `promote`, `reject`, or `inconclusive`. If promoted,
-re-profile before selecting the next candidate. If composing passed changes,
-repeat parity and end-to-end gates on the combined stack.
+- **Output:** a `verdict` event (`promote`, `reject`, `inconclusive`) with
+  reason, headroom captured, transfer boundary, and next action; an updated
+  lever table; and a status message in the reporting format.
 
-Log the decision as a `verdict` event with the reason, headroom captured,
-transfer boundary, and next action.
+### Step 8. Next iteration
 
-Consider reduced precision or algorithmic approximation only after the
-lossless-first search is documented, unless the user explicitly chooses a
-quality-performance trade-off. Present approximate candidates as a Pareto
-frontier, never as lossless speedups.
+- `promote`: compose with the promoted stack, re-run parity and the paired gate
+  on the composition, then return to Step 3: the bottleneck has moved.
+- `reject` or `inconclusive`: return to Step 4 and take the next lever.
+- Leave the loop only when the target is met, the remaining lossless
+  recoverable budget is below the threshold, or the budget is spent. If the
+  target is above the lossless ceiling, present the approximate levers (rungs
+  6 and 7) as a measured Pareto with quality deltas for the user to choose, and
+  keep working lossless levers meanwhile. Never end a turn with only
+  "stopping" or "waiting for a decision".
+
+## Rules that apply at every step
+
+- **Real deliverable, real conditions.** Throughput, latency, memory,
+  quality, startup, and cost are separate metrics. Production shapes, modes,
+  precision, concurrency, scale, and topology decide promotion; smaller setups
+  only screen. Revalidate when the environment changes materially.
+- **Measure before proposing.** Do not infer the bottleneck from the
+  architecture.
+- **Parity before performance.** Lossless is measured, not assumed: report
+  deviations even for intended no-op changes, with absolute values for control
+  and candidate.
+- **Memory is performance.** Record allocated and reserved peaks,
+  fragmentation, host memory, and OOM margin, and any batch or topology
+  opportunity a reduction opens.
+- **Authority.** Inside the hardware and budget the user allocated, run
+  profiles, benchmarks, kernels, and parity checks without asking. Ask before
+  production-affecting changes, spending beyond the budget, or a quality
+  trade-off the user has not authorized; never invent one.
+- **Negative knowledge is a result.** Log rejected levers with conditions and
+  reasons so later sessions do not repeat them.
 
 ## Custom-kernel escalation
 
-Use standard PyTorch, compiler, and CUDA facilities first. Consult KernelWiki
-when all of the following are true:
+Descend to kernels when the end-to-end profile shows GPU-bound time
+concentrated in a few kernels or kernel classes whose recoverable budget can
+move the primary metric past the promotion threshold. Typical signals:
+memory-bound kernels far below HBM bandwidth, chains of elementwise casts and
+copies, tiny-grid or one-warp kernels, an unfused quantize or normalization
+between two GEMMs, an attention or recurrence shape with no fast library path.
 
-- profiling identifies a concrete GPU-kernel bottleneck;
-- its recoverable budget can materially affect the end-to-end metric;
-- production shapes, dtypes, scale, topology, and hardware are known;
-- existing operators or compiler output do not meet the target;
-- the validation plan includes numerical parity, resource use, and full-path
-  measurement.
+1. **Profile kernels early.** Nsight Compute on a production-shaped window costs
+   minutes; run it as soon as the timeline points at GPU-bound time, not as a
+   last resort. Use
+   [ncu-report-skill](https://github.com/mit-han-lab/ncu-report-skill) to
+   classify throughput against the pipe and bandwidth ceilings, stalls,
+   occupancy, and tails. Convert each kernel's gap to its ceiling into an
+   end-to-end budget.
+2. **Swap before writing.** Check whether the framework, engine, or a kernel
+   library already ships a faster implementation behind a backend flag,
+   dispatcher, or stale guard. A swap is a flag plus a parity gate.
+3. **Pick the language from the evidence.** Follow
+   [references/kernel-dsls.md](references/kernel-dsls.md): Triton for fusion of
+   memory-bound chains, TileLang for tile-level GEMM, attention, and recurrence
+   variants, CuTe DSL when the ceiling needs architecture-specific tensor-core,
+   memory, and pipelining features. Search
+   [KernelWiki](https://github.com/mit-han-lab/KernelWiki) for techniques and
+   prior implementations; it is evidence of technique, not of benefit here.
+4. **Gate like any other arm.** Production shapes and dtypes, a numerical
+   parity test against the control op, resource use, then the full-path paired
+   gate. A faster microbenchmark is not a speedup.
 
-Treat KernelWiki as a source of kernel techniques and implementation evidence,
-not as proof that a technique benefits this workload.
+When kernel budget remains and the user asked for more speed, write the kernel;
+do not wait to be told.
 
-When a timeline and production-shaped component benchmark justify deeper kernel
-analysis, use the
-[ncu-report-skill](https://github.com/mit-han-lab/ncu-report-skill) to collect
-and interpret Nsight Compute evidence. Use it to classify utilization, stalls,
-memory traffic, instruction mix, occupancy, and tail effects. Do not start with
-NCU merely because the workload uses CUDA: first prove that the selected kernel
-has enough recoverable end-to-end budget to matter.
+## Reporting
 
-The escalation boundary is:
+Status messages to the user stay short and lead with the answer:
 
-`end-to-end profile -> material kernel budget -> NCU diagnosis -> KernelWiki or
-existing implementation search -> candidate kernel -> parity -> end-to-end gate`
+1. now -> target -> gap, in the primary metric, and whether the target is
+   reachable losslessly, with the evidence;
+2. what changed since the last update: verdicts with paired numbers;
+3. what is running, where, and when each result is due;
+4. the top levers from the lever table with best-case gains;
+5. a decision the user must make, only if one blocks progress.
 
-## Required result format
+Use plain words for mechanisms; put profiles, parity tables, and logs in files
+and link them.
 
-Report:
-
-1. **Verdict:** `promote`, `reject`, or `inconclusive`.
-2. **Real setup:** target environment, workload, modes, scale, and topology.
-3. **Contract:** primary metric, correctness gate, and fixed conditions.
-4. **Baseline:** absolute end-to-end performance, memory, and quality values.
-5. **Bottleneck:** measured stage budget and estimated limit.
-6. **Change:** one causal mechanism and evidence that it activated.
-7. **Parity:** exact or numerical deviations, with absolute candidate and control
-   values.
-8. **Performance:** paired absolute results, delta, variability, and tails.
-9. **Trade-offs:** memory, quality, cold start, complexity, and mode coverage.
-10. **Transfer boundary:** which setups were measured and which remain unproven.
-11. **Decision:** fraction of available headroom captured and the reason for the
-    verdict.
-12. **Next action:** re-profile, validate at target scale, compose passed changes,
-    investigate a new bottleneck, or stop.
-13. **Log:** ids of the logged hypothesis, gate, and verdict events and the log
-    path.
+Each verdict, and the final write-up, records in the log or a results file:
+verdict; real setup; contract; baseline; measured bottleneck and limit; the one
+causal change and its activation evidence; parity with absolute control and
+candidate values; paired performance with variability and tails; trade-offs in
+memory, quality, cold start, complexity, and modes; transfer boundary; fraction
+of headroom captured; next action; and the logged event ids.
 
 Read [references/abstract-cases.md](references/abstract-cases.md) for generalized
 examples of correct promotion and rejection decisions.
-
-## Acknowledgements
-
-Thank you to MIT HAN Lab and all contributors to
-[KernelWiki](https://github.com/mit-han-lab/KernelWiki) and
-[ncu-report-skill](https://github.com/mit-han-lab/ncu-report-skill). Their work
-provides valuable kernel-optimization knowledge and a rigorous Nsight Compute
-analysis workflow. This skill complements those projects by deciding when to
-descend to kernel-level work and by requiring every local improvement to return
-to a representative end-to-end correctness and performance gate.

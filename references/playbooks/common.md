@@ -8,7 +8,7 @@ filter models, request servers). The class files add their own levers and
 numbers and refer back here by section number.
 
 Each entry names the symptom that justifies it, the mechanism, the ladder rung
-it belongs to (core principle 5), the gain range that was actually observed,
+it belongs to (SKILL.md step 4), the gain range that was actually observed,
 how to prove the change activated, and the parity trap. The ranges are prior
 expectations for sizing headroom, not promises. Every lever still goes through
 the contract, parity, and paired end-to-end gates.
@@ -22,6 +22,7 @@ Before picking a lever, read the stage map and answer:
 | GPU utilization well below 80% while the host is busy | host work, decode, process spawn, network file system | 1, 2, 3 |
 | GPU busy but with gaps between kernels; many small launches | launch overhead, single-process serialization | 4; small-filters.md lever 2 |
 | Serving engine reports few running requests although the GPU has memory | admission or cache-slot cap, ingestion payloads | llm-serving.md |
+| GPU busy, kernel profile shows memory-bound kernels far below HBM bandwidth, cast and copy chains, or tiny grids | kernel efficiency | [../kernel-dsls.md](../kernel-dsls.md): swap a library backend, then Triton, TileLang, CuTe DSL |
 | Compute pipe utilization above 80 to 85% in a kernel profile, or the GPU at its power cap | the exact-output ceiling | stop, or precision rung 5 |
 
 ## 1. Replace per-item process spawn with in-process decode
