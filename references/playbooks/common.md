@@ -24,6 +24,7 @@ Before picking a lever, read the stage map and answer:
 | Serving engine reports few running requests although the GPU has memory | admission or cache-slot cap, ingestion payloads | llm-serving.md |
 | GPU busy, kernel profile shows memory-bound kernels far below HBM bandwidth, cast and copy chains, or tiny grids | kernel efficiency | [../kernel-dsls.md](../kernel-dsls.md): swap a library backend, then Triton, TileLang, CuTe DSL |
 | GPU at its power cap with the SM clock well below maximum under load | power-limited clocks | 7 |
+| Two GPU phases of different shape share each device and phase disaggregation is proposed | phase interference or a starved phase | 8: measure per-phase GPU-seconds first |
 | Compute pipe utilization above 80 to 85% in a kernel profile, or the GPU at its power cap | the exact-output ceiling | stop, or precision rung 5 |
 
 ## 1. Replace per-item process spawn with in-process decode
@@ -214,6 +215,41 @@ above what the power limit sustains (the driver throttles anyway) or below
 the clock the memory-bound phases need. Per-GPU spread of a few percent is
 normal, so compare on the same GPUs.
 
+## 8. Disaggregate phases only when a phase is starved, not when the GPU is saturated
+
+**Symptom:** a request runs two GPU phases with different shapes (for example
+a vision encoder and a language-model prefill) on the same device, and the
+idea is to give each phase its own GPUs, as in prefill/decode disaggregation.
+
+**Mechanism:** separation pays only when co-location wastes something: one
+phase idles the GPU, the phases need conflicting batch sizes or parallelism,
+or one phase blocks the other's latency. When several processes per GPU
+already keep the device saturated, splitting adds transport and leaves the
+total GPU time per item unchanged or worse.
+
+**Ladder rung:** 2 (topology). Outputs can stay bitwise if the moved
+boundary tensor keeps its producer's memory layout (see the parity trap).
+
+**How to measure first:** run each phase alone on a GPU fed by surplus
+capacity of the other phase, and record items per second for each: `r_a` and
+`r_b`. The sum `1/r_a + 1/r_b` is the GPU-seconds per item of any split;
+compare it with `1/r_co` of the co-located GPU. The best fractional split
+gives `N / (1/r_a + 1/r_b)` for N GPUs, and integer splits are lower. If the
+sum is not below `1/r_co`, no split can win: stop before testing layouts.
+
+**Observed range:** a power-capped video frame ranker (vision encoder about
+36% of GPU time, three processes per GPU under MPS): encoder-only GPU 18.7
+items/s, prefill-only GPU 10.1, co-located 6.8. The split costs 0.153 against
+0.147 GPU-seconds per item: best fractional split -4%, a 1+3 split measured
+-31%, encoder-bound.
+
+**Parity trap:** a GEMM library may pick a different algorithm for a
+contiguous input than for a permuted view with the same values. After the
+boundary tensor went through a file it was contiguous, and about 45% of the
+projected features differed by one ulp until the consumer rebuilt the
+producer's strides. Compare the boundary tensor and the first op after it
+bitwise in isolation before blaming the network or weights.
+
 ## Measurement traps seen in practice
 
 - Sharding a benchmark across processes by interleaved rows changed the
@@ -229,3 +265,7 @@ normal, so compare on the same GPUs.
   replicas; do not treat probe failures as replica failures.
 - A benchmark that masks devices per client while a daemon is running is
   measuring time-slicing, not MPS.
+- One engine process that fails on startup (for example a port collision)
+  can kill its whole process group. Start every long-lived server in its own
+  session, and never use a bare `wait` in a driver that also starts servers:
+  it waits for the servers too.
