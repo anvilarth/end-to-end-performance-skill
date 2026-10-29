@@ -23,6 +23,7 @@ Before picking a lever, read the stage map and answer:
 | GPU busy but with gaps between kernels; many small launches | launch overhead, single-process serialization | 4; small-filters.md lever 2 |
 | Serving engine reports few running requests although the GPU has memory | admission or cache-slot cap, ingestion payloads | llm-serving.md |
 | GPU busy, kernel profile shows memory-bound kernels far below HBM bandwidth, cast and copy chains, or tiny grids | kernel efficiency | [../kernel-dsls.md](../kernel-dsls.md): swap a library backend, then Triton, TileLang, CuTe DSL |
+| GPU at its power cap with the SM clock well below maximum under load | power-limited clocks | 7 |
 | Compute pipe utilization above 80 to 85% in a kernel profile, or the GPU at its power cap | the exact-output ceiling | stop, or precision rung 5 |
 
 ## 1. Replace per-item process spawn with in-process decode
@@ -165,12 +166,50 @@ Stop criteria that closed campaigns honestly:
 
 - the dominant kernel sits above 80 to 85% on its compute pipe in a kernel
   profile and the outputs must stay exact;
-- the GPU is at its power cap with clocks already reduced under load;
+- the GPU is at its power cap with clocks already reduced under load, and a
+  locked-clock sweep (lever 7) found no setting faster than the default;
 - steady-state GPU idle is below about 5% with the exact model.
 
 At that point the remaining exact-output levers are host-side (levers 1 to 3)
 or precision (lever 5). Record the ceiling as negative knowledge with the
 evidence.
+
+## 7. Lock the SM clock when the GPU sits at its power cap
+
+**Symptom:** under steady load the board draws close to its power limit and
+the SM clock sits well below its maximum (for example about two thirds of
+it) while the dominant kernels already run near their compute pipe in a
+kernel profile.
+
+**Mechanism:** at the cap, the driver's boost logic keeps moving clock and
+voltage to hold the power target. A fixed application clock removes that
+oscillation and can run more work per watt. Outputs are bitwise unchanged:
+only the clock moves, not the kernels.
+
+**Ladder rung:** 2 (environment and scheduling). It needs root on the host
+and changes a shared device setting, so it is an operator decision for the
+fleet, not a code change.
+
+**How to measure:** read the supported clocks first
+(`nvidia-smi -q -d SUPPORTED_CLOCKS`, `clocks.max.sm`, `power.max_limit`);
+memory clocks may offer a single value. Sweep a few locked SM clocks
+(`nvidia-smi -i <gpu> -lgc <f>,<f>`) against the default in a Latin square
+over GPUs, with `nvidia-smi dmon -s pc` logging power and clock for every
+arm. Reset with `-rgc` at the end, including on failure.
+
+**Observed range:** first sweep in progress on a power-capped video frame
+ranker (default clock about 1.36 of 2.03 GHz under load at about 93% of the
+power limit, three workers per GPU). After one rotation, locks at 1.5, 1.7
+and 1.9 GHz sit within the GPU-to-GPU spread of the default (about 3%).
+Treat the lever as unproven until a full rotation set shows a paired gain.
+
+**Activation check:** `clocks.sm` equals the locked value under load, and
+power stays at or below the limit.
+
+**Parity trap:** none for outputs. Throughput can drop when the lock is set
+above what the power limit sustains (the driver throttles anyway) or below
+the clock the memory-bound phases need. Per-GPU spread of a few percent is
+normal, so compare on the same GPUs.
 
 ## Measurement traps seen in practice
 
