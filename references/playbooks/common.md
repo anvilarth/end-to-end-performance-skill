@@ -197,14 +197,17 @@ memory clocks may offer a single value. Sweep a few locked SM clocks
 over GPUs, with `nvidia-smi dmon -s pc` logging power and clock for every
 arm. Reset with `-rgc` at the end, including on failure.
 
-**Observed range:** first sweep in progress on a power-capped video frame
-ranker (default clock about 1.36 of 2.03 GHz under load at about 93% of the
-power limit, three workers per GPU). After one rotation, locks at 1.5, 1.7
-and 1.9 GHz sit within the GPU-to-GPU spread of the default (about 3%).
-Treat the lever as unproven until a full rotation set shows a paired gain.
+**Observed range:** no gain on a power-capped video frame ranker (three
+workers per GPU, 4x4 Latin square over GPUs): locks at 1.5, 1.7 and 1.9 GHz
+gave -0.4 to +0.3% against the default, within GPU-to-GPU spread. Under load
+every arm drew about 96% of the power limit and ran at about 1.24 GHz; the
+power-capping throttle overrode every lock above that clock. A lock can only
+pay where the workload leaves power headroom, for example memory-bound or
+bursty phases. Check the effective clock under load before reading throughput.
 
-**Activation check:** `clocks.sm` equals the locked value under load, and
-power stays at or below the limit.
+**Activation check:** the effective clock under load (`dmon` `pclk`) equals
+the lock. If it sits below the lock and the power-capping throttle reason
+counts up, the lock is not active and the arm only measures noise.
 
 **Parity trap:** none for outputs. Throughput can drop when the lock is set
 above what the power limit sustains (the driver throttles anyway) or below
