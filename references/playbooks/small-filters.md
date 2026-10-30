@@ -103,7 +103,8 @@ library; keep the decoder from reading past the last window.
 **Rung:** 1 and 2.
 
 **Observed:** async readback and pinned staging rewrites gave zero on the
-detector; the decoder-side resize was 5x cheaper but not bitwise. Record
+detector (run the activation check of common.md section 9 before repeating
+them elsewhere); the decoder-side resize was 5x cheaper but not bitwise. Record
 such zeros so they are not retried.
 
 ## 4. Precision rungs for this class

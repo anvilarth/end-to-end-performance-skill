@@ -59,7 +59,9 @@ for the benchmark and gate design.
 ### Step 3. Time budget and ceilings
 
 Profile the baseline: a timeline (CPU, input, transfers, sync, GPU, comms,
-output) first, then a kernel profile of a production-shaped window as soon as
+output) first, with the count of host-device synchronizations per unit of work
+(`torch.cuda.set_sync_debug_mode("warn")`, or sync and copy calls in the
+trace), then a kernel profile of a production-shaped window as soon as
 GPU-bound time is concentrated in a few kernel classes (see Custom-kernel
 escalation). For every stage classify the bound (compute, bandwidth, launch,
 sync, communication, host, I/O, capacity) and estimate its ceiling.
@@ -82,7 +84,8 @@ class playbook, and `common.md`; for kernel rows read
 list candidate levers, ordered by the least behavior-changing rung first:
 
 1. remove unnecessary work;
-2. scheduling, overlap, caching, locality, topology (several processes per GPU
+2. scheduling, overlap, caching, locality, topology (non-blocking transfers and
+   no implicit synchronization in the hot loop, several processes per GPU
    under CUDA MPS, more smaller replicas instead of wider tensor parallelism);
 3. an equivalent faster PyTorch implementation;
 4. compilation, fusion, layout;

@@ -55,6 +55,14 @@ synchronization to the production path merely to make every local timer exact.
 Use a timeline profiler for asynchronous boundaries when wall-clock wrappers are
 misleading.
 
+A wall-clock timer around an asynchronous launch measures the launch, not the
+work, and a timer around the first host read of a device value measures all the
+work queued before it. Time GPU stages with `torch.cuda.Event` pairs, and count
+the host-device synchronizations per unit of work
+(`torch.cuda.set_sync_debug_mode("warn")` in a diagnostic run) as part of the
+baseline: an unintended `.item()`, `.cpu()`, or pageable copy inside the hot
+loop is itself a stage budget (playbook common.md section 9).
+
 ## Estimate headroom
 
 For a stage occupying fraction `p` of end-to-end time and a proposed local

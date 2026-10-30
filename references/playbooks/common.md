@@ -26,6 +26,7 @@ Before picking a lever, read the stage map and answer:
 | GPU at its power cap with the SM clock well below maximum under load | power-limited clocks | 7 |
 | Two GPU phases of different shape share each device and phase disaggregation is proposed | phase interference or a starved phase | 8: measure per-phase GPU-seconds first |
 | Compute pipe utilization above 80 to 85% in a kernel profile, or the GPU at its power cap | the exact-output ceiling | stop, or precision rung 5 |
+| GPU idle gaps aligned with copies or per-step host reads of device values; trace shows `cudaMemcpy`, `cudaStreamSynchronize` or `cudaDeviceSynchronize` on the host thread | synchronization inside one process | 9, then 4 |
 
 ## 1. Replace per-item process spawn with in-process decode
 
@@ -250,8 +251,71 @@ projected features differed by one ulp until the consumer rebuilt the
 producer's strides. Compare the boundary tensor and the first op after it
 bitwise in isolation before blaming the network or weights.
 
+## 9. Make host-device transfers non-blocking and remove implicit synchronization
+
+**Symptom:** in the timeline the GPU idles at copy boundaries while the host
+thread sits in `cudaMemcpy`, `cudaStreamSynchronize`, or
+`cudaDeviceSynchronize`. The sources are a pageable `.to(device)`, and
+host reads of device values inside the hot loop: `.item()`, `.cpu()`,
+`.numpy()`, `.tolist()`, `float(t)`, `print`, `assert`, or `if` on a tensor,
+a loss or metric logged every step, a data-dependent shape (`nonzero`,
+masked indexing, `unique`). Each one drains the queued GPU work before the
+host can continue, so launches never run ahead of execution.
+
+**Mechanism:** pin the host buffers (`pin_memory=True` in the loader or
+`tensor.pin_memory()` once for a reused staging buffer) and copy with
+`non_blocking=True`, so the copy is a `cudaMemcpyAsync` on the stream and the
+host returns immediately. Move host reads out of the loop: accumulate
+losses and counters on device and read them every N steps or at the end;
+return device tensors from the forward and read them once per batch after
+the postprocessing kernels are queued. Where ordering is really required,
+record a `torch.cuda.Event` and wait on it instead of synchronizing the
+whole device. Run readback on a side stream only when the readback itself
+is the exposed cost. Do this lever before lever 4: each synchronization is a
+gap that MPS would merely hide behind another process, and a process that
+no longer drains the queue needs fewer neighbours.
+
+**Rung:** 2, scheduling and overlap. The arithmetic does not change, so
+outputs are bitwise when the ordering rules in the parity trap hold.
+
+**Observed gain:** preliminary. Expect a gain only when the sum of host
+blocking time per item is material in the timeline (tens of percent of the
+step for small models with per-step logging; a few percent or nothing for
+large forwards). **Observed zero:** an async readback and pinned staging
+rewrite on a small detector (small-filters.md lever 3), where the model
+time was already overlapped with decode in other workers. Size the headroom
+from the measured blocking time, not from the number of calls.
+
+**Activation check:** each of these must change, otherwise the arm did
+nothing:
+
+- `torch.cuda.set_sync_debug_mode("warn")` around the hot loop (not in
+  production): count the warnings per item before and after; the remaining
+  ones must be the intentional reads.
+- In the torch profiler or Nsight Systems trace, `cudaMemcpy` on the host
+  thread becomes `cudaMemcpyAsync`, and the number of `cudaStreamSynchronize`
+  plus `cudaDeviceSynchronize` calls per item drops to the intended count.
+- `tensor.is_pinned()` is true for every source of a `non_blocking` copy.
+- `CUDA_LAUNCH_BLOCKING` is unset in the measured process.
+- The launch queue runs ahead: in the trace the gap between a kernel's
+  launch and its execution grows instead of staying near zero.
+
+**Parity trap:** two silent ones. `non_blocking=True` from pageable memory is
+executed synchronously by the driver: no error, no gain, so the activation
+check above is the only way to see it. A `non_blocking` device-to-host copy
+into a pinned buffer that is read before the stream reaches it, or a pinned
+host source that is overwritten by the next batch before the copy completes,
+yields wrong values with no error; require an event or stream
+synchronization before every host read of such a buffer and before reusing
+it. Keep a bitwise comparison of the final outputs against the synchronous
+control in the gate list.
+
 ## Measurement traps seen in practice
 
+- Removing a synchronization moves time between stage timers: the stage
+  that held the sync looked slow because it absorbed all queued GPU work, and
+  after the change the earlier stages look slower. Only end-to-end wall
+  clock and the trace are authoritative for a synchronization lever.
 - Sharding a benchmark across processes by interleaved rows changed the
   allocation history and therefore the matmul kernel variant, producing
   one-ulp differences that are not the candidate's fault. Shard by contiguous

@@ -30,6 +30,8 @@ stage; the stage with the largest measured budget picks the first lever.
   runtimes and inputs;
 - several processes per GPU under a CUDA MPS daemon: the full recipe,
   activation checks, pitfalls, and when it yields zero;
+- non-blocking host-device transfers and removal of implicit synchronization
+  (`.item()`, pageable copies) with the sync-count activation check;
 - knowing the ceiling: compute-pipe utilization, power cap, idle floor;
 - precision rungs as an authorized Pareto and how to measure decision flips;
 - measurement traps seen in practice.
