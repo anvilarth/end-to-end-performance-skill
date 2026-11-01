@@ -104,8 +104,9 @@ bursts but lost end to end.
 to begin before launching the next); two groups initializing symmetric memory
 at once hung on some nodes. Keep a fallback that disables symmetric-memory
 collectives per host. Spread weight reads from a shared file system by
-starting hosts in waves. Disaggregated prefill and decode did not work in the
-engine version measured; treat it as untested, not as a lever.
+starting hosts in waves. Disaggregated prefill and decode failed with one
+KV-transfer backend and worked with another in the same engine version. It
+gained only at high load (see [../abstract-cases.md](../abstract-cases.md)).
 
 ## 4. Keep the memory fraction below the preprocessing overhead
 
@@ -138,7 +139,9 @@ client contract.
 
 - Report the steady window (for example the 25 to 75% quantile of the run)
   separately from the full run; a 1,000-item run loses about 40% to ramp and
-  tail.
+  tail. Trust the window only with a ramped client start and a run that
+  replaces the in-flight requests several times; otherwise prefer an
+  engine-side rate.
 - Health probes to a loaded engine time out; do not count probe failures as
   replica failures.
 - The configured running count is a ceiling, not a demand: raise client

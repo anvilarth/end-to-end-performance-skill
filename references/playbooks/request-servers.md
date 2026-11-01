@@ -17,7 +17,10 @@ servers per GPU under MPS, and raising the per-server engine concurrency to
 match.
 
 Primary metric: processed media seconds (or items) per second per node in
-steady state, with outputs bitwise against the single-server reference.
+steady state. Outputs stay bitwise against the single-server reference for
+host-side levers. For levers 1 and 2, a dynamic-batching engine is not
+bitwise under changing load. Require a word-level match rate within the
+spread of repeated control runs.
 
 ## Triage
 

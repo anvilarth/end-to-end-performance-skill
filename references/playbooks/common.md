@@ -25,7 +25,7 @@ Before picking a lever, read the stage map and answer:
 | GPU busy, kernel profile shows memory-bound kernels far below HBM bandwidth, cast and copy chains, or tiny grids | kernel efficiency | [../kernel-dsls.md](../kernel-dsls.md): swap a library backend, then Triton, TileLang, CuTe DSL |
 | GPU at its power cap with the SM clock well below maximum under load | power-limited clocks | 7 |
 | Two GPU phases of different shape share each device and phase disaggregation is proposed | phase interference or a starved phase | 8: measure per-phase GPU-seconds first |
-| Compute pipe utilization above 80 to 85% in a kernel profile, or the GPU at its power cap | the exact-output ceiling | stop, or precision rung 5 |
+| Compute pipe utilization above 80 to 85% in a kernel profile, or the GPU at its power cap | the exact-output ceiling | 4 at two or three processes when requests have host phases; then stop, or precision rung 5 |
 | GPU idle gaps aligned with copies or per-step host reads of device values; trace shows `cudaMemcpy`, `cudaStreamSynchronize` or `cudaDeviceSynchronize` on the host thread | synchronization inside one process | 9, then 4 |
 
 ## 1. Replace per-item process spawn with in-process decode
@@ -108,9 +108,10 @@ taggers; 2x per GPU on an audio tagger when paired with lever 1 (the spawn cost
 had hidden the GPU idle time). Beyond three to four processes the gain
 flattens or reverses.
 
-**Observed zero:** a GPU whose compute pipe is already above 85% busy in the
-kernel profile, or a node sitting at its power cap, gains nothing from MPS.
-Check the ceiling first (section 6).
+**Observed zero:** on a GPU whose compute pipe was already above 85% busy and
+at its power cap, a fourth process gained nothing on typical inputs. Two or
+three processes still gained there, because they overlap the host phases
+between requests; a steady-state idle figure does not show these phases.
 
 **How to run it:**
 
@@ -170,11 +171,13 @@ Stop criteria that closed campaigns honestly:
   profile and the outputs must stay exact;
 - the GPU is at its power cap with clocks already reduced under load, and a
   locked-clock sweep (lever 7) found no setting faster than the default;
-- steady-state GPU idle is below about 5% with the exact model.
+- steady-state GPU idle is below about 5% with the exact model, and two or
+  three processes per GPU (lever 4) no longer gain. The idle figure does not
+  show the host phases between requests.
 
-At that point the remaining exact-output levers are host-side (levers 1 to 3)
-or precision (lever 5). Record the ceiling as negative knowledge with the
-evidence.
+At that point the remaining exact-output levers are host-side (levers 1 to 3),
+lever 4 if it was not measured, or precision (lever 5). Record the ceiling as
+negative knowledge with the evidence.
 
 ## 7. Lock the SM clock when the GPU sits at its power cap
 
@@ -322,7 +325,9 @@ control in the gate list.
   blocks.
 - Short runs overstate or understate per-process layouts because workers
   start skewed. Compare against a same-length baseline and report a steady
-  window (for example the 25 to 75% quantile of the run) for serving.
+  window (for example the 25 to 75% quantile of the run) for serving. Trust
+  that window only with a ramped client start and a run that replaces the
+  in-flight requests several times; otherwise prefer an engine-side rate.
 - A full-run average for a serving benchmark loses about 40% to ramp and
   tail; report steady state and the full run separately.
 - Health probes to a loaded engine time out and under-report healthy
