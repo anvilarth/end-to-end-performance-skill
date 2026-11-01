@@ -35,17 +35,17 @@ because it sets the node-level limit once GPUs are fed.
 
 The general recipe is in common.md section 4. Class-specific numbers:
 
-- audio tagger, fp32, one worker per GPU with 64 threads: 95 rows/s/GPU.
-  In-process decode plus four workers per GPU with 16 threads each under
-  MPS: 197 rows/s/GPU, 2x per GPU and node, bitwise. Six or eight workers
-  per GPU lost; the daemon caps at 48 clients.
-- frame ranker (an 8B multimodal model used for ranking, not generation):
-  two to three workers per GPU +11% on the mixed input mix, +26 to 33% on the
-  longest clips; a fourth worker added nothing because the tensor pipe was
-  already saturated and the GPU was power-capped.
-- video encoder: two processes +13%, three +16%, bitwise.
-- image detector: two workers +30% on the stock code, +39% on top of the
-  kernel fix below.
+- audio tagger, fp32: from one worker per GPU with 64 threads to in-process
+  decode plus four workers per GPU with 16 threads each under MPS, about 2x
+  per GPU and node, bitwise. Six or eight workers per GPU lost; the daemon
+  caps at 48 clients.
+- frame ranker (a multimodal model used for ranking, not generation): two to
+  three workers per GPU gained a few percent on the mixed input mix and about
+  30% on the longest clips; a fourth worker added nothing on typical inputs
+  because the tensor pipe was already saturated and the GPU was power-capped.
+- video encoder: about 15% at two or three processes, bitwise.
+- image detector: two workers about 30% on the stock code, almost 40% on top
+  of the kernel fix below.
 
 **Activation check:** the daemon log shows each client connect; throughput
 per GPU rises with the second process. If it does not, the clients are
@@ -65,16 +65,16 @@ DRAM bandwidth, and dozens of launches per transformer layer.
 bitwise at every step):**
 
 1. rotary tables rebuilt several times per layer: cache them per shape,
-   34.6 to 7.7 ms;
-2. batch windows instead of one window per forward: 7.7 to 4.5 ms;
-3. fuse the Q, K, V projections into one matmul: 4.5 to 4.4 ms;
+   more than 4x faster;
+2. batch windows instead of one window per forward: about 40% less time;
+3. fuse the Q, K, V projections into one matmul: a few percent;
 4. one Triton kernel for the rotary chain with explicit round-to-nearest-even
-   when casting to bf16: 4.4 to 3.65 ms.
+   when casting to bf16: almost 20% less time.
 
-Total 9.5x per window with bitwise outputs across all production
-resolutions and the short-clip tail. The same rotary fix on an image
-detector backbone: 1.66 to 1.03 ms per window, 0 decision flips on the
-trained head, +35% in the real CLI.
+Total close to 10x per window on the main input shape, with bitwise outputs
+across all production resolutions and the short-clip tail. The same rotary
+fix on an image detector backbone: about 1.6x per window, no decision flips
+on the trained head, about 20% in the real CLI.
 
 **Rung:** 3, then 4, then 5; each step measured on its own.
 
@@ -84,17 +84,17 @@ predicted and the Triton kernel appears in the timeline.
 **Parity trap:** compiler fusion can contract a multiply and an add into a
 fused multiply-add and change the last bit; block contraction explicitly in
 the kernel. Flash-style attention was slower than the cuDNN path on the
-measured GPU; hardware video decode changed pixels by one to two LSB and
-flipped 28 of 1,500 decisions on a trained head, so keep it opt-in.
+measured GPU; hardware video decode changed pixels by a few LSB and
+flipped about 2% of decisions on a trained head, so keep it opt-in.
 
-**Counter-example:** graph compilation gained 10% in a static benchmark and
-lost in the real CLI (dozens of resolutions, partial last batches, dynamic
+**Counter-example:** graph compilation gained about 10% in a static benchmark
+and lost in the real CLI (dozens of resolutions, partial last batches, dynamic
 image size recompiles per shape). Measure compile in the real entry point.
 
 ## 3. Host-side staging around the model
 
 **Symptom:** pinned-memory staging or readback per batch costs more than the
-forward itself (observed 2.5 ms per window against a 1.0 ms model).
+forward itself (observed about twice the model time per window).
 
 **Mechanism:** large per-batch pinned buffers and synchronous readback
 serialize the host; resize in the decoder output format instead of a second
@@ -104,23 +104,23 @@ library; keep the decoder from reading past the last window.
 
 **Observed:** async readback and pinned staging rewrites gave zero on the
 detector (run the activation check of common.md section 9 before repeating
-them elsewhere); the decoder-side resize was 5x cheaper but not bitwise. Record
-such zeros so they are not retried.
+them elsewhere); the decoder-side resize was about 5x cheaper but not
+bitwise. Record such zeros so they are not retried.
 
 ## 4. Precision rungs for this class
 
 Only after the exact ceiling is documented (common.md section 6) and with
 authorization:
 
-- fp32 matmul emulated with three bf16 products: 269 versus 197 rows/s/GPU
-  on the audio tagger (1.37x), deviation 3.8e-6, below the fp32-versus-fp64
-  error. Trap: with a fused bias the tall GEMM hit a legacy kernel 2x
-  slower; unfuse the bias.
-- TF32 matmul: 307 rows/s/GPU, deviation 1.2e-3; bf16 weights 324, deviation
-  2.4e-2. Both measured only; whether they are acceptable is the owner's
-  call.
-- Triton normalization kernels on the frame ranker: +2%, score drift about
-  1e-2, adopted by the owner as a product decision.
+- fp32 matmul emulated with bf16 products (each operand split into three
+  bf16 parts): about 1.4x on the audio tagger, deviation a few times 1e-6,
+  below the fp32-versus-fp64 error. Trap: with a fused bias the tall GEMM hit
+  a much slower legacy kernel; unfuse the bias.
+- TF32 matmul: a further 10 to 15%, deviation around 1e-3; bf16 weights a few
+  percent more, deviation a few times 1e-2. Both measured only; whether they
+  are acceptable is the owner's call.
+- Triton normalization kernels on the frame ranker: a few percent, score
+  drift about 1e-2, adopted by the owner as a product decision.
 
 Measure decision flips with the trained production head on the production
 input mix; a surrogate head underestimated flips by an order of magnitude.
@@ -129,8 +129,8 @@ input mix; a surrogate head underestimated flips by an order of magnitude.
 
 - Short runs (under a minute) misstate multi-process layouts because workers
   start skewed; use runs of several minutes and a same-length baseline.
-- CPU-seconds per item is the node ceiling: 192 cores at 135 ms per item is
-  about 1,400 items/s regardless of GPU count.
+- CPU-seconds per item is the node ceiling: for example, 200 cores at 0.1
+  CPU-seconds per item cap the node at 2,000 items/s regardless of GPU count.
 - Keep the environment and the model cache on local disk; shared-file-system
   imports stalled workers for minutes on loaded nodes.
 - Fingerprints of fp32 outputs are device-specific; compare on the same GPU

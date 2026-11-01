@@ -25,7 +25,7 @@ Before picking a lever, read the stage map and answer:
 | GPU busy, kernel profile shows memory-bound kernels far below HBM bandwidth, cast and copy chains, or tiny grids | kernel efficiency | [../kernel-dsls.md](../kernel-dsls.md): swap a library backend, then Triton, TileLang, CuTe DSL |
 | GPU at its power cap with the SM clock well below maximum under load | power-limited clocks | 7 |
 | Two GPU phases of different shape share each device and phase disaggregation is proposed | phase interference or a starved phase | 8: measure per-phase GPU-seconds first |
-| Compute pipe utilization above 80 to 85% in a kernel profile, or the GPU at its power cap | the exact-output ceiling | 4 at two or three processes when requests have host phases; then stop, or precision rung 5 |
+| Compute pipe utilization above 80 to 85% in a kernel profile, or the GPU at its power cap | the exact-output ceiling | 4 at two or three processes when requests have host phases; then stop, or precision (lever 5) |
 | GPU idle gaps aligned with copies or per-step host reads of device values; trace shows `cudaMemcpy`, `cudaStreamSynchronize` or `cudaDeviceSynchronize` on the host thread | synchronization inside one process | 9, then 4 |
 
 ## 1. Replace per-item process spawn with in-process decode
@@ -35,14 +35,14 @@ item; GPU idle between batches.
 
 **Mechanism:** each spawn pays `exec` plus dynamic linking of hundreds of
 shared libraries. Observed cost was on the order of 100 ms of CPU per item,
-which caps a 192-core node at roughly a thousand items per second regardless of
-GPU count. Decoding in process through a library binding removes that cost
-entirely.
+which caps a node of a couple of hundred cores below two thousand items per
+second regardless of GPU count. Decoding in process through a library binding
+removes that cost entirely.
 
 **Rung:** 1, remove work.
 
-**Observed gain:** 2x per GPU on an audio tagging stage once combined with
-lever 4; host CPU per clip halved on a video encoder.
+**Observed gain:** about 2x per GPU on an audio tagging stage once combined
+with lever 4; host CPU per clip halved on a video encoder.
 
 **Activation check:** process creation rate drops to zero in the stage map;
 per-item CPU time falls by the spawn cost.
@@ -62,8 +62,8 @@ boundaries land on the same decoded samples.
 
 **Rung:** 1, remove work.
 
-**Observed gain:** about 2.6x less host CPU on a transcription stage; part of a
-26x node-level improvement when combined with levers 3 and 4.
+**Observed gain:** 2 to 3x less host CPU on adjacent segments; segments far
+apart cost about 3x more (it decodes the gaps), so group only close segments.
 
 **Parity trap:** verify sample alignment at every segment boundary, not only on
 the first segment.
@@ -81,8 +81,8 @@ point the runtime at the copy.
 
 **Rung:** 2, locality.
 
-**Observed gain:** import stalls from minutes to seconds; a transcription stage
-went from preprocessing-bound to GPU-bound.
+**Observed gain:** import stalls from minutes to seconds; preprocessing per
+client process about 5x faster on a transcription stage (node still CPU-bound).
 
 **Activation check:** no remote paths in the process's open file list after
 warm-up; start-up time per worker is flat as hosts are added.
@@ -102,11 +102,11 @@ gain is largest when the per-item host work is comparable to the GPU work.
 **Rung:** 2, scheduling and overlap. It does not change arithmetic, so outputs
 are bitwise when each process is deterministic on its own.
 
-**Observed gain:** +13 to 30% at two processes per GPU and +16 to 33% at
-three across video encoders, frame rankers, speech servers, and audio
-taggers; 2x per GPU on an audio tagger when paired with lever 1 (the spawn cost
-had hidden the GPU idle time). Beyond three to four processes the gain
-flattens or reverses.
+**Observed gain:** from a few percent to almost 40% at two to four processes
+per GPU across video encoders, image detectors, frame rankers, speech servers,
+and audio taggers; about 2x per GPU on an audio tagger when paired with lever 1
+(the spawn cost had hidden the GPU idle time). Beyond three to four processes
+the gain flattens or reverses.
 
 **Observed zero:** on a GPU whose compute pipe was already above 85% busy and
 at its power cap, a fourth process gained nothing on typical inputs. Two or
@@ -130,8 +130,8 @@ between requests; a steady-state idle figure does not show these phases.
 
 **Costs and risks:**
 
-- Host CPU per item rises with the number of clients (observed 0.31 to
-  0.39 CPU-seconds per item from one to several clients); budget cores.
+- Host CPU per item rises with the number of clients (observed a quarter to
+  a half more from one to several clients); budget cores.
 - Memory is divided among the clients; size per-process memory fractions so
   the sum fits with headroom.
 - A faulting client can take the daemon down with it; one rare MMU fault was
@@ -147,14 +147,15 @@ authorized a quality trade-off.
 
 **Mechanism and observed positions:**
 
-- fp32 matmul emulated with three bf16 products: 1.35 to 1.4x on an fp32
-  pipeline with deviation below the fp32-versus-fp64 error itself; one trap:
-  a fused bias can route a tall GEMM to a legacy kernel that is 2x slower, so
-  unfuse the bias and re-measure.
+- fp32 matmul emulated with bf16 products (each operand split into three bf16
+  parts): about 1.4x on an fp32 pipeline with deviation below the
+  fp32-versus-fp64 error itself; one trap: a fused bias can route a tall GEMM
+  to a much slower legacy kernel, so unfuse the bias and re-measure.
 - TF32 matmul: a further 10 to 15%, deviation around 1e-3.
-- bf16 recurrent state in a serving engine: +12% steady state.
-- Hardware video decode: halves host CPU per window but changes pixels by one
-  or two LSB.
+- bf16 recurrent state in a serving engine: about 10% steady state when the
+  saved memory admits more running requests.
+- Hardware video decode: halves host CPU per window but changes pixels by a
+  few LSB.
 
 **Rung:** 6, reduce precision.
 
@@ -203,11 +204,11 @@ over GPUs, with `nvidia-smi dmon -s pc` logging power and clock for every
 arm. Reset with `-rgc` at the end, including on failure.
 
 **Observed range:** no gain on a power-capped video frame ranker (three
-workers per GPU, 4x4 Latin square over GPUs): locks at 1.5, 1.7 and 1.9 GHz
-gave -0.4 to +0.3% against the default, within GPU-to-GPU spread. Under load
-every arm drew about 96% of the power limit and ran at about 1.24 GHz; the
-power-capping throttle overrode every lock above that clock. A lock can only
-pay where the workload leaves power headroom, for example memory-bound or
+workers per GPU, a Latin square over GPUs): several locked clocks stayed
+within about 1% of the default, inside the GPU-to-GPU spread. Under load
+every arm drew close to the power limit and ran at the same reduced clock;
+the power-capping throttle overrode every lock above that clock. A lock can
+only pay where the workload leaves power headroom, for example memory-bound or
 bursty phases. Check the effective clock under load before reading throughput.
 
 **Activation check:** the effective clock under load (`dmon` `pclk`) equals
@@ -241,15 +242,14 @@ compare it with `1/r_co` of the co-located GPU. The best fractional split
 gives `N / (1/r_a + 1/r_b)` for N GPUs, and integer splits are lower. If the
 sum is not below `1/r_co`, no split can win: stop before testing layouts.
 
-**Observed range:** a power-capped video frame ranker (vision encoder about
-36% of GPU time, three processes per GPU under MPS): encoder-only GPU 18.7
-items/s, prefill-only GPU 10.1, co-located 6.8. The split costs 0.153 against
-0.147 GPU-seconds per item: best fractional split -4%, a 1+3 split measured
--31%, encoder-bound.
+**Observed range:** a power-capped video frame ranker (vision encoder about a
+third of GPU time, three processes per GPU under MPS): the per-phase sum was a
+few percent above `1/r_co`; the best fractional split lost a few percent, and a
+measured integer split about 30% on the mixed input, more on the longest ones.
 
 **Parity trap:** a GEMM library may pick a different algorithm for a
 contiguous input than for a permuted view with the same values. After the
-boundary tensor went through a file it was contiguous, and about 45% of the
+boundary tensor went through a file it was contiguous, and nearly half of the
 projected features differed by one ulp until the consumer rebuilt the
 producer's strides. Compare the boundary tensor and the first op after it
 bitwise in isolation before blaming the network or weights.
@@ -328,8 +328,8 @@ control in the gate list.
   window (for example the 25 to 75% quantile of the run) for serving. Trust
   that window only with a ramped client start and a run that replaces the
   in-flight requests several times; otherwise prefer an engine-side rate.
-- A full-run average for a serving benchmark loses about 40% to ramp and
-  tail; report steady state and the full run separately.
+- A full-run average for a serving benchmark can lose over a third of its
+  wall time to ramp and tail; report steady state and the full run separately.
 - Health probes to a loaded engine time out and under-report healthy
   replicas; do not treat probe failures as replica failures.
 - A benchmark that masks devices per client while a daemon is running is

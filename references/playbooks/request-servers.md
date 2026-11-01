@@ -17,10 +17,10 @@ servers per GPU under MPS, and raising the per-server engine concurrency to
 match.
 
 Primary metric: processed media seconds (or items) per second per node in
-steady state. Outputs stay bitwise against the single-server reference for
-host-side levers. For levers 1 and 2, a dynamic-batching engine is not
-bitwise under changing load. Require a word-level match rate within the
-spread of repeated control runs.
+steady state. Host-side levers keep the engine inputs bitwise. To compare
+their text exactly, use a batch-invariant engine mode. A dynamic-batching
+engine is not bitwise when a lever changes load or timing: require a
+word-level match rate within the spread of repeated control runs.
 
 ## Triage
 
@@ -43,10 +43,10 @@ or below the engine's running limit.
 
 **Rung:** 2, scheduling.
 
-**Observed gain:** +15 to 21% from MPS alone on a transcription server; the
-node went from 372 to about 5,700 media seconds per second (9,800 on
-contiguous inputs) once combined with the engine and host-side levers below,
-about 26x per node.
+**Observed gain:** about 15 to 20% from MPS alone on one GPU while the GPU
+was the limit. Three servers per GPU, lever 2, more client processes and a
+local-disk decoder gave more than an order of magnitude per node on the
+baseline's sparse sample. MPS added nothing there: the host CPU was the limit.
 
 **Activation check:** three server processes per GPU in the daemon's client
 list; per-GPU throughput rises with the second and third server.
@@ -69,14 +69,14 @@ running count under load reaches it.
 
 ## 3. Keep servers persistent and feed them from local disk
 
-**Symptom:** servers cold-start from a shared file system for 7 to 20
-minutes; workers wait on imports or on a decoder wrapper that loads libraries
+**Symptom:** servers cold-start from a shared file system for many minutes;
+workers wait on imports or on a decoder wrapper that loads libraries
 remotely.
 
 **Mechanism:** common.md sections 2 and 3. Decode once per group of adjacent
-segments (bit-identical, 2.6x less host CPU), run the decoder wrapper from a
-local-disk runtime, and keep servers running across tasks instead of
-restarting them per job.
+segments (bit-identical, 2 to 3x less host CPU, but more on sparse segments),
+run the decoder wrapper from a local-disk runtime, and keep servers running
+across tasks instead of restarting them per job.
 
 **Rung:** 1 and 2.
 
@@ -85,7 +85,7 @@ restarting them per job.
 ## Measurement notes for this class
 
 - Report media seconds per second on the real input mix; contiguous inputs
-  overstate it by about 1.7x versus a sparse sample.
+  overstate it (about 1.7x here, because grouped decode pays only on them).
 - Health checks against loaded servers time out; count completed requests,
   not probe successes.
 - Start servers sequentially per host and in waves across hosts when weights

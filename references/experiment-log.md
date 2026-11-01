@@ -53,7 +53,7 @@ Every event carries:
   "ts": "2026-10-22T14:05:11Z",
   "session": "2026-10-22-a",
   "rev": "a1b2c3d (dirty)",
-  "setup": "8xH100 SXM, 1 node, FSDP, bs=32, seq=4096, bf16, warm",
+  "setup": "8x<GPU model>, 1 node, FSDP, bs=32, seq=4096, bf16, warm",
   "summary": "one line a human can scan"
 }
 ```

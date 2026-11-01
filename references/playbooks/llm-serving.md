@@ -46,18 +46,18 @@ per request.
 
 **Rung:** 2, scheduling.
 
-**Observed gain:** +57% steady-state throughput on a hybrid-attention
-multimodal model after raising running requests from about 70 to about 200
-with a correctly sized state cache; the full 1,000-item benchmark showed +50%
-because ramp and tail dilute it.
+**Observed gain:** about 1.7x in the steady window and more than 1.5x on the
+full run for a hybrid-attention multimodal model, after raising running
+requests about threefold with a correctly sized state cache and lever 2. The
+window came from short runs and can read high: decide on the full-run figure.
 
 **Activation check:** the engine log prints the configured cache sizes and the
 KV token count; the running-request counter reaches the configured value
 under load.
 
 **Parity trap:** none from the cache itself; keep kernels and dtypes fixed so
-outputs stay comparable. A bf16 recurrent state is a precision rung (+12%)
-and needs authorization.
+outputs stay comparable. A bf16 recurrent state is a precision rung that needs
+authorization; it gains only when its freed memory admits more requests.
 
 ## 2. Shrink multimodal ingestion payloads
 
@@ -74,7 +74,7 @@ on the first GPU outside the engine's memory budget.
 **Rung:** 1, remove work.
 
 **Observed gain:** per-request ingestion time roughly halved; part of the
-+57% above. Tokenizer worker processes did not help on their own: the limit
+gain above. Tokenizer worker processes did not help on their own: the limit
 was per admission path, not per thread.
 
 **Activation check:** the engine log shows the patched cast; scheduler time
@@ -96,9 +96,9 @@ balanced.
 
 **Rung:** 2, topology.
 
-**Observed gain:** +45% per node from two four-GPU replicas to four two-GPU
-replicas on the same model and clips; the wider layout decoded faster in
-bursts but lost end to end.
+**Observed gain:** about 30% in the steady window and about 50% on the full
+run per node, from two four-GPU replicas to four two-GPU replicas on the same
+model and clips. The wider layout decoded faster in bursts but lost end to end.
 
 **Caveats:** start replicas on a host sequentially (wait for weight loading
 to begin before launching the next); two groups initializing symmetric memory
@@ -115,8 +115,8 @@ engine's memory fraction leaves room.
 
 **Mechanism:** the image preprocessing of the tokenizer manager, any IPC pool,
 and multimodal worker processes allocate on the first GPU outside the
-engine's static budget. Observed ceilings: 0.90 at moderate concurrency,
-0.88 at about 200 running per replica, lower for wider tensor parallelism.
+engine's static budget. Observed ceilings: about 0.9 at moderate concurrency,
+slightly lower at high running counts, lower for wider tensor parallelism.
 
 **Rung:** 2, memory as performance.
 
@@ -138,10 +138,10 @@ client contract.
 ## Measurement notes for this class
 
 - Report the steady window (for example the 25 to 75% quantile of the run)
-  separately from the full run; a 1,000-item run loses about 40% to ramp and
-  tail. Trust the window only with a ramped client start and a run that
-  replaces the in-flight requests several times; otherwise prefer an
-  engine-side rate.
+  separately from the full run; a run of about a thousand items lost over a
+  third of its wall time to ramp and tail. Trust the window only with a
+  ramped client start and a run that replaces the in-flight requests several
+  times; otherwise prefer an engine-side rate.
 - Health probes to a loaded engine time out; do not count probe failures as
   replica failures.
 - The configured running count is a ceiling, not a demand: raise client

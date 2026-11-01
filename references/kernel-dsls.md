@@ -107,24 +107,24 @@ Highest cost; the same gates apply.
 ## Observed cases
 
 - **Swap through a stale guard.** A linear-attention decode recurrence ran in a
-  Triton kernel at 2.2 to 2.7 TB/s with one-warp blocks, about 16% of decode
-  kernel time. The engine already shipped a CuTe DSL version but its dispatcher
-  accepted only the Triton kernel. Relaxing the guard gave +4 to +7% end to
-  end on two nodes with judged-equivalent quality.
+  Triton kernel at about a third of peak bandwidth with one-warp blocks, about
+  a sixth of decode kernel time. The engine already shipped a CuTe DSL version
+  but its dispatcher accepted only the Triton kernel. Relaxing the guard gave
+  about 5% end to end in two paired runs with judged-equivalent quality.
 - **Memory-bound tail in prefill.** A kernel profile of a low-precision VLM
   prefill showed about a quarter of kernel time in elementwise casts,
-  activation quantization, a short convolution, and activations, running at 1
-  to 2 TB/s of an 8 TB/s ceiling. Estimated recoverable budget: 12 to 15% end
-  to end. The levers are cast removal and Triton fusion, and fusing the
-  activation quantization into the neighbouring GEMM epilogue. Pursue such
-  a tail before declaring the lossless ceiling reached.
-- **Unusual head dim.** For attention with head dim 512 the library paths were
-  slower or had no kernel. A Triton kernel passed parity but lost to the
-  unfused path, 17 + 71 ms against 30 + 39 ms. That is the signal to move to
-  TileLang or CuTe DSL rather than tune the Triton kernel further.
+  activation quantization, a short convolution, and activations, running at a
+  quarter or less of peak HBM bandwidth. Estimated recoverable budget: more
+  than 10% end to end. The levers are cast removal and Triton fusion, and
+  fusing the activation quantization into the neighbouring GEMM epilogue.
+  Pursue such a tail before declaring the lossless ceiling reached.
+- **Unusual head dim.** For attention with an unusually large head dim the
+  library paths were slower or had no kernel. A Triton kernel passed parity
+  but lost to the unfused path by about a quarter. That is the signal to move
+  to TileLang or CuTe DSL rather than tune the Triton kernel further.
 - **Bitwise rotary in Triton.** One Triton kernel for the rotary chain with
   explicit round-to-nearest-even replaced an eager chain bitwise; see
   [playbooks/small-filters.md](playbooks/small-filters.md).
 - **Launch count, not code.** A pair of small TileLang kernels was launched
-  about 360 times per step and took about 7% of the step. That is a fusion or
-  graph-capture problem; a faster kernel body would recover little.
+  hundreds of times per step and took several percent of the step. That is a
+  fusion or graph-capture problem; a faster kernel body would recover little.
