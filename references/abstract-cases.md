@@ -12,7 +12,7 @@ disrupts overlap, and regresses the complete step.
 **Verdict:** reject for the 32-GPU target. Preserve the 8-GPU result only as a
 setup-specific finding; do not generalize it.
 
-**Principle:** ask for the real usage setup first and validate scale and topology
+**Principle:** recover the real usage setup first and validate scale and topology
 as part of the optimization.
 
 ## A fast kernel with no end-to-end benefit

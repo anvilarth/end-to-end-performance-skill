@@ -20,6 +20,14 @@ Measure the surface the user actually pays for:
 Do not merge these surfaces into one number. An optimization may improve warm
 throughput while regressing cold start or tail latency.
 
+Check the metric's formula in the executed harness, not only its README. Output
+tokens/s, input-plus-output tokens/s and completed requests/s are different metrics.
+Record numerator, denominator, failed-request handling and timer boundaries. Local
+retokenization of response text is useful evidence but may not reconstruct generated
+token IDs or hidden/special tokens; document what the count includes. Repeated warmup
+prompts and cache reuse can change effective prefill work. Random-vocabulary prompts
+can test capacity but do not replace representative content and quality checks.
+
 ## Freeze the baseline manifest
 
 Record enough state to reproduce both arms:
@@ -65,7 +73,7 @@ loop is itself a stage budget (playbook common.md section 9).
 
 ## Estimate headroom
 
-For a stage occupying fraction `p` of end-to-end time and a proposed local
+For a non-overlapping stage occupying fraction `p` of end-to-end time and a proposed local
 speedup `s`, estimate the ideal total speedup with Amdahl's law:
 
 `total_speedup = 1 / ((1 - p) + p / s)`
@@ -73,6 +81,9 @@ speedup `s`, estimate the ideal total speedup with Amdahl's law:
 Also calculate the impossible best case where the stage becomes free:
 
 `maximum_total_speedup = 1 / (1 - p)`
+
+For overlapped stages, use exposed critical-path cost rather than summed durations.
+Do not extrapolate a selected kernel window into a full-run fraction.
 
 Stop before implementation when the maximum benefit is below the promotion
 threshold or cannot be resolved by benchmark noise.
@@ -128,6 +139,8 @@ Never hide a missed absolute quality gate behind a positive paired delta.
 - Report median and relevant tails; include variability or a confidence interval.
 - Track failures, retries, restarts, and out-of-memory events.
 - Verify that instrumentation and the candidate path were active.
+- Match permitted input mutation and allocation semantics; restore input/state after
+  warmup or autotuning when repeated calls would otherwise change the workload.
 
 Do not promote from one fast replica, cross-worker averages, unsynchronized stage
 timers, or a microbenchmark alone.
@@ -187,3 +200,20 @@ Use precise verdict boundaries:
   size prevents a valid comparison;
 - `promote`: the candidate passes the complete contract under representative
   conditions.
+
+## Qualify and reuse the harness
+
+Run a small real-input control/control check before expensive screening. Confirm
+that the comparator detects a deliberately corrupted or missing output, and that
+the candidate activation flag reaches the measured process. Use the existing test
+fixtures where possible. Unknown references remain missing, never zero deviation.
+
+Freeze repetitions or a justified sequential stopping rule before final A/B runs.
+Do not repeatedly inspect results and stop only on significance. Keep all attempted
+controls, failed runs and expected IDs in the report. Structural/JSON validity does
+not establish semantic quality; use the quality contract actually agreed for the task.
+
+Reuse immutable reference/input artifacts when their dependencies match. Recheck
+parity and timing through the installed delivery entrypoint when packaging changes
+batch order, imports, backend selection or synchronization. Resident warm versus
+fresh-process timing is an execution-mode comparison, not a kernel acceleration.
