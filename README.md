@@ -10,6 +10,10 @@ bottlenecks by recoverable end-to-end impact, applies lossless changes first,
 and screens candidates cheaply before representative correctness and performance gates.
 Existing authorization is reused; only decision-changing gaps require questions.
 
+[The decision map](references/decision-map.md) brings the workflow into one
+flowchart: what to check first, which diagnostic tool to use, where to optimize
+next, and when to stop or promote a change.
+
 Its central rule is simple:
 
 > Optimize the delivered workload, not an isolated component.
@@ -85,6 +89,7 @@ end-to-end-performance-skill/
 ├── SKILL.md
 ├── references/
 │   ├── measurement-and-parity.md
+│   ├── decision-map.md
 │   ├── kernel-dsls.md
 │   ├── bottleneck-recipes.md
 │   ├── advanced-recipes.md
@@ -110,6 +115,8 @@ end-to-end-performance-skill/
   TileLang, and CuTe DSL from kernel-profile evidence.
 - `references/measurement-and-parity.md` defines benchmark, parity, topology,
   and verdict guidance.
+- `references/decision-map.md` contains the unified flowchart, tool-selection
+  matrix and per-branch stopping rules.
 - `references/playbooks/` is a library of measured levers by workload class:
   `common.md` (in-process decode, local-disk runtimes, CUDA MPS with several
   processes per GPU, ceilings, precision rungs, measurement traps),
