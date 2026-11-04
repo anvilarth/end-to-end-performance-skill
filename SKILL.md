@@ -15,6 +15,10 @@ concisely. For repeated rounds, use [the experiment loop](references/experiment-
 to budget screening, profiler repair and final validation. When asked for progress,
 answer from the latest outputs in the reporting format.
 
+For the complete flowchart, tool-selection matrix and per-branch stopping rules,
+see [the decision map](references/decision-map.md). Use it for orientation, then
+read only the reference needed for the current decision.
+
 ## The loop
 
 ### Step 0. Load the log
