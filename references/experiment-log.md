@@ -8,8 +8,11 @@ inconclusive.
 
 ## Location
 
-Write the log inside the workload's repository unless the user names another
-location:
+Use the workload's existing experiment record and writer when available. Preserve
+its append-only history, identifiers and artifact links; map the fields below to
+that format rather than creating a parallel journal. Follow local workspace rules
+for generated data. If no record exists, use this layout unless the user names
+another location:
 
 ```text
 .perf-log/
@@ -18,9 +21,10 @@ location:
     └── <event-id>/    # raw evidence: profiles, traces, benchmark output, diffs
 ```
 
-Create the directory on first use. Ask the user once whether `.perf-log/`
-should be committed or added to `.gitignore`; default to ignored, because traces
-and environment details may contain hostnames, paths, or internal data.
+Create the directory on first use. Reuse the repository's ignore policy and keep
+generated traces and environment details out of commits by default; they may
+contain hostnames, paths or internal data. Do not ask again when the user or the
+workspace has already established how experiment artifacts are stored.
 
 ## When to write
 
@@ -75,7 +79,9 @@ Type-specific fields:
   physical or empirical bound), `artifacts`.
 - `hypothesis`: `mechanism` (one causal change), `lever` (position in the
   lossless-first order), `attacked_budget`, `best_case_gain`,
-  `confidence`, `cost`, `rank_score`, `based_on` (ids of the profile,
+  low/central/high predicted savings with units and assumptions, cheapest
+  falsifier, stop condition, `confidence`, `cost` (including setup and validation),
+  `rank_score`, `based_on` (ids of the profile,
   baseline, or earlier verdict events that motivated it), `status`
   (`proposed`, `deprioritized`, `in_progress`).
 - `gate`: `hypothesis`, `baseline` (id of the control it was compared
@@ -92,14 +98,15 @@ output under `artifacts/<event-id>/` and reference it by relative path.
 
 - **Append only.** Never edit or delete earlier lines. To correct an event,
   append a new one with `"supersedes": "<old id>"` and the reason.
-- **Read before proposing.** At the start of a session, read `log.jsonl` and
+- **Read before proposing.** At the start of a session, read the existing log and
   summarize: the active contract, latest baseline, promoted changes, rejected
   and inconclusive hypotheses, and open next actions. Do not re-propose a
   rejected hypothesis unless the setup, contract, or bottleneck has changed;
   when you do, cite the earlier id and what changed.
-- **Invalidate on contract change.** A new `contract` or `baseline` event
-  makes earlier performance comparisons non-attributable. Mark affected open
-  hypotheses as needing re-measurement in the next `note`.
+- **Invalidate by dependency.** A changed contract, workload or environment
+  invalidates affected comparisons. A new event alone does not invalidate
+  identical immutable inputs or references. Mark affected hypotheses in the
+  next `note`; use a fresh paired control for final timing.
 - **Separate harness failures.** Use gate `outcome: error` and verdict
   `inconclusive` when the candidate was never validly measured.
 - **No secrets.** Do not log tokens, credentials, or private data samples.

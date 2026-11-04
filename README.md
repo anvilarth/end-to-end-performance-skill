@@ -3,11 +3,12 @@
 An agent skill for optimizing PyTorch and CUDA training and inference workloads
 as complete systems.
 
-The skill starts by asking how the code is actually used: hardware, scale,
+The skill first recovers actual usage from launchers and existing artifacts: hardware, scale,
 topology, workload shapes, modes, concurrency, cold or warm behavior, and the
 correctness contract. It then profiles the full execution path, ranks measured
 bottlenecks by recoverable end-to-end impact, applies lossless changes first,
-and validates every candidate with correctness and performance gates.
+and screens candidates cheaply before representative correctness and performance gates.
+Existing authorization is reused; only decision-changing gaps require questions.
 
 Its central rule is simple:
 
@@ -41,10 +42,11 @@ Establish the real usage setup
 -> Re-profile because the bottleneck may have moved
 ```
 
-Every contract, baseline, hypothesis, gate result, and verdict is appended to a
-local experiment log (`.perf-log/log.jsonl` in the workload repository) as it
-happens. A new session reads the log first, so rejected and inconclusive ideas
-are not repeated and open next actions are picked up.
+Every contract, baseline, hypothesis, gate result and verdict is recorded using
+the workload's existing experiment log, or `.perf-log/log.jsonl` if none exists.
+A new session reads the record first, so rejected and inconclusive ideas are not
+repeated and open next actions are picked up. The loop checks control/comparator
+readiness before expensive runs and reserves time for final delivery validation.
 
 ## Kernel-level escalation
 
@@ -83,6 +85,12 @@ end-to-end-performance-skill/
 ├── SKILL.md
 ├── references/
 │   ├── measurement-and-parity.md
+│   ├── kernel-dsls.md
+│   ├── bottleneck-recipes.md
+│   ├── advanced-recipes.md
+│   ├── gpu-mode.md
+│   ├── gpu-mode-map.md
+│   ├── experiment-loop.md
 │   ├── playbooks/
 │   │   ├── README.md
 │   │   ├── common.md
@@ -110,7 +118,12 @@ end-to-end-performance-skill/
   fixes, host staging), `request-servers.md` (servers per GPU, engine
   concurrency, persistent servers). `README.md` there picks the class.
 - `references/experiment-log.md` defines the local append-only log of
-  hypotheses, gate results, and verdicts.
+  hypotheses, gate results and verdicts, with reuse of existing workspace records.
+- `references/experiment-loop.md` covers screening, validation budgets, reuse and stop decisions.
+- `references/bottleneck-recipes.md` covers eight common measured symptoms;
+  `references/advanced-recipes.md` adds twelve conditional optimization paths.
+- `references/gpu-mode.md` records source and tutorial-transfer guidance;
+  `references/gpu-mode-map.md` indexes the reviewed organization and pinned revisions.
 - `references/abstract-cases.md` contains generalized examples of promotion,
   rejection, and inconclusive decisions.
 

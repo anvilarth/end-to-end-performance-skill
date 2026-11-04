@@ -17,11 +17,14 @@ For each candidate kernel, from the Nsight Compute report:
   shape;
 - launch count per step and the share of the step spent in that kernel class.
 
-`recoverable e2e budget = share of e2e time x (1 - achieved / ceiling)`, for
-the ceiling that binds. Sum it per kernel class (casts, norms, quantization,
-attention, recurrence, GEMM). A class with a budget below the promotion
-threshold is not worth a new kernel; a kernel already above 80 to 85% of its
-binding ceiling is done.
+`recoverable e2e budget = share of e2e time x (1 - achieved / ceiling)` is an
+optimistic model only when the share is exposed full-path time and the achieved
+rate and attainable ceiling describe the same fixed work. State those assumptions;
+utilization counters alone are not a wall-time speedup prediction. Do not sum
+overlapping classes or extrapolate a sampled window into the complete workload.
+A class below the promotion threshold is not worth a new kernel; stop when the
+remaining recoverable benefit cannot repay implementation and validation. There
+is no universal utilization percentage at which every kernel is finished.
 
 ## Decision table
 
@@ -41,8 +44,10 @@ binding ceiling is done.
 The cheapest kernel win. Engines and libraries ship several backends per op
 and default to the most conservative one; dispatchers sometimes reject a newer
 backend through a guard written before it existed. List the backends for each
-hot op, read the guard, enable the alternative, and run the parity gate. Ask
-the upstream library before writing anything.
+hot op, read the guard and its correctness/compatibility rationale, and enable
+an alternative only for its supported contract. Verify shape, dtype, strides,
+hardware, backward and license compatibility; then run the parity gate. Inspect
+upstream implementations before writing anything.
 
 ### Triton
 
@@ -98,6 +103,10 @@ Traps:
 - architecture-specific kernels do not run on older GPUs; keep a fallback and
   state the transfer boundary.
 
+For explicit layouts, asynchronous pipelines, persistent scheduling and bounded
+autotuning, consult [advanced recipes](advanced-recipes.md). These are optional
+paths selected by the measured bottleneck, not reasons to change DSL by default.
+
 ### CUDA C++ and CUTLASS C++
 
 Use when the kernel must live inside an existing C++ extension, or when the
@@ -114,9 +123,10 @@ Highest cost; the same gates apply.
 - **Memory-bound tail in prefill.** A kernel profile of a low-precision VLM
   prefill showed about a quarter of kernel time in elementwise casts,
   activation quantization, a short convolution, and activations, running at a
-  quarter or less of peak HBM bandwidth. Estimated recoverable budget: more
-  than 10% end to end. The levers are cast removal and Triton fusion, and
-  fusing the activation quantization into the neighbouring GEMM epilogue.
+  quarter or less of peak HBM bandwidth. This identifies candidates; full-path
+  timing must establish their exposed end-to-end budget. The levers are cast
+  removal and Triton fusion, and fusing the activation quantization into the
+  neighbouring GEMM epilogue.
   Pursue such a tail before declaring the lossless ceiling reached.
 - **Unusual head dim.** For attention with an unusually large head dim the
   library paths were slower or had no kernel. A Triton kernel passed parity
