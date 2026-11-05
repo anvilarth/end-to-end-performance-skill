@@ -81,6 +81,10 @@ sizes, placement, slow ranks and link type. A P2P bandwidth test is a diagnostic
 not an application speedup or a reason to force one NCCL algorithm globally.
 **Candidate:** first correct placement/use an existing overlapping backend; then
 consider tiled producer/consumer communication if its implementation cost is justified.
+At decode, a low-latency fused all-reduce (sentinel-polled buffers, fused with
+the residual add, normalization and any quantization) has been reported about
+twice as fast as the library collective; it is a candidate only when the exposed
+collective is a measured share of the step.
 **Cheap test:** original and overlapped subgraphs with all ranks, same buffers,
 result ownership and reduction semantics. Include launch, staging and synchronization;
 check buffer lifetime, memory ordering and progress when resources are occupied.

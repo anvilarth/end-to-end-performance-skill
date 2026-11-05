@@ -50,6 +50,24 @@ exceeds the intended effect, repair that before running more candidates. Disting
 performance noise from stochastic output disagreement; each needs its own gate.
 Do not widen tolerances to rescue a candidate or discard an inconvenient control.
 
+## Persistent measurement harness
+
+When engine launch, weight loading, autotuning or graph capture dominate each
+iteration (minutes of startup for seconds of measurement), load once and swap
+the candidate in place: replace the forward entrypoint, recapture graphs, cache
+kernel binaries across candidates. Reported ranges are two orders of magnitude
+more experiments per hour and much less idle hardware.
+
+Use two tiers. A cheap tier (a layer subset, a fixed cached request set) screens
+candidates and absorbs crashes, illegal accesses and hangs; a full tier
+promotes. Calibrate the cheap tier before trusting it: measure its variance and
+its rank agreement with the full tier on a few known candidates, and tune the
+smallest layer count that still ranks correctly. A cached request set stops
+measuring prefill; say so in the record. Under a long budget with several
+parallel searchers, keep the shared log flat and do not prescribe a lever order
+or a curated knowledge base: reported ablations found both reduced the final
+gain, while the experiment record itself remains required for verdicts.
+
 ## Profiling repair budget
 
 Before full capture, prove one intended kernel from the real spawned worker is

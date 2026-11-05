@@ -133,6 +133,16 @@ and latency target. More replicas can improve aggregate throughput; wider tensor
 parallelism can solve capacity or single-request latency but adds communication.
 Measure routing balance and the slowest replica, not just one local worker.
 
+When ranking layouts with a cost model, keep three levels of estimate apart:
+hardware specification, measured primitives (GEMM, bandwidth, collectives with
+their per-call latency) and measured end-to-end forward pass. The gaps between
+them separate hardware limits from implementation immaturity, so a layout is not
+rejected only because its current code is slow. Feed the model measured
+data-dependent inputs: expert imbalance, speculative acceptance length and
+uneven request lengths, since stragglers set the time of the whole replica.
+Expert parallelism tends to win at high concurrency and tensor parallelism at
+tight per-user latency; the crossover is workload-specific.
+
 For small independent GPU jobs, several processes or CUDA MPS may improve device
 occupancy. Check installed MPS version, permissions, memory duplication, fairness,
 fault behavior and actual co-resident throughput. MPS is not a promise of better

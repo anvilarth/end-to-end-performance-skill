@@ -75,6 +75,7 @@ Use with [serving and concurrency](../handbook/04-serving-and-concurrency.md).
 | S6. [FlashAttention](https://github.com/Dao-AILab/flash-attention) — upstream implementations | Looking for supported efficient attention kernels | Check device, dtype, mask, head dimension, backward and version constraints. |
 | S7. [FlashInfer documentation](https://docs.flashinfer.ai/) — upstream library | Investigating serving-oriented attention and related operators | Wrapper, cache layout, planning and integration costs belong in the benchmark. |
 | S8. [vLLM automatic prefix caching](https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/) — official guide | Checking supported prefix-reuse behavior and configuration | Include model/adapter/content identity, invalidation, hit rate and memory pressure. |
+| S9. [Together Compiler: Continual Compilation for AI Inference](https://www.alphaxiv.org/abs/2611.together-compiler-continual-ai-inference) — industry paper | Building a persistent, tiered measurement harness; measurement fidelity for data-dependent operators; parallelism cost model with measured ceilings; ablations of curated agent context | Results come from parallel agents, a production engine, day-long budgets and two nodes per model; evidence of technique and of measurement pitfalls, not of local gains. |
 
 ## Training and communication
 

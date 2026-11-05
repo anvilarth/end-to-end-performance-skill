@@ -143,6 +143,10 @@ Never hide a missed absolute quality gate behind a positive paired delta.
 - Verify that instrumentation and the candidate path were active.
 - Match permitted input mutation and allocation semantics; restore input/state after
   warmup or autotuning when repeated calls would otherwise change the workload.
+- Under continuous batching, measure prefill and decode separately; mixing them
+  in one window can double back-to-back variance and hide gains of a few percent.
+- Gate data-dependent operators (top-k, routing, sparse indexing) on real input
+  distributions; random inputs change expert activation and branch behavior.
 
 Do not promote from one fast replica, cross-worker averages, unsynchronized stage
 timers, or a microbenchmark alone.

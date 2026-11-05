@@ -150,3 +150,10 @@ client contract.
   concurrency to use it and check any upstream rate limit.
 - Validate on the same clips and the same node when comparing engine flags;
   cross-node comparisons hide replica start skew and node-specific hangs.
+- Record the traffic profile (input and output lengths, cache hit rate,
+  concurrency, tails) as a contract input. It drifts within days as users adopt
+  a model or a customer changes use case; such a drift is a material environment
+  change that reopens validation, and levers can reverse sign between regimes.
+- At batch size 1, decode is bound by weight bandwidth, so a wider tensor
+  parallelism that halves per-GPU weight traffic can raise per-user tokens per
+  second even where it loses aggregate throughput; measure both.

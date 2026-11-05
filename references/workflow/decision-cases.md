@@ -332,3 +332,45 @@ the training owner decide.
 
 **Principle:** work is free to remove only when nothing uses its result, or when
 the remaining path reproduces that result bitwise.
+
+## A kernel that is fast on random inputs and slow on real ones
+
+A top-k selection kernel buckets scores into histogram bins and ranks within the
+threshold bin by pairwise comparison. On random inputs the scores spread across
+bins and the kernel is microseconds. Real scores contain many exact zeros from a
+preceding activation, which land in one bin; the quadratic path runs thousands
+of times slower and the engine regresses end to end. Random inputs also
+activate noticeably more experts than real traffic in routed layers.
+
+**Verdict:** reject; the microbenchmark measured a distribution the workload
+never produces.
+
+**Principle:** data-dependent operators are gated on real input distributions
+inside the real engine, never on a synthetic harness.
+
+## A persistent megakernel that loses to graph replay with dependent launch
+
+A whole decode layer is merged into one persistent kernel to remove launch gaps.
+Each dependent step still needs a grid-wide barrier, which costs more inside a
+kernel than a kernel boundary costs under graph replay with programmatic
+dependent launch. After a day of work the merged kernel is a fraction of a
+percent faster; meanwhile deleting no-op copies and memsets from the captured
+graph and removing head padding that did several times the needed work gave
+the largest single gains.
+
+**Verdict:** reject the megakernel; promote the removals.
+
+**Principle:** exhaust rung 1 and driver-level primitives (graph replay,
+dependent launch, prefetch) before authoring a persistent kernel.
+
+## A lever whose sign flips with concurrency
+
+A persistent expert down-projection is a few percent faster at medium and high
+batch sizes and several percent slower at small ones. The serving traffic moves
+between those regimes within a day.
+
+**Verdict:** promote with activation keyed on the live batch size, validated in
+both regimes; not as an unconditional change.
+
+**Principle:** a serving lever is promoted per operating region, and the traffic
+profile that defines the regions is part of the contract.

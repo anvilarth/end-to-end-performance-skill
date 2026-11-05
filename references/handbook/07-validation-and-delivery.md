@@ -45,6 +45,10 @@ candidate. A candidate and comparator that import the same modified function
 can agree on the same bug. Store reference identity, input IDs and comparator
 version with results. Verify the comparator on a known matching case and a
 deliberate meaningful mismatch when it is new or materially changed.
+When the forward pass consumes randomness, bit exactness includes the generator
+state and any sampling metadata, not only the outputs. For a served engine, add
+a cross-request contamination check: a candidate that reads or writes cache
+outside its own request can pass single-request parity.
 
 Report expected, completed, missing, duplicate, extra and failed IDs. For each
 field or tensor family, include its evaluated count and failures. Missing
