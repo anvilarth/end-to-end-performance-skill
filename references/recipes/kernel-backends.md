@@ -1,5 +1,7 @@
 # Choosing a kernel path: swap, Triton, TileLang, CuTe DSL
 
+[Home](../../README.md) / [Library](../README.md) / [Recipes](README.md)
+
 Read this at ladder rung 5, after a kernel profile has named the kernels and
 their gap to the ceiling. Choose the path from what the profile shows, not
 from which language is most familiar. Every path ends in the same gates:
@@ -104,7 +106,7 @@ Traps:
   state the transfer boundary.
 
 For explicit layouts, asynchronous pipelines, persistent scheduling and bounded
-autotuning, consult [advanced recipes](advanced-recipes.md). These are optional
+autotuning, consult [advanced recipes](specialized-bottlenecks.md). These are optional
 paths selected by the measured bottleneck, not reasons to change DSL by default.
 
 ### CUDA C++ and CUTLASS C++
@@ -134,7 +136,7 @@ Highest cost; the same gates apply.
   to TileLang or CuTe DSL rather than tune the Triton kernel further.
 - **Bitwise rotary in Triton.** One Triton kernel for the rotary chain with
   explicit round-to-nearest-even replaced an eager chain bitwise; see
-  [playbooks/small-filters.md](playbooks/small-filters.md).
+  [playbooks/small-filters.md](../playbooks/small-filters.md).
 - **Launch count, not code.** A pair of small TileLang kernels was launched
   hundreds of times per step and took several percent of the step. That is a
   fusion or graph-capture problem; a faster kernel body would recover little.

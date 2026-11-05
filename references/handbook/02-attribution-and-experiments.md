@@ -1,5 +1,7 @@
 # 2. Attribution and experiment selection
 
+[Home](../../README.md) / [Library](../README.md) / [Handbook](README.md) / 02
+
 **Open when:** a valid baseline exists but the next change lacks a measured
 mechanism or savings estimate. **Exit when:** one affordable experiment has
 enough evidence to run, a correctness gate and a stop rule. Use the relevant
@@ -169,5 +171,9 @@ the reference is missing or measurement is too noisy, say inconclusive.
 After promotion, refresh cheap timings. Escalate profiling again only when the
 remaining bottleneck is unknown or the previous model no longer fits. Stop when
 the target is reached, the best affordable bound is immaterial, or the agreed
-budget is exhausted. Sources: [profiling tools](sources.md#profiling-and-hardware)
+budget is exhausted. Sources: [profiling tools](../sources/README.md#profiling-and-hardware)
 and [experiment evidence](07-validation-and-delivery.md).
+
+---
+
+[← Contract & baseline](01-contract-and-baseline.md) · [Handbook](README.md) · [Input & compilation →](03-input-shapes-and-compilation.md)

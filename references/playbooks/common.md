@@ -1,5 +1,7 @@
 # Playbook: shared levers
 
+[Home](../../README.md) / [Library](../README.md) / [Playbooks](README.md)
+
 Levers that apply to every workload class in this library: host-side work
 removal, several processes per GPU under CUDA MPS, knowing the ceiling,
 precision rungs, and measurement traps. Read this file together with the
@@ -22,7 +24,7 @@ Before picking a lever, read the stage map and answer:
 | GPU utilization well below 80% while the host is busy | host work, decode, process spawn, network file system | 1, 2, 3 |
 | GPU busy but with gaps between kernels; many small launches | launch overhead, single-process serialization | 4; small-filters.md lever 2 |
 | Serving engine reports few running requests although the GPU has memory | admission or cache-slot cap, ingestion payloads | llm-serving.md |
-| GPU busy, kernel profile shows memory-bound kernels far below HBM bandwidth, cast and copy chains, or tiny grids | kernel efficiency | [../kernel-dsls.md](../kernel-dsls.md): swap a library backend, then Triton, TileLang, CuTe DSL |
+| GPU busy, kernel profile shows memory-bound kernels far below HBM bandwidth, cast and copy chains, or tiny grids | kernel efficiency | [Kernel backends](../recipes/kernel-backends.md): swap a library backend, then Triton, TileLang, CuTe DSL |
 | GPU at its power cap with the SM clock well below maximum under load | power-limited clocks | 7 |
 | Two GPU phases of different shape share each device and phase disaggregation is proposed | phase interference or a starved phase | 8: measure per-phase GPU-seconds first |
 | Compute pipe utilization above 80 to 85% in a kernel profile, or the GPU at its power cap | the exact-output ceiling | 4 at two or three processes when requests have host phases; then stop, or precision (lever 5) |

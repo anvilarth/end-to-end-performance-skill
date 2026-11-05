@@ -11,12 +11,12 @@ unit of success.
 
 Use the loop's dependencies and exit conditions, reusing valid outputs already
 available. Keep detailed evidence in the log and report material decisions
-concisely. For repeated rounds, use [the experiment loop](references/experiment-loop.md)
+concisely. For repeated rounds, use [the experiment loop](references/workflow/experiment-loop.md)
 to budget screening, profiler repair and final validation. When asked for progress,
 answer from the latest outputs in the reporting format.
 
 For the complete flowchart, tool-selection matrix and per-branch stopping rules,
-see [the decision map](references/decision-map.md). Use it for orientation, then
+see [the decision map](references/workflow/decision-map.md). Use it for orientation, then
 read only the reference needed for the current decision.
 
 For detailed procedures, use the [performance handbook](references/handbook/README.md).
@@ -32,7 +32,7 @@ Choose the chapter from the missing evidence; do not load the whole library:
 | Operator contract, DSL, counters, tuning, custom-op integration | [Kernel engineering](references/handbook/06-kernel-engineering.md) |
 | Numerical/quality gates, paired timing, composition, delivery | [Validation](references/handbook/07-validation-and-delivery.md) |
 
-The [annotated source library](references/handbook/sources.md) links each technical
+The [annotated source library](references/sources/README.md) links each technical
 question to upstream documentation, research or implementation evidence and states
 its transfer limits. Read a source to resolve the current decision, then return to
 the experiment; a tutorial result is not local performance evidence.
@@ -41,7 +41,7 @@ the experiment; a tutorial result is not local performance evidence.
 
 ### Step 0. Load the log
 
-Read [references/experiment-log.md](references/experiment-log.md). Recover the
+Read [references/workflow/experiment-log.md](references/workflow/experiment-log.md). Recover the
 existing experiment record and artifacts; use `.perf-log/log.jsonl` when the
 workload has no established record. Follow its existing writers and local rules.
 
@@ -85,7 +85,7 @@ Instrument the full path with low-overhead stage timings and memory metrics.
 Warm up as the target mode requires; measure cold separately when it matters.
 Use repetitions or a sequential stopping rule fixed before final measurement;
 do not keep sampling until a favorable result appears. Read
-[references/measurement-and-parity.md](references/measurement-and-parity.md)
+[references/workflow/measurement-and-parity.md](references/workflow/measurement-and-parity.md)
 for the benchmark and gate design.
 
 - **Output:** `baseline` event with absolute value, variance, and memory peaks.
@@ -120,7 +120,7 @@ require heavyweight profiling before testing residency or load reuse.
 
 Read [references/playbooks/README.md](references/playbooks/README.md), the
 class playbook, and `common.md`; for kernel rows read
-[references/kernel-dsls.md](references/kernel-dsls.md). For each budget row
+[references/recipes/kernel-backends.md](references/recipes/kernel-backends.md). For each budget row
 list candidate levers, ordered by the least behavior-changing rung first:
 
 1. remove unnecessary work;
@@ -138,12 +138,12 @@ implementation and validation cost. Record low/central/high savings, assumptions
 the cheapest falsifier and a stop rule. Drop levers whose best case is below noise
 or the threshold. Include compile/startup break-even for the actual job lifetime.
 
-Use only the relevant branch of [bottleneck recipes](references/bottleneck-recipes.md)
+Use only the relevant branch of [bottleneck recipes](references/recipes/common-bottlenecks.md)
 for shapes, compilation, generation, transfers, materialization, memory and parity.
-[Advanced recipes](references/advanced-recipes.md) cover prefix reuse, scheduling,
+[Advanced recipes](references/recipes/specialized-bottlenecks.md) cover prefix reuse, scheduling,
 optimizer/DDP, communication, hybrid models and kernel tuning. The
-[GPU MODE map](references/gpu-mode-map.md) routes to sources;
-[GPU MODE resources](references/gpu-mode.md) records tutorial-transfer limits.
+[GPU MODE map](references/sources/gpu-mode-map.md) routes to sources;
+[GPU MODE resources](references/sources/gpu-mode.md) records tutorial-transfer limits.
 
 - **Output:** a `hypothesis` event per lever, and to the user the lever table:
 
@@ -245,12 +245,12 @@ between two GEMMs, an attention or recurrence shape with no fast library path.
    classify throughput against the pipe and bandwidth ceilings, stalls,
    occupancy, and tails. Convert each kernel's gap to its ceiling into an
    end-to-end budget only with compatible full-path attribution. See the capture
-   guidance in [GPU MODE resources](references/gpu-mode.md).
+   guidance in [GPU MODE resources](references/sources/gpu-mode.md).
 2. **Swap before writing.** Check whether the framework, engine, or a kernel
    library already ships a faster implementation behind a backend flag,
    dispatcher, or stale guard. A swap is a flag plus a parity gate.
 3. **Pick the language from the evidence.** Follow
-   [references/kernel-dsls.md](references/kernel-dsls.md): Triton for fusion of
+   [references/recipes/kernel-backends.md](references/recipes/kernel-backends.md): Triton for fusion of
    memory-bound chains, TileLang for tile-level GEMM, attention, and recurrence
    variants, CuTe DSL when the ceiling needs architecture-specific tensor-core,
    memory, and pipelining features. Search
@@ -284,5 +284,5 @@ candidate values; paired performance with variability and tails; trade-offs in
 memory, quality, cold start, complexity, and modes; transfer boundary; fraction
 of headroom captured; next action; and the logged event ids.
 
-Read [references/abstract-cases.md](references/abstract-cases.md) for generalized
+Read [references/workflow/decision-cases.md](references/workflow/decision-cases.md) for generalized
 examples of correct promotion and rejection decisions.

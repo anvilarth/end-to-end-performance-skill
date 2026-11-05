@@ -1,7 +1,9 @@
 # Source library: read at the point of need
 
+[Home](../../README.md) / [Library](../README.md) / Sources
+
 This is a decision-oriented index, not a requirement to read every source. Open
-the procedure in the [handbook](README.md) first, then the source that resolves
+the procedure in the [handbook](../handbook/README.md) first, then the source that resolves
 its missing implementation detail. Official documentation describes APIs;
 research motivates hypotheses; implementation repositories expose actual
 contracts; teaching material helps build a mental model. None establishes a
@@ -10,13 +12,13 @@ speedup on the current workload without measurement.
 Documentation URLs may track a newer release than the installed package. Check
 the installed version and use its matching documentation before applying an API.
 For copied implementations, record commit, license, supported shapes/dtypes and
-local adaptations. The [GPU MODE map](../gpu-mode-map.md) separately preserves
+local adaptations. The [GPU MODE map](gpu-mode-map.md) separately preserves
 the reviewed organization snapshot and exact source revisions.
 
 ## Measurement and numerics
 
-Use with [contract and baseline](01-contract-and-baseline.md) and
-[validation](07-validation-and-delivery.md).
+Use with [contract and baseline](../handbook/01-contract-and-baseline.md) and
+[validation](../handbook/07-validation-and-delivery.md).
 
 | ID / source | Open when / question answered | Apply with this boundary |
 | --- | --- | --- |
@@ -28,8 +30,8 @@ Use with [contract and baseline](01-contract-and-baseline.md) and
 
 ## Profiling and hardware
 
-Use with [attribution](02-attribution-and-experiments.md) and
-[kernel engineering](06-kernel-engineering.md).
+Use with [attribution](../handbook/02-attribution-and-experiments.md) and
+[kernel engineering](../handbook/06-kernel-engineering.md).
 
 | ID / source | Open when / question answered | Apply with this boundary |
 | --- | --- | --- |
@@ -44,7 +46,7 @@ Use with [attribution](02-attribution-and-experiments.md) and
 
 ## Data, memory and compilation
 
-Use with [input, shapes and compilation](03-input-shapes-and-compilation.md).
+Use with [input, shapes and compilation](../handbook/03-input-shapes-and-compilation.md).
 
 | ID / source | Open when / question answered | Apply with this boundary |
 | --- | --- | --- |
@@ -61,7 +63,7 @@ Use with [input, shapes and compilation](03-input-shapes-and-compilation.md).
 
 ## Serving and attention
 
-Use with [serving and concurrency](04-serving-and-concurrency.md).
+Use with [serving and concurrency](../handbook/04-serving-and-concurrency.md).
 
 | ID / source | Open when / question answered | Apply with this boundary |
 | --- | --- | --- |
@@ -76,7 +78,7 @@ Use with [serving and concurrency](04-serving-and-concurrency.md).
 
 ## Training and communication
 
-Use with [training and distributed execution](05-training-and-distributed.md).
+Use with [training and distributed execution](../handbook/05-training-and-distributed.md).
 
 | ID / source | Open when / question answered | Apply with this boundary |
 | --- | --- | --- |
@@ -92,8 +94,8 @@ Use with [training and distributed execution](05-training-and-distributed.md).
 
 ## Kernel implementation
 
-Use with [kernel engineering](06-kernel-engineering.md) and the
-[DSL selection guide](../kernel-dsls.md).
+Use with [kernel engineering](../handbook/06-kernel-engineering.md) and the
+[DSL selection guide](../recipes/kernel-backends.md).
 
 | ID / source | Open when / question answered | Apply with this boundary |
 | --- | --- | --- |
@@ -110,8 +112,8 @@ Use with [kernel engineering](06-kernel-engineering.md) and the
 
 ## GPU MODE and implementation discovery
 
-These complement the [26-repository map](../gpu-mode-map.md), its lecture route
-and the [tutorial transfer warnings](../gpu-mode.md). Curated indexes are discovery
+These complement the [26-repository map](gpu-mode-map.md), its lecture route
+and the [tutorial transfer warnings](gpu-mode.md). Curated indexes are discovery
 sources; follow the linked original implementation or paper for technical claims.
 
 | ID / source | Open when / question answered | Apply with this boundary |
@@ -139,3 +141,7 @@ code inspected, locally reproduced, and promoted on a representative workload.
 Do not upgrade one evidence level to another by wording alone. HTTP link checks
 verify reachability, not implementation correctness or full review of external
 videos, papers and every transitive link.
+
+---
+
+[← Validation & delivery](../handbook/07-validation-and-delivery.md) · [Handbook](../handbook/README.md) · [Library](../README.md)

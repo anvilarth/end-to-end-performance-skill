@@ -1,5 +1,7 @@
 # Playbook: LLM and VLM serving
 
+[Home](../../README.md) / [Library](../README.md) / [Playbooks](README.md)
+
 For generative models behind a continuous-batching engine (KV cache, tensor or
 expert parallelism, chunked prefill), typically multimodal captioning or
 generation with hundreds of requests in flight per node and long outputs per
@@ -106,7 +108,7 @@ at once hung on some nodes. Keep a fallback that disables symmetric-memory
 collectives per host. Spread weight reads from a shared file system by
 starting hosts in waves. Disaggregated prefill and decode failed with one
 KV-transfer backend and worked with another in the same engine version. It
-gained only at high load (see [../abstract-cases.md](../abstract-cases.md)).
+gained only at high load (see the [decision cases](../workflow/decision-cases.md)).
 
 ## 4. Keep the memory fraction below the preprocessing overhead
 

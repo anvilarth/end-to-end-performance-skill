@@ -1,4 +1,6 @@
-# Further recipes from GPU MODE
+# Specialized optimization recipes
+
+[Home](../../README.md) / [Library](../README.md) / [Recipes](README.md)
 
 Use only the branch matching measured exposed cost. These are candidate-selection
 rules, not demonstrated gains on the user's workload. Source snapshots were reviewed

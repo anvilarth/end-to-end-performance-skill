@@ -1,8 +1,10 @@
 # From a symptom to a decisive experiment
 
+[Home](../../README.md) / [Library](../README.md) / [Recipes](README.md)
+
 Use only the matching section after measuring the full-path budget. These recipes
 select hypotheses; they do not establish an acceleration or replace the contract in
-[measurement-and-parity.md](measurement-and-parity.md). Match API examples to the
+[measurement-and-parity.md](../workflow/measurement-and-parity.md). Match API examples to the
 installed versions. Preserve authorized precision, workload and resource limits.
 
 ## 1. Variable shapes and wasted padding

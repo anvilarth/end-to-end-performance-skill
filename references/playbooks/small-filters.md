@@ -1,5 +1,7 @@
 # Playbook: small filter models
 
+[Home](../../README.md) / [Library](../README.md) / [Playbooks](README.md)
+
 For small per-item models run inside worker processes: classifiers, audio
 taggers, embedders, AI-content detectors, frame rankers, video and image
 encoders. One forward per item or per window, the model is a modest fraction
