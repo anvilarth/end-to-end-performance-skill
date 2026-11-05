@@ -1,5 +1,7 @@
 # Choosing a kernel path: swap, Triton, TileLang, CuTe DSL
 
+[Home](../README.md) / [Library](README.md) / Optimization recipes
+
 Read this at ladder rung 5, after a kernel profile has named the kernels and
 their gap to the ceiling. Choose the path from what the profile shows, not
 from which language is most familiar. Every path ends in the same gates:

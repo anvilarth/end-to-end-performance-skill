@@ -1,5 +1,7 @@
 # 5. Training and distributed execution
 
+[Home](../../README.md) / [Library](../README.md) / [Handbook](README.md) / 05
+
 **Open when:** optimizing complete training updates, fitting a larger useful
 batch, or scaling across authorized GPUs/nodes. **Exit when:** the real training
 step improves under the agreed numerical and learning-quality contract. Sources:
@@ -177,3 +179,7 @@ to 45 ms. Decide whether that gain justifies the resource cost under the contrac
 Finish at [validation and delivery](07-validation-and-delivery.md). Preserve
 the exact launch, rank mapping, complete-step evidence and restart state needed
 to reproduce the selected configuration.
+
+---
+
+[← Serving](04-serving-and-concurrency.md) · [Handbook](README.md) · [Kernel engineering →](06-kernel-engineering.md)

@@ -1,5 +1,7 @@
 # End-to-end optimization: decision map
 
+[Home](../README.md) / [Library](README.md) / Workflow
+
 Use this map for an overview of the complete optimization workflow and for choosing
 the next diagnostic tool. Read only the branch matching the measured bottleneck.
 The detailed recipes remain in the linked references; the map does not require

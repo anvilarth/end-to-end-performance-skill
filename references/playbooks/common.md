@@ -1,5 +1,7 @@
 # Playbook: shared levers
 
+[Home](../../README.md) / [Library](../README.md) / [Playbooks](README.md)
+
 Levers that apply to every workload class in this library: host-side work
 removal, several processes per GPU under CUDA MPS, knowing the ceiling,
 precision rungs, and measurement traps. Read this file together with the

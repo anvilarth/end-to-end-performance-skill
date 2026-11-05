@@ -1,5 +1,7 @@
 # Source library: read at the point of need
 
+[Home](../../README.md) / [Library](../README.md) / [Handbook](README.md) / Sources
+
 This is a decision-oriented index, not a requirement to read every source. Open
 the procedure in the [handbook](README.md) first, then the source that resolves
 its missing implementation detail. Official documentation describes APIs;
@@ -139,3 +141,7 @@ code inspected, locally reproduced, and promoted on a representative workload.
 Do not upgrade one evidence level to another by wording alone. HTTP link checks
 verify reachability, not implementation correctness or full review of external
 videos, papers and every transitive link.
+
+---
+
+[← Validation & delivery](07-validation-and-delivery.md) · [Handbook](README.md) · [Library](../README.md)

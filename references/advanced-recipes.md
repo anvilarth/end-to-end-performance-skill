@@ -1,5 +1,7 @@
 # Further recipes from GPU MODE
 
+[Home](../README.md) / [Library](README.md) / Optimization recipes
+
 Use only the branch matching measured exposed cost. These are candidate-selection
 rules, not demonstrated gains on the user's workload. Source snapshots were reviewed
 2026-11-04; check the installed backend's capabilities before using any API or flag.

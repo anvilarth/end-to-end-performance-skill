@@ -1,5 +1,7 @@
 # Experiment Log
 
+[Home](../README.md) / [Library](README.md) / Workflow
+
 Use this reference to keep a local, append-only record of the contract,
 baselines, hypotheses, gate results, and verdicts. The log is the memory of the
 optimization effort: it lets a later session, or another agent, see what was

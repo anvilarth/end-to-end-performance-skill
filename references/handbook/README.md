@@ -1,5 +1,7 @@
 # Performance engineering handbook
 
+[Home](../../README.md) / [Library](../README.md) / Handbook
+
 Use this library while making a specific optimization decision. Start with the
 [decision map](../decision-map.md), identify the missing evidence, and open one
 chapter below. Reading every chapter before measuring is unnecessary. The

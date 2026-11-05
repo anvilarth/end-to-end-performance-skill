@@ -1,5 +1,7 @@
 # Playbook library
 
+[Home](../../README.md) / [Library](../README.md) / Playbooks
+
 Levers that repeatedly delivered material end-to-end gains, grouped by
 workload class. Use this index in workflow step 3 to pick the playbook that
 matches the deliverable, then read `common.md` plus one class file. Do not read

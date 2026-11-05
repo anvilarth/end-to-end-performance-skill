@@ -1,5 +1,7 @@
 # Playbook: LLM and VLM serving
 
+[Home](../../README.md) / [Library](../README.md) / [Playbooks](README.md)
+
 For generative models behind a continuous-batching engine (KV cache, tensor or
 expert parallelism, chunked prefill), typically multimodal captioning or
 generation with hundreds of requests in flight per node and long outputs per

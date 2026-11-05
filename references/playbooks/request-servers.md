@@ -1,5 +1,7 @@
 # Playbook: request servers for short requests
 
+[Home](../../README.md) / [Library](../README.md) / [Playbooks](README.md)
+
 For model servers that answer many short requests over HTTP or RPC: speech
 recognition and transcription, embedding services, rerankers, small
 multimodal scorers exposed as a service. Clients drive the concurrency; the

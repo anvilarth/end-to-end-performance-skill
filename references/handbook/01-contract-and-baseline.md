@@ -1,5 +1,7 @@
 # 1. Contract and baseline
 
+[Home](../../README.md) / [Library](../README.md) / [Handbook](README.md) / 01
+
 **Open when:** the workload, metric, reference or measurement boundary is unclear,
 or an old baseline may not describe the current job. **Exit when:** another session
 can execute the control, produce complete outputs, compare them and resolve the
@@ -176,3 +178,7 @@ quality reference is missing, label subsequent timing as diagnostic. If the
 baseline is reproducible and a dominant cost is already obvious, proceed directly
 to its cheapest causal experiment. Otherwise use the next chapter's attribution
 ladder. Sources: [measurement and numerics](sources.md#measurement-and-numerics).
+
+---
+
+[← Overview](README.md) · [Handbook](README.md) · [Attribution & experiments →](02-attribution-and-experiments.md)

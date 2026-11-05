@@ -1,5 +1,7 @@
 # GPU MODE organization map
 
+[Home](../README.md) / [Library](README.md) / Research
+
 Snapshot reviewed 2026-11-04: 26 public repositories, including one empty repository.
 This is a purpose map, not a certification of all code or external links. Use the
 [advanced recipes](advanced-recipes.md) for experiments and [measurement rules](measurement-and-parity.md)

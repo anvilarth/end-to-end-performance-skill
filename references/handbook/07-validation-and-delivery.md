@@ -1,5 +1,7 @@
 # 7. Validation, composition and delivery
 
+[Home](../../README.md) / [Library](../README.md) / [Handbook](README.md) / 07
+
 **Open when:** a candidate has passed its cheap screen or a session needs an
 explicit verdict. **Exit when:** evidence supports promote/reject/inconclusive,
 and the delivered entrypoint plus journal let another session reproduce it.
@@ -177,3 +179,7 @@ Separate observed results from estimates. A resumed session should know what
 already passed, what is running, what failed, and what remains unverified without
 reading the entire conversation. Stop when the target is met or remaining
 affordable headroom is exhausted; further research needs a concrete open question.
+
+---
+
+[← Kernel engineering](06-kernel-engineering.md) · [Handbook](README.md) · [Sources →](sources.md)

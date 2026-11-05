@@ -1,5 +1,7 @@
 # GPU MODE: use resources at the point of need
 
+[Home](../README.md) / [Library](README.md) / Research
+
 Reviewed 2026-11-04. GPU MODE is an organization, not one repository. Follow current
 primary documentation for APIs; these resources are optional, not dependencies.
 The [organization map](gpu-mode-map.md) covers all public repositories in the reviewed

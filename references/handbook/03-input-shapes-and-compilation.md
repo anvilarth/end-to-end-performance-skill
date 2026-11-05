@@ -1,5 +1,7 @@
 # 3. Input, shapes, memory and compilation
 
+[Home](../../README.md) / [Library](../README.md) / [Handbook](README.md) / 03
+
 **Open when:** the timeline exposes input stalls, padding, copies, allocations,
 Python/launch overhead or repeated compilation. **Exit when:** one intervention
 improves the real path under unchanged input/output semantics. First use
@@ -182,3 +184,7 @@ If the remaining dominant work is device math, go to
 [kernel engineering](06-kernel-engineering.md). If waiting is caused by queueing
 or inter-rank coordination, use [serving](04-serving-and-concurrency.md) or
 [distributed execution](05-training-and-distributed.md).
+
+---
+
+[← Attribution & experiments](02-attribution-and-experiments.md) · [Handbook](README.md) · [Serving →](04-serving-and-concurrency.md)

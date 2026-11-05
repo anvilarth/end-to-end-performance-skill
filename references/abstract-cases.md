@@ -1,5 +1,7 @@
 # Abstract performance cases
 
+[Home](../README.md) / [Library](README.md) / Worked cases
+
 Use these generalized cases to recognize common decision patterns. They encode
 reusable lessons, not results for any particular model or organization.
 

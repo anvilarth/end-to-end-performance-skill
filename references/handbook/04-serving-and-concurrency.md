@@ -1,5 +1,7 @@
 # 4. Serving and concurrency
 
+[Home](../../README.md) / [Library](../README.md) / [Handbook](README.md) / 04
+
 **Open when:** optimizing online requests, batched generation or an offline job
 using an inference server. **Exit when:** the chosen configuration improves the
 declared useful-work metric at representative load while meeting quality,
@@ -168,3 +170,7 @@ Finish with [validation and delivery](07-validation-and-delivery.md). If there
 is no acceptable point before saturation, state whether the limit is compute,
 memory, transport, quality or the authorized resource budget. This gives the next
 session a concrete decision instead of another blind concurrency sweep.
+
+---
+
+[← Input & compilation](03-input-shapes-and-compilation.md) · [Handbook](README.md) · [Training →](05-training-and-distributed.md)

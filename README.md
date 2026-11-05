@@ -1,172 +1,129 @@
-# End-to-End Performance Skill
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/readme/cover-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/readme/cover-light.svg">
+  <img alt="End-to-End Performance — measure the full path, prove the gain." src="assets/readme/cover-light.svg" width="1200">
+</picture>
 
-An agent skill for optimizing PyTorch and CUDA training and inference workloads
-as complete systems.
+<p align="center">
+  <strong>A field guide and agent skill for optimizing complete PyTorch and CUDA workloads.</strong><br>
+  Training · inference · serving · distributed systems · GPU kernels
+</p>
 
-The skill first recovers actual usage from launchers and existing artifacts: hardware, scale,
-topology, workload shapes, modes, concurrency, cold or warm behavior, and the
-correctness contract. It then profiles the full execution path, ranks measured
-bottlenecks by recoverable end-to-end impact, applies lossless changes first,
-and screens candidates cheaply before representative correctness and performance gates.
-Existing authorization is reused; only decision-changing gaps require questions.
+<p align="center">
+  <a href="#start-here">Start here</a> ·
+  <a href="#the-handbook">Handbook</a> ·
+  <a href="references/README.md">Library</a> ·
+  <a href="#use-the-skill">Use the skill</a> ·
+  <a href="references/handbook/sources.md">Sources</a>
+</p>
 
-[The decision map](references/decision-map.md) brings the workflow into one
-flowchart: what to check first, which diagnostic tool to use, where to optimize
-next, and when to stop or promote a change.
+---
 
-The [performance handbook](references/handbook/README.md) expands that map into
-seven detailed procedures: baseline, attribution, input/compilation, serving,
-training/distribution, kernel engineering, and validation/delivery. Each chapter
-states when to use it, what to measure, how to interpret the result, failure
-routes and the condition for moving on. It includes command templates, worked
-budget examples and an [annotated source library](references/handbook/sources.md).
-The skill loads only the chapter needed for the current decision.
+## Start here
 
-Its central rule is simple:
+Find the next useful experiment, estimate what it can save, and validate the
+complete delivered workload. Start with the question you need to answer.
 
-> Optimize the delivered workload, not an isolated component.
+<table>
+<tr>
+<td width="50%" valign="top">
+<h3>01 / Choose the next move</h3>
+<p>A decision tree from the real workload to a measured bottleneck, a bounded experiment and a verdict.</p>
+<a href="references/decision-map.md"><strong>Open the decision map →</strong></a>
+</td>
+<td width="50%" valign="top">
+<h3>02 / Work through the details</h3>
+<p>Seven practical chapters: what to check, which tool to use, how to interpret the result and when to stop.</p>
+<a href="references/handbook/README.md"><strong>Read the handbook →</strong></a>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<h3>03 / Match your workload</h3>
+<p>Focused recipes for LLM/VLM serving, small model workers and request servers, with activation and parity checks.</p>
+<a href="references/playbooks/README.md"><strong>Pick a playbook →</strong></a>
+</td>
+<td width="50%" valign="top">
+<h3>04 / Find the evidence</h3>
+<p>59 annotated sources, a reviewed GPU MODE map and implementation references matched to the current question.</p>
+<a href="references/handbook/sources.md"><strong>Browse the sources →</strong></a>
+</td>
+</tr>
+</table>
 
-## How to use it
+## The handbook
 
-Install the skill, then invoke it on a PyTorch or CUDA training or inference
-workload:
+**Contract → measure → attribute → change → validate → decide.**
 
-```text
-Use $end-to-end-performance-skill to profile and optimize this PyTorch workload.
-```
+Read in order for the complete workflow, or open the chapter that resolves your
+current bottleneck. Each chapter includes entry evidence, procedures, failure
+routes and an exit condition.
 
-Provide the repository or code path and describe the real usage setup when it is
-known. The skill will ask for any missing details needed to define a
-representative benchmark and correctness contract.
+| | Chapter | The question it answers |
+| :--- | :--- | :--- |
+| **01** | [Contract & baseline](references/handbook/01-contract-and-baseline.md) | What must become faster, and can we measure it reliably? |
+| **02** | [Attribution & experiments](references/handbook/02-attribution-and-experiments.md) | Where is the recoverable time, and what should we try first? |
+| **03** | [Input, shapes & compilation](references/handbook/03-input-shapes-and-compilation.md) | Are decode, padding, copies, memory or launch overhead limiting us? |
+| **04** | [Serving & concurrency](references/handbook/04-serving-and-concurrency.md) | How do we increase useful throughput while meeting latency and quality limits? |
+| **05** | [Training & distributed execution](references/handbook/05-training-and-distributed.md) | How do we improve the complete update and scale across GPUs? |
+| **06** | [Kernel engineering](references/handbook/06-kernel-engineering.md) | When is a custom kernel worth it, and which technique fits the bound? |
+| **07** | [Validation & delivery](references/handbook/07-validation-and-delivery.md) | Is the gain real, reproducible and ready to use? |
 
-The workflow is:
+## Use the skill
 
-```text
-Establish the real usage setup
--> Freeze the correctness and performance contract
--> Measure the complete end-to-end path
--> Estimate recoverable headroom
--> Rank lossless-first candidates
--> Implement one causal change
--> Validate parity before performance
--> Measure the representative end-to-end workload
--> Promote, reject, or mark inconclusive
--> Re-profile because the bottleneck may have moved
-```
-
-Every contract, baseline, hypothesis, gate result and verdict is recorded using
-the workload's existing experiment log, or `.perf-log/log.jsonl` if none exists.
-A new session reads the record first, so rejected and inconclusive ideas are not
-repeated and open next actions are picked up. The loop checks control/comparator
-readiness before expensive runs and reserves time for final delivery validation.
-
-## Kernel-level escalation
-
-The skill does not begin with custom kernels, but it descends to them as soon
-as a kernel profile shows recoverable end-to-end budget.
-[references/kernel-dsls.md](references/kernel-dsls.md) picks the path from the
-profile evidence: swap an existing library backend, Triton for memory-bound
-fusion, TileLang for tile-level GEMM, attention, and recurrence variants, CuTe
-DSL when the ceiling needs architecture-specific tensor-core features. It also
-uses:
-
-- [ncu-report-skill](https://github.com/mit-han-lab/ncu-report-skill) to collect
-  and interpret Nsight Compute evidence;
-- [KernelWiki](https://github.com/mit-han-lab/KernelWiki) to research relevant
-  GPU-kernel techniques and implementations.
-
-The candidate kernel must then return to numerical parity and representative
-end-to-end validation. A faster microbenchmark is not itself a model speedup.
-
-## Installation
-
-Clone the repository into a skill directory supported by your coding agent. For
-Codex, a user-level installation can be created with:
+Clone into a skill directory supported by your coding agent. For a standard
+Codex user-level installation:
 
 ```bash
-git clone <repository-url> ~/.codex/skills/end-to-end-performance-skill
+git clone https://github.com/anvilarth/end-to-end-performance-skill.git \
+  ~/.codex/skills/end-to-end-performance-skill
 ```
 
-The exact installation location may differ between Agent Skills-compatible
-tools.
-
-## Repository structure
+Then invoke it with a repository or launcher and the outcome you need:
 
 ```text
-end-to-end-performance-skill/
-├── SKILL.md
-├── references/
-│   ├── measurement-and-parity.md
-│   ├── decision-map.md
-│   ├── kernel-dsls.md
-│   ├── bottleneck-recipes.md
-│   ├── advanced-recipes.md
-│   ├── gpu-mode.md
-│   ├── gpu-mode-map.md
-│   ├── experiment-loop.md
-│   ├── handbook/
-│   │   ├── README.md
-│   │   ├── 01-contract-and-baseline.md
-│   │   ├── 02-attribution-and-experiments.md
-│   │   ├── 03-input-shapes-and-compilation.md
-│   │   ├── 04-serving-and-concurrency.md
-│   │   ├── 05-training-and-distributed.md
-│   │   ├── 06-kernel-engineering.md
-│   │   ├── 07-validation-and-delivery.md
-│   │   └── sources.md
-│   ├── playbooks/
-│   │   ├── README.md
-│   │   ├── common.md
-│   │   ├── llm-serving.md
-│   │   ├── small-filters.md
-│   │   └── request-servers.md
-│   ├── experiment-log.md
-│   └── abstract-cases.md
-├── README.md
-└── LICENSE
+Use $end-to-end-performance-skill to optimize this workload.
+Entry point: <repository and launch command>
+Target: <latency, useful throughput, memory or cost>
+Constraints: <hardware, precision, quality and time budget>
 ```
 
-- `SKILL.md` contains the step loop (each step with its output and exit
-  condition), the rules that apply at every step, kernel escalation, and the
-  reporting format.
-- `references/kernel-dsls.md` chooses between a library backend swap, Triton,
-  TileLang, and CuTe DSL from kernel-profile evidence.
-- `references/measurement-and-parity.md` defines benchmark, parity, topology,
-  and verdict guidance.
-- `references/decision-map.md` contains the unified flowchart, tool-selection
-  matrix and per-branch stopping rules.
-- `references/handbook/` contains the detailed operating procedures and source
-  library. Start at its index or follow the chapter links in `SKILL.md`.
-- `references/playbooks/` is a library of measured levers by workload class:
-  `common.md` (in-process decode, local-disk runtimes, CUDA MPS with several
-  processes per GPU, ceilings, precision rungs, measurement traps),
-  `llm-serving.md` (admission caps, ingestion payloads, replicas versus tensor
-  parallelism), `small-filters.md` (workers per GPU, launch-bound encoder
-  fixes, host staging), `request-servers.md` (servers per GPU, engine
-  concurrency, persistent servers). `README.md` there picks the class.
-- `references/experiment-log.md` defines the local append-only log of
-  hypotheses, gate results and verdicts, with reuse of existing workspace records.
-- `references/experiment-loop.md` covers screening, validation budgets, reuse and stop decisions.
-- `references/bottleneck-recipes.md` covers eight common measured symptoms;
-  `references/advanced-recipes.md` adds twelve conditional optimization paths.
-- `references/gpu-mode.md` records source and tutorial-transfer guidance;
-  `references/gpu-mode-map.md` indexes the reviewed organization and pinned revisions.
-- `references/abstract-cases.md` contains generalized examples of promotion,
-  rejection, and inconclusive decisions.
+The skill recovers actual usage from code and existing artifacts, loads only the
+relevant references, and reuses the workload's experiment log. New sessions can
+resume from prior baselines, decisions and rejected hypotheses.
 
-## Acknowledgements
+[Read the agent instructions](SKILL.md) · [Experiment record](references/experiment-log.md)
 
-Special thanks to [MIT HAN Lab](https://github.com/mit-han-lab),
-[Dongyun Zou](https://github.com/DongyunZou), and all contributors to
+## Explore the library
+
+| Collection | What you will find |
+| :--- | :--- |
+| [Workflow & measurement](references/README.md#workflow--measurement) | Decision map, measurement rules, experiment budgets, logs and worked cases |
+| [Handbook](references/handbook/README.md) | The full sequence, with tools, commands, calculations and failure routes |
+| [Workload playbooks](references/playbooks/README.md) | Serving engines, small models, request servers and shared techniques |
+| [Optimization recipes](references/README.md#optimization-recipes) | 8 common bottleneck recipes, 12 advanced paths and a kernel/DSL guide |
+| [Research & implementations](references/README.md#research--implementations) | Annotated sources, GPU MODE repositories, lectures and transfer limits |
+
+**The complete catalog is in [references/README.md](references/README.md).**
+Existing document paths remain stable, so bookmarks and installed skill links
+continue to work.
+
+## What counts as a win
+
+- **Measured headroom.** Rank changes by recoverable end-to-end time and the cost of proving them.
+- **Preserved behavior.** Start with equivalent changes; validate the agreed numerical and quality contract.
+- **A complete result.** Promote from representative full-path evidence. Record rejected and inconclusive experiments too.
+
+An isolated kernel speedup is one piece of evidence. Success is a faster delivered
+training step, batch, generation or served request.
+
+---
+
+Thanks to [GPU MODE](https://github.com/gpu-mode),
+[MIT HAN Lab](https://github.com/mit-han-lab),
+[Dongyun Zou](https://github.com/DongyunZou), and the contributors to
 [KernelWiki](https://github.com/mit-han-lab/KernelWiki) and
-[ncu-report-skill](https://github.com/mit-han-lab/ncu-report-skill).
+[ncu-report-skill](https://github.com/mit-han-lab/ncu-report-skill) for the teaching,
+implementation and profiling resources that inform this library.
 
-Their work provides an excellent GPU-kernel knowledge base and a rigorous
-Nsight Compute profiling workflow. This skill is designed to complement those
-projects by identifying when kernel-level investigation is justified and by
-bringing every local optimization back to a representative end-to-end
-correctness and performance decision.
-
-## License
-
-MIT
+[MIT License](LICENSE)

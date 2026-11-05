@@ -1,5 +1,7 @@
 # 6. Kernel engineering
 
+[Home](../../README.md) / [Library](../README.md) / [Handbook](README.md) / 06
+
 **Open when:** a measured operator family has material recoverable end-to-end
 cost and cheaper changes do not address it. **Exit when:** a contract-compatible
 implementation improves the complete path, or its best affordable improvement
@@ -170,3 +172,7 @@ and [complete delivery gate](07-validation-and-delivery.md).
 Example: a kernel family is 8 ms of a 100 ms request. Halving it has an ideal
 4 ms gain; 3 ms of packing leaves about 1 ms before other effects. If the accepted
 improvement threshold is 5 ms, stop this route even though the kernel is 2x faster.
+
+---
+
+[← Training](05-training-and-distributed.md) · [Handbook](README.md) · [Validation & delivery →](07-validation-and-delivery.md)
