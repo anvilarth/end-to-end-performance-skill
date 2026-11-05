@@ -5,6 +5,12 @@ the next diagnostic tool. Read only the branch matching the measured bottleneck.
 The detailed recipes remain in the linked references; the map does not require
 running every profiler or trying every lever.
 
+For the step-by-step procedure behind a branch, open the matching chapter in
+the [performance handbook](handbook/README.md). It supplies entry evidence,
+commands, interpretation, failure routes and exit conditions. The
+[source library](handbook/sources.md) points to the underlying documentation
+and implementations without requiring a full-library read.
+
 - [Decision graph](#decision-graph)
 - [Which tool, when, and what decision it supports](#which-tool-when-and-what-decision-it-supports)
 - [How far to push each branch](#how-far-to-push-each-branch)

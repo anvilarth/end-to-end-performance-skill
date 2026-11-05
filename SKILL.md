@@ -19,6 +19,24 @@ For the complete flowchart, tool-selection matrix and per-branch stopping rules,
 see [the decision map](references/decision-map.md). Use it for orientation, then
 read only the reference needed for the current decision.
 
+For detailed procedures, use the [performance handbook](references/handbook/README.md).
+Choose the chapter from the missing evidence; do not load the whole library:
+
+| Need | Procedure |
+| --- | --- |
+| Reproducible workload, metric, reference, A/A | [Contract and baseline](references/handbook/01-contract-and-baseline.md) |
+| Critical path, profiling, savings estimate, falsifier | [Attribution and experiments](references/handbook/02-attribution-and-experiments.md) |
+| Decode, staging, shapes, memory, compile or graph replay | [Input and compilation](references/handbook/03-input-shapes-and-compilation.md) |
+| Arrival process, concurrency, cache, replicas, prefill/decode | [Serving](references/handbook/04-serving-and-concurrency.md) |
+| Complete updates, optimizer, accumulation, DDP/FSDP, scaling | [Training](references/handbook/05-training-and-distributed.md) |
+| Operator contract, DSL, counters, tuning, custom-op integration | [Kernel engineering](references/handbook/06-kernel-engineering.md) |
+| Numerical/quality gates, paired timing, composition, delivery | [Validation](references/handbook/07-validation-and-delivery.md) |
+
+The [annotated source library](references/handbook/sources.md) links each technical
+question to upstream documentation, research or implementation evidence and states
+its transfer limits. Read a source to resolve the current decision, then return to
+the experiment; a tutorial result is not local performance evidence.
+
 ## The loop
 
 ### Step 0. Load the log

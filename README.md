@@ -14,6 +14,14 @@ Existing authorization is reused; only decision-changing gaps require questions.
 flowchart: what to check first, which diagnostic tool to use, where to optimize
 next, and when to stop or promote a change.
 
+The [performance handbook](references/handbook/README.md) expands that map into
+seven detailed procedures: baseline, attribution, input/compilation, serving,
+training/distribution, kernel engineering, and validation/delivery. Each chapter
+states when to use it, what to measure, how to interpret the result, failure
+routes and the condition for moving on. It includes command templates, worked
+budget examples and an [annotated source library](references/handbook/sources.md).
+The skill loads only the chapter needed for the current decision.
+
 Its central rule is simple:
 
 > Optimize the delivered workload, not an isolated component.
@@ -96,6 +104,16 @@ end-to-end-performance-skill/
 │   ├── gpu-mode.md
 │   ├── gpu-mode-map.md
 │   ├── experiment-loop.md
+│   ├── handbook/
+│   │   ├── README.md
+│   │   ├── 01-contract-and-baseline.md
+│   │   ├── 02-attribution-and-experiments.md
+│   │   ├── 03-input-shapes-and-compilation.md
+│   │   ├── 04-serving-and-concurrency.md
+│   │   ├── 05-training-and-distributed.md
+│   │   ├── 06-kernel-engineering.md
+│   │   ├── 07-validation-and-delivery.md
+│   │   └── sources.md
 │   ├── playbooks/
 │   │   ├── README.md
 │   │   ├── common.md
@@ -117,6 +135,8 @@ end-to-end-performance-skill/
   and verdict guidance.
 - `references/decision-map.md` contains the unified flowchart, tool-selection
   matrix and per-branch stopping rules.
+- `references/handbook/` contains the detailed operating procedures and source
+  library. Start at its index or follow the chapter links in `SKILL.md`.
 - `references/playbooks/` is a library of measured levers by workload class:
   `common.md` (in-process decode, local-disk runtimes, CUDA MPS with several
   processes per GPU, ceilings, precision rungs, measurement traps),
