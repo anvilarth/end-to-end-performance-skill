@@ -1,6 +1,6 @@
 # End-to-end optimization: decision map
 
-[Home](../README.md) / [Library](README.md) / Workflow
+[Home](../../README.md) / [Library](../README.md) / [Workflow](README.md)
 
 Use this map for an overview of the complete optimization workflow and for choosing
 the next diagnostic tool. Read only the branch matching the measured bottleneck.
@@ -8,9 +8,9 @@ The detailed recipes remain in the linked references; the map does not require
 running every profiler or trying every lever.
 
 For the step-by-step procedure behind a branch, open the matching chapter in
-the [performance handbook](handbook/README.md). It supplies entry evidence,
+the [performance handbook](../handbook/README.md). It supplies entry evidence,
 commands, interpretation, failure routes and exit conditions. The
-[source library](handbook/sources.md) points to the underlying documentation
+[source library](../sources/README.md) points to the underlying documentation
 and implementations without requiring a full-library read.
 
 - [Decision graph](#decision-graph)
@@ -166,7 +166,7 @@ delivered workload. Choose the tool that resolves the current uncertainty.
 | Why does multi-GPU scaling fail? | Relevant-rank timelines, topology, [NCCL tests](https://github.com/NVIDIA/nccl-tests), CUDA P2P tests | Exposed collectives, message sizes, slow ranks, placement and overlap | Fix imbalance/placement before deeper fusion. One-rank traces or a proxy topology cannot establish target-scale performance. |
 | Will GPU sharing help? | [MPS](https://docs.nvidia.com/deploy/mps/) daemon/client state and a fixed-workload concurrency sweep | Actual client attachment, aggregate useful throughput, memory, tails and cache contention | Increase authorized workers to the useful plateau; retain the smallest effective count. Higher utilization can coincide with lower throughput. |
 | What limits an expensive kernel? | [Nsight Compute](https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html), initially on one real shape | Intended kernels, memory traffic, compute pipes, stalls, registers/spills, grid and tails | Ask a narrow question and bound capture repairs. Replay timing is not final application timing. |
-| Which implementation should be tried? | Existing dispatch/backend flags, fused operators, compiler, then a suitable kernel DSL | Shape/dtype/stride/device/backward support and required scheduling features | Prefer a compatible implementation before custom code. Use [kernel-dsls.md](kernel-dsls.md) and [advanced recipes](advanced-recipes.md) for deeper selection. |
+| Which implementation should be tried? | Existing dispatch/backend flags, fused operators, compiler, then a suitable kernel DSL | Shape/dtype/stride/device/backward support and required scheduling features | Prefer a compatible implementation before custom code. Use [kernel backends](../recipes/kernel-backends.md) and [specialized recipes](../recipes/specialized-bottlenecks.md) for deeper selection. |
 | Is a custom kernel correct? | Small index/layout examples, Triton interpreter/Viz and [Compute Sanitizer](https://docs.nvidia.com/compute-sanitizer/ComputeSanitizer/index.html) as applicable | Tails, strides, address range, aliasing, mutation, invalid/uninitialized accesses and synchronization hazards | Interpreter checks do not prove GPU race freedom; sanitizers do not prove mathematical or model-quality equivalence. |
 | Which kernel configuration pays off? | `torch.utils.benchmark`, Triton benchmarking/autotuning, bounded DSL search; PyGPUBench where isolation is needed | Representative shapes, warmup/cache policy, restored mutable state, independent reference and search cost | Cache validated choices with device/version/shape/dtype/layout identity and a fallback. Return microbenchmark wins to the E2E gate. |
 | Is the change accepted and reusable? | Existing experiment log and paired E2E report | Absolute control/candidate metrics, variability, coverage, quality, memory and transfer limits | Record promote/reject/inconclusive, artifacts and reopening conditions. Revisit rejected ideas only when relevant evidence changes. |
@@ -230,5 +230,5 @@ Do not import a no-draft restriction from another task or disregard one in this 
    and accepted delivery as well as workload speed.
 
 Continue with [measurement and parity](measurement-and-parity.md),
-[experiment budgeting](experiment-loop.md), [common bottleneck recipes](bottleneck-recipes.md),
-[advanced recipes](advanced-recipes.md), or the relevant [workload playbook](playbooks/README.md).
+[experiment budgeting](experiment-loop.md), [common bottleneck recipes](../recipes/common-bottlenecks.md),
+[advanced recipes](../recipes/specialized-bottlenecks.md), or the relevant [workload playbook](../playbooks/README.md).

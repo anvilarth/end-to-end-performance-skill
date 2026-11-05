@@ -1,6 +1,6 @@
 # Experiment Log
 
-[Home](../README.md) / [Library](README.md) / Workflow
+[Home](../../README.md) / [Library](../README.md) / [Workflow](README.md)
 
 Use this reference to keep a local, append-only record of the contract,
 baselines, hypotheses, gate results, and verdicts. The log is the memory of the

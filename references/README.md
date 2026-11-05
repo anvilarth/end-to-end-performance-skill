@@ -2,93 +2,72 @@
 
 [Home](../README.md) / Library
 
-The complete reading map for the performance skill. Choose a collection by the
-decision you need to make; use the [decision map](decision-map.md) when the next
-step is unclear.
+Start with the question you are trying to answer. The folders separate the
+optimization protocol, detailed procedures, candidate changes, workload context
+and supporting evidence. Each document has one home.
 
-[Workflow](#workflow--measurement) · [Handbook](#handbook) ·
-[Playbooks](#workload-playbooks) · [Recipes](#optimization-recipes) ·
-[Research](#research--implementations)
+## Choose a collection
 
-## Workflow & measurement
-
-Establish the workload, make evidence trustworthy, and keep the experiment loop
-short enough to reach a decision.
-
-| Read | Use it for |
-| :--- | :--- |
-| [Decision map](decision-map.md) | The full branching workflow, tool-selection matrix and stopping rules |
-| [Measurement & parity](measurement-and-parity.md) | Timing boundaries, correctness, topology and promotion gates |
-| [Experiment loop](experiment-loop.md) | Screening, profiler repair, validation budgets and reuse of evidence |
-| [Experiment log](experiment-log.md) | Contracts, hypotheses, gate results and resumable decisions |
-| [Worked cases](abstract-cases.md) | Examples of promotion, rejection and inconclusive results |
-
-## Handbook
-
-Detailed operating procedures. Every chapter has a contents list and links to
-its neighbors. Start at the [handbook overview](handbook/README.md) for the
-sequence and the question-to-chapter routing table.
-
-| | Chapter | Main topics |
+| Question | Collection | What belongs here |
 | :--- | :--- | :--- |
-| **01** | [Contract & baseline](handbook/01-contract-and-baseline.md) | Useful work, timing, representative inputs, references, cold/warm state, A/A |
-| **02** | [Attribution & experiments](handbook/02-attribution-and-experiments.md) | Profiling ladder, critical path, ceilings, savings, falsifiers |
-| **03** | [Input, shapes & compilation](handbook/03-input-shapes-and-compilation.md) | Decode, workers, transfers, packing, memory, compile, CUDA graphs |
-| **04** | [Serving & concurrency](handbook/04-serving-and-concurrency.md) | Arrival processes, queues, caching, replicas, attention, tails |
-| **05** | [Training & distributed execution](handbook/05-training-and-distributed.md) | Complete updates, accumulation, optimizer, checkpointing, DDP/FSDP, scaling |
-| **06** | [Kernel engineering](handbook/06-kernel-engineering.md) | Contracts, backends/DSLs, counters, bounded tuning, sanitizers, integration |
-| **07** | [Validation & delivery](handbook/07-validation-and-delivery.md) | Gate ladder, independent references, paired timing, composition, handoff |
+| What happens next, and what counts as evidence? | [Workflow](workflow/README.md) | Decision map, measurement rules, experiment budgets, records and decision cases |
+| How do I carry out this stage? | [Handbook](handbook/README.md) | Seven detailed procedures, from baseline to delivery |
+| What change could remove this measured bottleneck? | [Recipes](recipes/README.md) | A mechanism, applicability, cheap test and stop rule |
+| What is different about this kind of workload? | [Playbooks](playbooks/README.md) | Workload-specific levers, activation checks, observed ranges and parity traps |
+| Where is the underlying explanation or implementation? | [Sources](sources/README.md) | Annotated references, source revisions and transfer limits |
 
-## Workload playbooks
+The [agent entrypoint](../SKILL.md) contains the essential loop and routes into
+these collections. The [repository front page](../README.md) introduces the
+project. Neither needs to duplicate the entire library.
 
-Start at the [playbook selector](playbooks/README.md), then read the shared
-techniques and the class matching your deliverable. Reported ranges are priors,
-not promises for a new workload.
+## Follow a short reading path
 
-| Read | Use it for |
-| :--- | :--- |
-| [Shared techniques](playbooks/common.md) | Work removal, decode/locality, GPU sharing, precision and measurement traps |
-| [LLM / VLM serving](playbooks/llm-serving.md) | Continuous batching, admission limits, payloads, replicas versus tensor parallelism |
-| [Small model workers](playbooks/small-filters.md) | Classifiers, encoders and filters; workers per GPU, launch overhead and staging |
-| [Request servers](playbooks/request-servers.md) | Short HTTP requests, persistent servers, concurrency and startup amortization |
+- **Unknown bottleneck:** [decision map](workflow/decision-map.md) →
+  [attribution procedure](handbook/02-attribution-and-experiments.md) → one measured candidate.
+- **Serving throughput has plateaued:** [serving procedure](handbook/04-serving-and-concurrency.md) →
+  [serving playbook](playbooks/llm-serving.md) → a relevant recipe or source only if needed.
+- **A kernel microbenchmark improved:** [kernel procedure](handbook/06-kernel-engineering.md) →
+  [measurement rules](workflow/measurement-and-parity.md) →
+  [delivery gate](handbook/07-validation-and-delivery.md).
+- **Resuming work:** the workload's existing journal →
+  [experiment loop](workflow/experiment-loop.md) → the next unresolved decision.
 
-## Optimization recipes
+These are routes into the library, not required reading lists. Reuse valid
+artifacts and skip sections that do not change the current decision.
 
-Use a recipe after establishing a material budget for its mechanism. Return to
-full-path validation after the local screen.
+## Where new material goes
 
-| Read | Use it for |
-| :--- | :--- |
-| [Common bottlenecks](bottleneck-recipes.md) | 8 paths covering shapes, compilation, generation, transfers, materialization, memory, utilization and numerics |
-| [Advanced paths](advanced-recipes.md) | 12 paths covering reuse, scheduling, optimizers, collectives, hybrid models and kernel techniques |
-| [Kernels & DSL selection](kernel-dsls.md) | Choosing an existing backend, Triton, TileLang or CuTe from profile evidence |
+| New material | Its home | Keep out of that document |
+| :--- | :--- | :--- |
+| A cross-workload acceptance rule or log field | The relevant `workflow/` reference | Model-specific tuning instructions |
+| A missing step, command or failure route in a procedure | The relevant `handbook/` chapter | A second copy of the measurement contract |
+| A reusable optimization hypothesis | An existing `recipes/` file | Claims of success without a workload and gate |
+| A lever whose value depends on workload behavior | The matching `playbooks/` file | Generic procedure text already in the handbook |
+| A paper, implementation or tutorial | `sources/README.md` or its GPU MODE maps | New default requirements inferred from the source |
+| An illustrative promote/reject/inconclusive pattern | [Decision cases](workflow/decision-cases.md) | Private session transcripts or invented measurements |
 
-## Research & implementations
+Workflow references own the measurement and record definitions. Handbook
+chapters explain how to use them. Recipes and playbooks link back to those gates;
+a source supports an idea without becoming a new authority over the task.
+When a statement affects several collections, update its home and the links to
+it rather than pasting the same rule everywhere.
 
-Find the explanation or implementation needed for the current hypothesis.
-Check the source's version, supported contract and transfer limits before reuse.
-
-| Read | Use it for |
-| :--- | :--- |
-| [Annotated source library](handbook/sources.md) | 59 documentation, research, implementation and discovery references grouped by decision |
-| [GPU MODE organization map](gpu-mode-map.md) | A reviewed 26-repository snapshot, pinned revisions, operator atlas and lecture routes |
-| [GPU MODE transfer guide](gpu-mode.md) | Applying tutorial ideas, narrow captures and implementation candidates without importing invalid benchmark assumptions |
-
-## Where things live
+## Repository layout
 
 ```text
-SKILL.md                  Agent entrypoint and essential rules
-README.md                 Repository front page
+README.md                      Project introduction and human entrypoint
+SKILL.md                       Agent entrypoint and essential loop
 references/
-  README.md               This catalog
-  handbook/               Detailed procedures and annotated sources
-  playbooks/              Workload-specific levers
-  *.md                    Workflow, recipes, cases and GPU MODE maps
-assets/readme/            Light and dark SVG covers
+  README.md                    Collection map and placement rules
+  workflow/                    Decision protocol and evidence definitions
+  handbook/                    Step-by-step procedures
+  recipes/                     Candidates by measured bottleneck
+  playbooks/                   Candidates in workload context
+  sources/                     References, provenance and transfer limits
+assets/readme/                 Light and dark cover artwork
 ```
 
-To extend the library, follow the handbook's
-[maintenance guidance](handbook/README.md#keeping-the-library-useful): add evidence
-that changes a decision, place it with the relevant procedure, and link the
-primary source. Keep workload artifacts and private session data in the workload's
-own workspace.
+Keep runnable helpers in `scripts/` only when a repeated task actually needs
+one; this documentation library does not require an empty scripts directory or
+an application build. Workload logs, datasets, traces and private evidence stay
+in their own workspace, outside this repository.

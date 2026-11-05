@@ -6,7 +6,7 @@
 Python/launch overhead or repeated compilation. **Exit when:** one intervention
 improves the real path under unchanged input/output semantics. First use
 [attribution](02-attribution-and-experiments.md) if the symptom is only low GPU
-utilization. Sources: [data and compilation](sources.md#data-memory-and-compilation).
+utilization. Sources: [data and compilation](../sources/README.md#data-memory-and-compilation).
 
 ## In this chapter
 

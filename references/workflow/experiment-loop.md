@@ -1,6 +1,6 @@
 # Fast experiment loop
 
-[Home](../README.md) / [Library](README.md) / Workflow
+[Home](../../README.md) / [Library](../README.md) / [Workflow](README.md)
 
 Use for iterative performance work. Reuse existing lab files and tools rather than
 introducing a second experiment framework. These are decision aids, not a mandatory

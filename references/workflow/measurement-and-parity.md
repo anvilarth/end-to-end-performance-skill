@@ -1,6 +1,6 @@
 # Measurement and parity
 
-[Home](../README.md) / [Library](README.md) / Workflow
+[Home](../../README.md) / [Library](../README.md) / [Workflow](README.md)
 
 Use this reference when defining a baseline, benchmark protocol, or correctness
 gate. Adapt the metrics to the workload, but do not weaken the separation between

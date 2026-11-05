@@ -1,20 +1,20 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/readme/cover-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="assets/readme/cover-light.svg">
-  <img alt="End-to-End Performance — measure the full path, prove the gain." src="assets/readme/cover-light.svg" width="1200">
+  <img alt="End-to-End Performance — a practical library for making the whole workload faster." src="assets/readme/cover-light.svg" width="1200">
 </picture>
 
-<p align="center">
+<p>
   <strong>A field guide and agent skill for optimizing complete PyTorch and CUDA workloads.</strong><br>
   Training · inference · serving · distributed systems · GPU kernels
 </p>
 
-<p align="center">
+<p>
   <a href="#start-here">Start here</a> ·
   <a href="#the-handbook">Handbook</a> ·
   <a href="references/README.md">Library</a> ·
   <a href="#use-the-skill">Use the skill</a> ·
-  <a href="references/handbook/sources.md">Sources</a>
+  <a href="references/sources/README.md">Sources</a>
 </p>
 
 ---
@@ -24,32 +24,41 @@
 Find the next useful experiment, estimate what it can save, and validate the
 complete delivered workload. Start with the question you need to answer.
 
-<table>
-<tr>
-<td width="50%" valign="top">
-<h3>01 / Choose the next move</h3>
-<p>A decision tree from the real workload to a measured bottleneck, a bounded experiment and a verdict.</p>
-<a href="references/decision-map.md"><strong>Open the decision map →</strong></a>
-</td>
-<td width="50%" valign="top">
-<h3>02 / Work through the details</h3>
-<p>Seven practical chapters: what to check, which tool to use, how to interpret the result and when to stop.</p>
-<a href="references/handbook/README.md"><strong>Read the handbook →</strong></a>
-</td>
-</tr>
-<tr>
-<td width="50%" valign="top">
-<h3>03 / Match your workload</h3>
-<p>Focused recipes for LLM/VLM serving, small model workers and request servers, with activation and parity checks.</p>
-<a href="references/playbooks/README.md"><strong>Pick a playbook →</strong></a>
-</td>
-<td width="50%" valign="top">
-<h3>04 / Find the evidence</h3>
-<p>59 annotated sources, a reviewed GPU MODE map and implementation references matched to the current question.</p>
-<a href="references/handbook/sources.md"><strong>Browse the sources →</strong></a>
-</td>
-</tr>
-</table>
+`WORKFLOW · START HERE`
+
+### [Choose the next experiment ↗](references/workflow/decision-map.md)
+
+A decision tree from the real workload to a measured bottleneck, a bounded
+experiment and a verdict.
+
+---
+
+`HANDBOOK · SEVEN CHAPTERS`
+
+### [Work through the procedure ↗](references/handbook/README.md)
+
+What to check, which tool to use, how to interpret the result and when to stop.
+Read the relevant chapter when a step needs more detail.
+
+---
+
+`PLAYBOOKS · WORKLOAD CONTEXT`
+
+### [Find the levers for your workload ↗](references/playbooks/README.md)
+
+Focused guidance for LLM/VLM serving, small model workers and request servers,
+with activation checks and parity traps.
+
+---
+
+`SOURCES · 59 ANNOTATED REFERENCES`
+
+### [Read the explanation behind the idea ↗](references/sources/README.md)
+
+Documentation, research and implementations, with a reviewed GPU MODE map and
+explicit limits on what transfers to a new workload.
+
+---
 
 ## The handbook
 
@@ -92,21 +101,21 @@ The skill recovers actual usage from code and existing artifacts, loads only the
 relevant references, and reuses the workload's experiment log. New sessions can
 resume from prior baselines, decisions and rejected hypotheses.
 
-[Read the agent instructions](SKILL.md) · [Experiment record](references/experiment-log.md)
+[Read the agent instructions](SKILL.md) · [Experiment record](references/workflow/experiment-log.md)
 
 ## Explore the library
 
-| Collection | What you will find |
+| Collection | Its role |
 | :--- | :--- |
-| [Workflow & measurement](references/README.md#workflow--measurement) | Decision map, measurement rules, experiment budgets, logs and worked cases |
-| [Handbook](references/handbook/README.md) | The full sequence, with tools, commands, calculations and failure routes |
-| [Workload playbooks](references/playbooks/README.md) | Serving engines, small models, request servers and shared techniques |
-| [Optimization recipes](references/README.md#optimization-recipes) | 8 common bottleneck recipes, 12 advanced paths and a kernel/DSL guide |
-| [Research & implementations](references/README.md#research--implementations) | Annotated sources, GPU MODE repositories, lectures and transfer limits |
+| [Workflow](references/workflow/README.md) | The decision protocol: measurement, evidence, experiment budgets and records |
+| [Handbook](references/handbook/README.md) | Detailed procedures, tools, commands and failure routes |
+| [Recipes](references/recipes/README.md) | Candidate changes for a measured bottleneck |
+| [Playbooks](references/playbooks/README.md) | Workload-specific levers and their practical limits |
+| [Sources](references/sources/README.md) | Underlying explanations, implementations and provenance |
 
-**The complete catalog is in [references/README.md](references/README.md).**
-Existing document paths remain stable, so bookmarks and installed skill links
-continue to work.
+[The library map](references/README.md) explains where each kind of material
+belongs, how the collections connect, and how to add new evidence without
+creating competing copies of the same rule.
 
 ## What counts as a win
 
@@ -126,4 +135,4 @@ Thanks to [GPU MODE](https://github.com/gpu-mode),
 [ncu-report-skill](https://github.com/mit-han-lab/ncu-report-skill) for the teaching,
 implementation and profiling resources that inform this library.
 
-[MIT License](LICENSE)
+[Andrei Filatov](https://anvilarth.github.io/blog.html) · [MIT License](LICENSE)

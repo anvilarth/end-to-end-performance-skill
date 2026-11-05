@@ -6,7 +6,7 @@
 using an inference server. **Exit when:** the chosen configuration improves the
 declared useful-work metric at representative load while meeting quality,
 latency, memory and completion constraints. Sources:
-[serving and attention](sources.md#serving-and-attention).
+[serving and attention](../sources/README.md#serving-and-attention).
 
 ## In this chapter
 

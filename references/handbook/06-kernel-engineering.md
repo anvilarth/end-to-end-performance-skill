@@ -5,8 +5,8 @@
 **Open when:** a measured operator family has material recoverable end-to-end
 cost and cheaper changes do not address it. **Exit when:** a contract-compatible
 implementation improves the complete path, or its best affordable improvement
-is below the threshold. Sources: [kernel implementation](sources.md#kernel-implementation)
-and [GPU MODE discovery](sources.md#gpu-mode-and-implementation-discovery).
+is below the threshold. Sources: [kernel implementation](../sources/README.md#kernel-implementation)
+and [GPU MODE discovery](../sources/README.md#gpu-mode-and-implementation-discovery).
 
 ## In this chapter
 
@@ -40,11 +40,11 @@ A faster GEMM with a new per-call transpose can lose at the operator boundary.
 ## 2. Search for an equivalent implementation first
 
 Inspect the current framework/engine backend and available vendor/library
-implementation. Then search [triton-index](sources.md#gpu-mode-and-implementation-discovery),
+implementation. Then search [triton-index](../sources/README.md#gpu-mode-and-implementation-discovery),
 FlashAttention/FlashInfer or the appropriate upstream library for the specific
 operator. Read its contract, tests, limitations and license before adopting code.
 
-Use [the DSL decision guide](../kernel-dsls.md) to choose implementation effort:
+Use [the DSL decision guide](../recipes/kernel-backends.md) to choose implementation effort:
 
 | Need shown by evidence | Likely starting point | Escalate when |
 | --- | --- | --- |

@@ -3,7 +3,7 @@
 [Home](../../README.md) / [Library](../README.md) / Handbook
 
 Use this library while making a specific optimization decision. Start with the
-[decision map](../decision-map.md), identify the missing evidence, and open one
+[decision map](../workflow/decision-map.md), identify the missing evidence, and open one
 chapter below. Reading every chapter before measuring is unnecessary. The
 chapters expand the skill's loop; they do not create a second workflow or log.
 
@@ -18,14 +18,15 @@ chapters expand the skill's loop; they do not create a second workflow or log.
 | Is the training step limited by compute, optimizer, memory or communication? | [5. Training and distributed execution](05-training-and-distributed.md) | A validated complete update and scaling decision |
 | Which kernel technique fits the measured bound? | [6. Kernel engineering](06-kernel-engineering.md) | A contract-compatible implementation whose integration saves time |
 | Is this enough evidence to promote, compose and ship? | [7. Validation and delivery](07-validation-and-delivery.md) | An explicit verdict, reproducible delivery and a resumable record |
-| Where is the primary explanation, API or implementation? | [Source library](sources.md) | A source matched to the question, with its transfer limits |
+| Where is the primary explanation, API or implementation? | [Source library](../sources/README.md) | A source matched to the question, with its transfer limits |
 
 For a familiar workload, the existing [class playbooks](../playbooks/README.md)
-provide concrete levers. [Bottleneck recipes](../bottleneck-recipes.md) and
-[advanced recipes](../advanced-recipes.md) are compact experiment menus. The
-[GPU MODE map](../gpu-mode-map.md) locates reviewed repositories and lectures;
-the source library adds upstream documentation and research. Avoid loading all
-three menus when one answers the question.
+provide concrete levers. [Bottleneck recipes](../recipes/common-bottlenecks.md) and
+[advanced recipes](../recipes/specialized-bottlenecks.md) are compact experiment menus. The
+[GPU MODE map](../sources/gpu-mode-map.md) locates reviewed repositories and lectures;
+the source library adds upstream documentation and research.
+[The collection map](../README.md) explains their distinct roles. Avoid loading
+all the menus when one answers the question.
 
 ## The working sequence
 
@@ -68,7 +69,7 @@ is already valid.
 
 Every chapter identifies entry evidence, actions, interpretation, failure paths
 and an exit condition. For each candidate keep one compact record in the
-[existing experiment log](../experiment-log.md):
+[existing experiment log](../workflow/experiment-log.md):
 
 1. **Observation:** artifact, workload scope, absolute time and variability.
 2. **Hypothesis:** mechanism and the one change expected to affect it.
@@ -100,7 +101,7 @@ to the installed versions before borrowing APIs or profiler options.
 
 Add a new recipe when an observed failure or reusable decision is missing, not
 merely because another link exists. Put the procedure in the relevant chapter,
-link its primary source in [sources.md](sources.md), and state applicability,
+link its primary source in the [source library](../sources/README.md), and state applicability,
 failure modes and acceptance evidence. Pin source revisions when importing code
 or relying on a specific benchmark implementation. Keep private manifests,
 traces, credentials and session transcripts in the workload's own workspace.

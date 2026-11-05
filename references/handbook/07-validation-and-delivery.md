@@ -5,8 +5,8 @@
 **Open when:** a candidate has passed its cheap screen or a session needs an
 explicit verdict. **Exit when:** evidence supports promote/reject/inconclusive,
 and the delivered entrypoint plus journal let another session reproduce it.
-This chapter expands [measurement and parity](../measurement-and-parity.md)
-and the [experiment loop](../experiment-loop.md).
+This chapter expands [measurement and parity](../workflow/measurement-and-parity.md)
+and the [experiment loop](../workflow/experiment-loop.md).
 
 ## In this chapter
 
@@ -182,4 +182,4 @@ affordable headroom is exhausted; further research needs a concrete open questio
 
 ---
 
-[← Kernel engineering](06-kernel-engineering.md) · [Handbook](README.md) · [Sources →](sources.md)
+[← Kernel engineering](06-kernel-engineering.md) · [Handbook](README.md) · [Sources →](../sources/README.md)

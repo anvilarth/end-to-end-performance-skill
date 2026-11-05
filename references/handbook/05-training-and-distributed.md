@@ -5,7 +5,7 @@
 **Open when:** optimizing complete training updates, fitting a larger useful
 batch, or scaling across authorized GPUs/nodes. **Exit when:** the real training
 step improves under the agreed numerical and learning-quality contract. Sources:
-[training and communication](sources.md#training-and-communication).
+[training and communication](../sources/README.md#training-and-communication).
 
 ## In this chapter
 

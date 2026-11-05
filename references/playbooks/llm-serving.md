@@ -108,7 +108,7 @@ at once hung on some nodes. Keep a fallback that disables symmetric-memory
 collectives per host. Spread weight reads from a shared file system by
 starting hosts in waves. Disaggregated prefill and decode failed with one
 KV-transfer backend and worked with another in the same engine version. It
-gained only at high load (see [../abstract-cases.md](../abstract-cases.md)).
+gained only at high load (see the [decision cases](../workflow/decision-cases.md)).
 
 ## 4. Keep the memory fraction below the preprocessing overhead
 

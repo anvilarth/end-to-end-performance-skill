@@ -177,7 +177,7 @@ If outputs are incomplete, fix the harness before timing candidates. If only the
 quality reference is missing, label subsequent timing as diagnostic. If the
 baseline is reproducible and a dominant cost is already obvious, proceed directly
 to its cheapest causal experiment. Otherwise use the next chapter's attribution
-ladder. Sources: [measurement and numerics](sources.md#measurement-and-numerics).
+ladder. Sources: [measurement and numerics](../sources/README.md#measurement-and-numerics).
 
 ---
 

@@ -171,7 +171,7 @@ the reference is missing or measurement is too noisy, say inconclusive.
 After promotion, refresh cheap timings. Escalate profiling again only when the
 remaining bottleneck is unknown or the previous model no longer fits. Stop when
 the target is reached, the best affordable bound is immaterial, or the agreed
-budget is exhausted. Sources: [profiling tools](sources.md#profiling-and-hardware)
+budget is exhausted. Sources: [profiling tools](../sources/README.md#profiling-and-hardware)
 and [experiment evidence](07-validation-and-delivery.md).
 
 ---

@@ -1,11 +1,11 @@
 # GPU MODE: use resources at the point of need
 
-[Home](../README.md) / [Library](README.md) / Research
+[Home](../../README.md) / [Library](../README.md) / [Sources](README.md)
 
 Reviewed 2026-11-04. GPU MODE is an organization, not one repository. Follow current
 primary documentation for APIs; these resources are optional, not dependencies.
 The [organization map](gpu-mode-map.md) covers all public repositories in the reviewed
-snapshot. [Advanced recipes](advanced-recipes.md) turn the deeper material into
+snapshot. [Advanced recipes](../recipes/specialized-bottlenecks.md) turn the deeper material into
 conditional experiments; reading every resource is not a prerequisite for optimization.
 
 | Need | Source | Useful transfer into this workflow |
@@ -43,7 +43,7 @@ and label it accurately. Source revision is recorded in the organization map.
 ## Additional candidates after kernel attribution
 
 For general model/pipeline symptoms first use
-[bottleneck recipes](bottleneck-recipes.md). The following candidates require a
+[bottleneck recipes](../recipes/common-bottlenecks.md). The following candidates require a
 material kernel budget. Try an available backend implementation before custom code.
 
 | Measured bottleneck | Candidate and source | Decisive check / limit |
