@@ -101,6 +101,11 @@ selected operating point with tails and full drain included.
 
 ## Closure
 
+Before handoff, perform a bounded [memory review](experiment-log.md#memory-review-at-stage-boundaries)
+of conclusions useful to the next decision. Update the existing summary with links
+to source events, scope conditions, and unresolved evidence. Keep the flat event log
+authoritative; a derived index must not prescribe the next lever or hide rejected arms.
+
 Stop when the requested target is validated. For open-ended "maximum" work, record
 the searched arms, binding constraint, remaining candidate headroom and untested
 boundaries. Continue only while there is a plausible budgeted material improvement.
