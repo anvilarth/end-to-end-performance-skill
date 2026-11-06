@@ -133,6 +133,12 @@ list candidate levers, ordered by the least behavior-changing rung first:
 6. reduced precision;
 7. algorithm change or approximation.
 
+For comparable prior decisions, consult the [2026 decision library](references/decisions/README.md).
+Search the observed symptom, inspect successful and unsuccessful cases, and verify
+the source conditions. External examples propose tests; they do not establish local gains.
+When asked to collect more experience, follow the [documentation workflow](references/decisions/WORKFLOW.md):
+source discovery, attributable decisions, negative cases, coverage checks and reuse.
+
 Rank by expected end-to-end seconds saved times confidence divided by setup,
 implementation and validation cost. Record low/central/high savings, assumptions,
 the cheapest falsifier and a stop rule. Drop levers whose best case is below noise

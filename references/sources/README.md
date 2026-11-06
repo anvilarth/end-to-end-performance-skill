@@ -15,6 +15,12 @@ For copied implementations, record commit, license, supported shapes/dtypes and
 local adaptations. The [GPU MODE map](gpu-mode-map.md) separately preserves
 the reviewed organization snapshot and exact source revisions.
 
+## Attributed engineering decisions
+
+The [2026 decision corpus](../decisions/README.md) records observations, actions,
+reported outcomes, scope and proposed transfer tests. Its [catalog](../decisions/CATALOG.md)
+distinguishes reviewed passages from pending extraction and inaccessible bodies.
+
 ## Measurement and numerics
 
 Use with [contract and baseline](../handbook/01-contract-and-baseline.md) and
