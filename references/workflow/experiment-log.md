@@ -100,8 +100,8 @@ output under `artifacts/<event-id>/` and reference it by relative path.
 
 - **Append only.** Never edit or delete earlier lines. To correct an event,
   append a new one with `"supersedes": "<old id>"` and the reason.
-- **Read before proposing.** At the start of a session, read the existing log and
-  summarize: the active contract, latest baseline, promoted changes, rejected
+- **Read before proposing.** Start with the current summary or index, then retrieve
+  relevant events and artifacts. Search the original log when needed. Summarize: the active contract, latest baseline, promoted changes, rejected
   and inconclusive hypotheses, and open next actions. Do not re-propose a
   rejected hypothesis unless the setup, contract, or bottleneck has changed;
   when you do, cite the earlier id and what changed.
@@ -121,3 +121,59 @@ A quick human view:
 jq -r '[.ts, .id, .type, .summary] | @tsv' .perf-log/log.jsonl
 jq -c 'select(.type == "verdict")' .perf-log/log.jsonl
 ```
+
+
+## Memory review at stage boundaries
+
+The event log and original artifacts remain authoritative. Memory review, sometimes
+called dreaming, checks what future sessions should reuse. It does not rerun every
+gate, prove a speedup, or create another journal.
+
+During work, capture useful observations with the existing `note` event and writer.
+Record the evidence ids and the setup where a conclusion applies. Separate tested
+conclusions from guesses in the note text. Keep successes, failures, strategies,
+and plans when useful; do not prescribe a quota or record only rejected levers.
+Read current GPU occupancy, process state, and other cheap live facts from tools.
+Do not preserve them as timeless rules.
+
+At a completed stage, a handoff, or a contradiction that affects the next decision:
+
+1. Retrieve relevant notes, verdicts, and their original artifacts. Check the measured
+   boundary, revision, shapes, dtype, backend, hardware, and applicable gates.
+2. Separate what the output proves from the agent's explanation. A transcript records
+   a claim; parity reports and paired measurements determine its support.
+3. Correct an unsupported conclusion with an appended `note` that cites and supersedes
+   it. Preserve original events. Missing or changed evidence makes reuse uncertain;
+   it does not turn a hypothesis into a verified rule.
+4. Combine duplicate conclusions in the existing current summary. Keep a short index
+   of useful findings, scope conditions, and event/artifact links. Put detail below
+   the index or in linked evidence. Repair broken links before relying on them.
+5. Check whether the next workload falls inside each conclusion's transfer boundary.
+   Retrieve fresh evidence for changed dependencies. Do not widen a tolerance or
+   inherit another task's permissions through a memory note.
+
+Use the existing summary or state document. If repeated retrieval is expensive and
+no summary exists, an optional `.perf-log/index.md` can serve as a derived index.
+It is a navigation aid, not an additional source of truth or required artifact.
+Keep only decision-relevant material in the startup context; move detail to links.
+Omit stale entries from the index while retaining their historical evidence.
+An empty index is valid. Search the original log when it cannot answer the question.
+
+For an already authorized team, each worker writes through its assigned journal
+writer or to its own evidence file. One owner reviews and updates the shared index.
+Do not let concurrent workers overwrite one summary, and do not start a team merely
+for memory maintenance. No new schema, daemon, or provider call is required.
+
+Budget the review within the task. Focus on conclusions used by the next decision
+and facts likely to drift. Stop when the handoff is sufficient; do not scan all
+history or build a wiki larger than the evidence it summarizes. Public skill edits
+receive only abstract, attributable lessons under the existing documentation workflow.
+Private logs and environment details stay with their owning workload.
+
+To claim that this process improves performance work, compare equivalent tasks and
+budgets: time to a valid decision, repeated failed ideas, context/tool cost, and final
+accepted results. A cleaner index alone does not establish an improvement.
+
+Design source: [Anthropic, The components of agent memory](https://www.anthropic.com/research/components-of-agent-memory),
+reviewed 2026-11-06. Its memory results motivate this procedure; they do not measure
+local optimization quality or time savings.

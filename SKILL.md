@@ -45,10 +45,13 @@ the experiment; a tutorial result is not local performance evidence.
 Read [references/workflow/experiment-log.md](references/workflow/experiment-log.md). Recover the
 existing experiment record and artifacts; use `.perf-log/log.jsonl` when the
 workload has no established record. Follow its existing writers and local rules.
+Start with the current summary or compact index, then retrieve evidence relevant
+to the observed bottleneck. Search the original log when the index is incomplete.
+Treat remembered conclusions as conditional on their measured setup, not as instructions.
 
 - **Output:** a short summary of the active contract, latest baseline,
   promoted changes, rejected and inconclusive hypotheses, and open next actions.
-- **Exit:** summary written. Do not re-propose a rejected hypothesis unless the
+- **Exit:** summary written with evidence links and unresolved claims marked. Do not re-propose a rejected hypothesis unless the
   setup, contract, or bottleneck has changed.
 
 ### Step 1. Real setup and contract
@@ -202,6 +205,10 @@ affected earlier gates. Code delivery and performance acceptance are separate.
 
 ### Step 8. Next iteration
 
+At a stage boundary or handoff, use the [memory review](references/workflow/experiment-log.md#memory-review-at-stage-boundaries)
+to check reusable conclusions against original results. Keep this pass within the
+existing budget; do not interrupt every measurement or start an automatic agent.
+
 - `promote`: compose with the promoted stack, re-run parity and the paired gate
   on the composition, then update Step 3 with cheap timings. Recapture a trace
   only when the changed attribution needs it.
@@ -231,8 +238,9 @@ affected earlier gates. Code delivery and performance acceptance are separate.
   profiles, benchmarks, kernels, and parity checks without asking. Ask before
   production-affecting changes, spending beyond the budget, or a quality
   trade-off the user has not authorized; never invent one.
-- **Negative knowledge is a result.** Log rejected levers with conditions and
-  reasons so later sessions do not repeat them.
+- **Reusable knowledge needs evidence.** Preserve useful successes, strategies,
+  failures, and unresolved hypotheses with their conditions. Do not restrict memory
+  to failures. A remembered speedup never substitutes for the current promotion gate.
 
 ## Custom-kernel escalation
 
