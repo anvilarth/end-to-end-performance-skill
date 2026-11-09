@@ -54,6 +54,8 @@ Read only the matching pages, keeping discovery distinct from reviewed evidence.
   Preserve negative results; a new instruction, lower precision, or faster
   microbenchmark does not by itself satisfy the workload contract.
 
+For operand-delivery/layout/scheduler probes use [kernel diagnostics](references/recipes/intra-kernel-and-cute.md#operand-delivery-layout-and-scheduler-experiments); for sampling, attention-state merging and FFT use [algorithm gates](references/recipes/specialized-bottlenecks.md#attention-states-sampling-and-alternative-algorithms); for eager/graph tactic selection use [execution-aware tuning](references/recipes/compilation-and-diffusion.md#execution-aware-tuning-and-compiler-changes). The [integration map](references/sources/integration-map.md) records where each collected source family is used and what remains only a lead.
+
 ## The loop
 
 ### Step 0. Load the log

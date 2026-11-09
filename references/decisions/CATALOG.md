@@ -52,3 +52,9 @@
 | [vLLM: Python bytecode startup](https://vllm.ai/blog/2026-09-22-python-bytecode-startup) | 2026-09-22 (publication) | passages_reviewed | 1 |
 | [TensorRT-LLM: Overlap Scheduler](https://nvidia.github.io/TensorRT-LLM/1.3.0rc20/torch/features/overlap_scheduler.html) | 2026-06-27 (update) | passages_reviewed | 1 |
 | [Dynamo: Full-stack agentic inference](https://developer.nvidia.com/blog/full-stack-optimizations-for-agentic-inference-with-nvidia-dynamo/) | 2026-04-17 (publication) | passages_reviewed | 2 |
+| [Pranjal: Outperforming cuBLAS on NVFP4](https://cudaforfun.substack.com/p/outperforming-cublas-on-nvfp4) | 2026-08-15 (publication) | passages_reviewed | 2 |
+| [Daniel Vegamyhre: MXFP8 GEMM](https://danielvegamyhre.github.io/2026/03/29/mxfp8-gemm.html) | 2026-03-29 (publication) | passages_reviewed | 1 |
+| [FlashInfer: Autotuner v2](https://flashinfer.ai/2026/09/22/autotuner-v2.html) | 2026-09-22 (publication) | passages_reviewed | 2 |
+| [ROCm: Four-wave interleave FP8 GEMM](https://rocm.blogs.amd.com/software-tools-optimization/4wave-fp8gemm/README.html) | 2026-05-27 (publication) | passages_reviewed | 1 |
+| [Pavel Belevich: My Triton Part 5 Verification](https://pbelevich.github.io/2026/06/26/My_Triton_From_Scratch_Part_5_Verification.html) | 2026-06-26 (publication) | passages_reviewed | 1 |
+| [Lei Zhang: Gluon Explicit Performance](https://www.lei.chat/posts/gluon-explicit-performance/) | 2026-02-28 (publication) | passages_reviewed | 1 |

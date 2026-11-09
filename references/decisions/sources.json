@@ -642,5 +642,77 @@
     "extraction_complete": false,
     "revision_status": "Selected live blog passages reviewed; upstream revision not pinned.",
     "review_note": "Linked implementation PRs not independently audited; reported outcomes are external evidence."
+  },
+  {
+    "id": "pranjal-nvfp4",
+    "title": "Pranjal: Outperforming cuBLAS on NVFP4",
+    "date": "2026-08-15",
+    "date_kind": "publication",
+    "url": "https://cudaforfun.substack.com/p/outperforming-cublas-on-nvfp4",
+    "kind": "blog",
+    "status": "passages_reviewed",
+    "reviewed_at": "2026-11-09",
+    "extraction_complete": false,
+    "revision_status": "Selected live passages reviewed; immutable code revision not pinned; no local kernel validation."
+  },
+  {
+    "id": "daniel-mxfp8",
+    "title": "Daniel Vegamyhre: MXFP8 GEMM",
+    "date": "2026-03-29",
+    "date_kind": "publication",
+    "url": "https://danielvegamyhre.github.io/2026/03/29/mxfp8-gemm.html",
+    "kind": "blog",
+    "status": "passages_reviewed",
+    "reviewed_at": "2026-11-09",
+    "extraction_complete": false,
+    "revision_status": "Selected live passages reviewed; immutable code revision not pinned; no local kernel validation."
+  },
+  {
+    "id": "fi-autotune",
+    "title": "FlashInfer: Autotuner v2",
+    "date": "2026-09-22",
+    "date_kind": "publication",
+    "url": "https://flashinfer.ai/2026/09/22/autotuner-v2.html",
+    "kind": "blog",
+    "status": "passages_reviewed",
+    "reviewed_at": "2026-11-09",
+    "extraction_complete": false,
+    "revision_status": "Selected live passages reviewed; immutable code revision not pinned; no local kernel validation."
+  },
+  {
+    "id": "amd-fourwave",
+    "title": "ROCm: Four-wave interleave FP8 GEMM",
+    "date": "2026-05-27",
+    "date_kind": "publication",
+    "url": "https://rocm.blogs.amd.com/software-tools-optimization/4wave-fp8gemm/README.html",
+    "kind": "blog",
+    "status": "passages_reviewed",
+    "reviewed_at": "2026-11-09",
+    "extraction_complete": false,
+    "revision_status": "Selected live passages reviewed; immutable code revision not pinned; no local kernel validation."
+  },
+  {
+    "id": "pavel-verifier",
+    "title": "Pavel Belevich: My Triton Part 5 Verification",
+    "date": "2026-06-26",
+    "date_kind": "publication",
+    "url": "https://pbelevich.github.io/2026/06/26/My_Triton_From_Scratch_Part_5_Verification.html",
+    "kind": "blog",
+    "status": "passages_reviewed",
+    "reviewed_at": "2026-11-09",
+    "extraction_complete": false,
+    "revision_status": "Selected live passages reviewed; immutable code revision not pinned; no local kernel validation."
+  },
+  {
+    "id": "lei-gluon",
+    "title": "Lei Zhang: Gluon Explicit Performance",
+    "date": "2026-02-28",
+    "date_kind": "publication",
+    "url": "https://www.lei.chat/posts/gluon-explicit-performance/",
+    "kind": "blog",
+    "status": "passages_reviewed",
+    "reviewed_at": "2026-11-09",
+    "extraction_complete": false,
+    "revision_status": "Selected live passages reviewed; immutable code revision not pinned; no local kernel validation."
   }
 ]

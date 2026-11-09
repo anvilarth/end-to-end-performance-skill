@@ -179,3 +179,5 @@ improvement threshold is 5 ms, stop this route even though the kernel is 2x fast
 
 For source-derived probes and version/architecture boundaries, use the
 [extended recipe](../recipes/intra-kernel-and-cute.md).
+
+For concrete operand-delivery, layout-conversion, SASS and scheduler experiments, use [kernel diagnostics](../recipes/intra-kernel-and-cute.md#operand-delivery-layout-and-scheduler-experiments). For additional DSLs, use [backend routes](../recipes/kernel-backends.md#additional-implementation-routes-when-evidence-calls-for-them).

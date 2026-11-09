@@ -140,3 +140,24 @@ Highest cost; the same gates apply.
 - **Launch count, not code.** A pair of small TileLang kernels was launched
   hundreds of times per step and took several percent of the step. That is a
   fusion or graph-capture problem; a faster kernel body would recover little.
+
+## Additional implementation routes when evidence calls for them
+
+- **Gluon:** explicit layouts and asynchronous operations within the Triton
+  ecosystem when compiler layout decisions are the measured limit. Read Lei
+  Zhang's concept/examples/bespoke-layout sequence in the
+  [author routes](../sources/gpu-blog-deep-dive.md), then inspect emitted IR.
+- **ThunderKittens:** compare tiled CUDA primitives and pipeline templates when
+  their register/shared/tensor-memory abstractions fit the supported operation.
+  Hamza's walkthrough is a guide to ownership, not a universal template.
+- **AMD HIP / FlyDSL / CK:** start from a supported library, then explicit LDS,
+  MFMA and wave scheduling when justified. The AMD route in the same source file
+  separates CDNA generations; NVIDIA warp/barrier assumptions do not transfer.
+- **Mojo, Pallas, Warp, TVM/MLIR and other frameworks:** use the
+  [documentation atlas](../sources/gpu-docs-atlas.md) to check supported target,
+  operation, integration, compilation lifetime and maintenance cost. Inclusion
+  in the atlas is discovery coverage, not a recommendation to port a workload.
+
+Interactive tools such as Kevin Huai's Pass Explorer can teach recorded lowering
+patterns; reproduce compiler dumps from the actual installed revision before
+using those patterns to diagnose a regression.

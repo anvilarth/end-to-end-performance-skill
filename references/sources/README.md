@@ -167,3 +167,5 @@ videos, papers and every transitive link.
 ## Further blog research
 
 See [additional authors, AMD route and twelve transfer tests](gpu-blog-deep-dive.md).
+
+See the [integration map](integration-map.md) for operational owners and evidence limits of every collected source family.

@@ -210,3 +210,19 @@ Sources: [sparsity 11](https://github.com/gpu-mode/lectures/tree/main/lecture_01
 [StreamingLLM 72](https://github.com/gpu-mode/lectures/tree/main/lecture_072),
 [PaTH 74](https://github.com/gpu-mode/lectures/tree/main/lecture_074),
 [numerics 84](https://github.com/gpu-mode/lectures/tree/main/lecture_084).
+
+## Attention states, sampling and alternative algorithms
+
+| Symptom | Candidate / activation | Correctness trap and decisive test |
+| --- | --- | --- |
+| Shared-prefix decode repeatedly reads identical KV | [Cascade attention](https://flashinfer.ai/2024/02/02/cascade-inference.html): process shared/private subsets with suitable kernels and merge output plus normalization state. Trace actual KV traffic reduction. | Queries still differ across requests. Preserve stable log-sum-exp scaling, masks and positions; compare merged output within tolerance. Include merge/dispatch cost and short-prefix cases. |
+| Sampling spends time sorting discarded vocabulary entries | [Sorting-free sampling](https://flashinfer.ai/2025/03/10/sampling.html): compare rejection/inverse-transform paths under the exact filter order. Verify the selected backend executes. | Top-k-first differs from joint top-k/top-p. Test ties, degenerate probabilities, threshold rounding and invalid indices; distribution tests matter beyond one seed's token parity. Reject if semantics or tail latency fail. |
+| Attention softmax saturates SFUs | [FA4 code analysis](https://modal.com/blog/reverse-engineer-flash-attention-4): compare permitted polynomial/hardware exponential mixtures and correction scheduling. Inspect SASS and pipe pressure. | Approximation requires the workload's quality authorization. Check input range, extremes, masking and long reductions; bf16 behavior does not imply fp32 equivalence. |
+| FFT convolution seems faster in isolation | [Nabla worklog](https://graphics-programming.org/blog/fft-bloom-optimized-to-the-bone-in-nabla): sweep direct versus FFT across image/filter sizes including transforms and temporaries. | Preserve linear/circular convolution, padding, shifts and cropping. Reject when transforms/allocation erase the gain, especially small filters. |
+| Fused expert parallelism speeds prefill but hurts small decode | [MegaMoE](https://flashinfer.ai/2026/09/22/mega-moe.html): compare dispatch/compute/combine jointly at the actual token/rank distribution. | Preserve routing weights, quantization and multi-rank/graph correctness. Keep a shape-dependent fallback; a prefill win does not establish decode benefit. |
+
+For experimental attention implementations, inspect producer ownership, online
+max/sum state, rescaling, reusable-buffer signaling and final drain together.
+[Hamza's ThunderKittens implementation](https://hamzaelshafie.bearblog.dev/dissecting-thunderkittens-anatomy-of-a-compact-dsl-for-high-performance-ai-kernels/)
+provides a worked route; its non-causal H100 example does not cover causal,
+ragged, dropout or backward contracts automatically.

@@ -184,3 +184,5 @@ session a concrete decision instead of another blind concurrency sweep.
 ---
 
 [← Input & compilation](03-input-shapes-and-compilation.md) · [Handbook](README.md) · [Training →](05-training-and-distributed.md)
+
+For shared-prefix attention-state merging, distribution-preserving sampling and shape-dependent fused MoE dispatch, use [algorithm probes](../recipes/specialized-bottlenecks.md#attention-states-sampling-and-alternative-algorithms).

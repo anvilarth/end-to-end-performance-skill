@@ -187,3 +187,18 @@ affordable headroom is exhausted; further research needs a concrete open questio
 ---
 
 [← Kernel engineering](06-kernel-engineering.md) · [Handbook](README.md) · [Sources →](../sources/README.md)
+
+## Runtime errors during kernel validation
+
+Separate immediate launch/configuration status from asynchronous execution failure.
+For a triple-chevron CUDA launch, query the launch error appropriately, then use
+an explicit completion boundary during diagnosis to attribute execution failures.
+Keep extra diagnostic synchronizations out of timed production runs. Nicholas
+Wilt's [original discussion](https://www.cudahandbook.com/blog/asynchronous-error-handling-is-hard)
+and [qualification](https://www.cudahandbook.com/blog/cudagetlasterror-its-raison-detre)
+must be read together; do not turn the first article into a universal ban on
+`cudaGetLastError`.
+
+For stochastic sampling, approximation and composed attention states use the
+[specific algorithm gates](../recipes/specialized-bottlenecks.md#attention-states-sampling-and-alternative-algorithms)
+in addition to the workload contract.

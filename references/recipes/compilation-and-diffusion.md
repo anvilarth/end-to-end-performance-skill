@@ -76,3 +76,31 @@ proof of an equivalent tokenizer. Native SIMD changes are architecture-specific.
 
 For execution-aware autotuning, independent selection evaluation and persisted
 cache boundaries, see the [additional blog transfer tests](../sources/gpu-blog-deep-dive.md#additional-transfer-tests).
+
+## Execution-aware tuning and compiler changes
+
+Source: [FlashInfer Autotuner v2](https://flashinfer.ai/2026/09/22/autotuner-v2.html).
+When the selected tactic wins a kernel benchmark but loses the application:
+
+1. Measure eager calls including recurring host/backend work separately from CUDA
+   Graph replay. Keep setup/capture out only if the deployment amortizes them.
+2. Tune using the deployment boundary; record environment, shape, dtype, backend
+   revision and measurement policy with persisted choices. Test cache invalidation,
+   fresh-process loading and rank agreement where the operation requires it.
+3. Evaluate selection using independent samples. Report latency regret
+   `(selected_latency - best_latency) / best_latency`, alongside absolute time;
+   ties and tiny differences should not count like catastrophic misses.
+4. Reject the tuning change if its search/setup cost cannot be amortized or the
+   held-out end-to-end comparison fails. Kernel winner identity alone is not success.
+
+For a warm compilation cache that still starts slowly, separately time in-process
+reuse, fresh-process disk-cache reuse and cold compilation. Trace lookup, artifact
+loading and runtime initialization before attributing residual time to compilation
+([Zalt's code-reading lead](https://zalt.me/blog/cache-hit-not-free)). Pin the actual
+compiler revision; the article's main-branch links are not immutable evidence.
+
+When modifying compiler passes, validate typed SSA and use-def/type contracts after
+each transformation; locate the first invalid pass before debugging generated CUDA.
+[Pavel's educational verifier](https://pbelevich.github.io/2026/06/26/My_Triton_From_Scratch_Part_5_Verification.html)
+is a model for this diagnostic boundary, not a production compiler performance
+claim. IR verification still requires numerical execution tests of lowered code.

@@ -113,3 +113,25 @@ identity in real arithmetic is not bitwise equivalence in low precision.
 For hierarchical throughput budgets, persistent scheduler regressions, SASS diffs,
 layout conversion and AMD wave/register trade-offs, consult the
 [blog-derived transfer tests](../sources/gpu-blog-deep-dive.md#decisions-to-carry-into-an-optimization-experiment).
+
+## Operand delivery, layout and scheduler experiments
+
+Use [the reviewed blog routes](../sources/gpu-blog-deep-dive.md) for primary
+passages and transfer limits. These probes complement the CuTe checks above.
+
+| Measured symptom | One-variable probe and activation evidence | Correctness and stop gate |
+| --- | --- | --- |
+| Compute roofline is high but tensor/FMA issue is low | Following Yifan Yang, derive operand bytes and reuse at HBM, L2, shared memory and registers for the actual dataflow. Sweep one tile dimension; inspect achieved bandwidth, instructions and register use. | Stop increasing reuse when spills, occupancy loss, power or another stage dominates. An HBM-only roofline cannot diagnose on-chip starvation. |
+| Shared-memory stalls despite coalesced global access | Following Axel Feldmann, compare conflict-free, conflicting and broadcast probes with equal work; inspect emitted load width and bank-serviced transactions. | Preserve lane ownership and vector alignment. Fewer conflicts alone is not a promotion result. Do not transplant A100 transaction assumptions to AMD. |
+| Persistent scheduling regresses or has a long tail | Compare ordinary, static-persistent and grouped raster order; then CLC if supported. Inspect tile coverage and tail occupancy, including awkward rectangular shapes. | Preserve paired-CTA ownership and completion. Stop if scheduling overhead exceeds the recovered tail/locality cost. Pranjal's H100 regression is a negative control, not a ban on persistence. |
+| Cache-friendly order still thrashes | Separate ownership of reused operands from local traversal order, as in the NVFP4 worklog. Measure working-set and L2 traffic. | Treat SM-to-cache-side mappings as observed hardware behavior, not stable API guarantees; retain a portable fallback. |
+| Earlier buffer release looks promising | Compare lifetime reduction against extra instructions/unrolling, with phase/wraparound checks. | Prove completion before reuse; reject on unchanged or worse uninstrumented time. Pranjal reports a losing earlier-release variant. |
+| Compiler update changes speed | Save flags, TTGIR/PTX and cubin; diff SASS for fusion, spills, loop growth and scheduling, using Mattana's controlled-variation approach. | Equal inputs and numerical contracts; one source/toolchain change per arm. Assembly difference is evidence to investigate, not causality by itself. |
+| Layout conversions dominate | Trace tensor ownership and conversions in TTGIR, then compare an explicit Gluon layout with the existing Triton path (Lei Zhang). | Test masks, strides and ragged tails; count shuffle/shared-memory conversions and registers. Do not rewrite a fast kernel merely to expose layouts. |
+| AMD GEMM loses despite high occupancy | Compare four-wave interleave with eight-wave scheduling on the named CDNA target; track VGPR/LDS usage and MFMA overlap. | Keep MFMA format/scales and output tolerance fixed. Stop optimizing occupancy when elapsed time worsens. |
+
+For low-precision GEMM, measure scale loading/reordering and epilogues as well as
+MMA. Retain the complete shape table and unresolved cases: Daniel Vegamyhre's
+MXFP8 headline best point does not cover every size. Use the same precision,
+alpha/beta, layouts and cache policy for the comparator. Salykov's clock/cache
+controls motivate both controlled diagnostic runs and production-shaped timing.

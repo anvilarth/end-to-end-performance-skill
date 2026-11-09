@@ -191,3 +191,5 @@ or inter-rank coordination, use [serving](04-serving-and-concurrency.md) or
 
 For source-derived probes and version/architecture boundaries, use the
 [extended recipe](../recipes/compilation-and-diffusion.md).
+
+For tuning under eager versus graph replay, persistent tactic caches and compiler-pass validation, use [execution-aware tuning](../recipes/compilation-and-diffusion.md#execution-aware-tuning-and-compiler-changes).

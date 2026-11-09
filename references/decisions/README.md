@@ -33,14 +33,14 @@ coverage are different. `sources.json` includes discovered but unextracted items
 `decisions.jsonl` contains only decisions supported by inspected source passages.
 No article is marked exhaustively extracted. This avoids claiming to know omitted
 experiments or private reasoning. Publication dates are distinguished from updates.
-The search is bounded to 2026 through November 6, not a claim to cover the internet.
+The search is bounded to 2026 through November 9, not a claim to cover the internet.
 
 Check: `python3 scripts/decision_library.py check`.
 The check validates data and references, not factual truth or agent improvement.
 
 ## Snapshot coverage and next pass
 
-This edition contains 52 sources and 92 decision records from 50 sources.
+This edition contains 58 sources and 100 decision records from 56 sources.
 Two discovered sources (Uber and Baseten) could not be read through the web tool.
 The main gaps are distributed training case studies, CPU/decode pipelines, and
 complete extraction of all decisions within long articles. The current records
