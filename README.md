@@ -51,12 +51,15 @@ with activation checks and parity traps.
 
 ---
 
-`SOURCES · 59 ANNOTATED REFERENCES`
+`SOURCES · DOCUMENTATION, IMPLEMENTATIONS AND ENGINEERING WORKLOGS`
 
 ### [Read the explanation behind the idea ↗](references/sources/README.md)
 
 Documentation, research and implementations, with a reviewed GPU MODE map and
-explicit limits on what transfers to a new workload.
+explicit limits on what transfers to a new workload. The [GPU documentation atlas](references/sources/gpu-docs-atlas.md),
+[Compilation collection](references/sources/compilation-reading.md) and
+[deep author routes](references/sources/gpu-authors-and-depth.md) extend this library
+from compiler/export decisions through layouts, PTX/SASS and intra-kernel traces.
 
 ---
 

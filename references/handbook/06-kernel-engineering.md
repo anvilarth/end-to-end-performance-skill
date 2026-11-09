@@ -176,3 +176,6 @@ improvement threshold is 5 ms, stop this route even though the kernel is 2x fast
 ---
 
 [← Training](05-training-and-distributed.md) · [Handbook](README.md) · [Validation & delivery →](07-validation-and-delivery.md)
+
+For source-derived probes and version/architecture boundaries, use the
+[extended recipe](../recipes/intra-kernel-and-cute.md).

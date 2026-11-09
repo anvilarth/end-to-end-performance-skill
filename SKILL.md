@@ -38,6 +38,22 @@ question to upstream documentation, research or implementation evidence and stat
 its transfer limits. Read a source to resolve the current decision, then return to
 the experiment; a tutorial result is not local performance evidence.
 
+## Compilation and low-level source routes
+
+For compiler/export, diffusion, intra-kernel profiling, CuTe layout/pipeline or
+PTX questions, use the [GPU documentation atlas](references/sources/gpu-docs-atlas.md).
+The [Compilation audit](references/sources/compilation-reading.md) preserves the
+collected sources; the [author and study routes](references/sources/gpu-authors-and-depth.md)
+are for deeper research or explicit learning requests. Search the large link graph
+with `python3 scripts/source_links.py SYMBOL --limit 20` from this skill directory.
+Read only the matching pages, keeping discovery distinct from reviewed evidence.
+
+- Internal kernel stalls or CuTe correctness: [intra-kernel and CuTe probes](references/recipes/intra-kernel-and-cute.md).
+- Capture, engine boundaries, build lifetime or diffusion: [compilation and diffusion](references/recipes/compilation-and-diffusion.md).
+- Verify blog mechanisms against version-matched APIs and actual architecture.
+  Preserve negative results; a new instruction, lower precision, or faster
+  microbenchmark does not by itself satisfy the workload contract.
+
 ## The loop
 
 ### Step 0. Load the log

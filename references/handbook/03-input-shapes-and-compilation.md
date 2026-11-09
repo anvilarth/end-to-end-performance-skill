@@ -188,3 +188,6 @@ or inter-rank coordination, use [serving](04-serving-and-concurrency.md) or
 ---
 
 [← Attribution & experiments](02-attribution-and-experiments.md) · [Handbook](README.md) · [Serving →](04-serving-and-concurrency.md)
+
+For source-derived probes and version/architecture boundaries, use the
+[extended recipe](../recipes/compilation-and-diffusion.md).

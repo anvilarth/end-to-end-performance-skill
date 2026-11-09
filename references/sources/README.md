@@ -152,3 +152,14 @@ videos, papers and every transitive link.
 ---
 
 [← Validation & delivery](../handbook/07-validation-and-delivery.md) · [Handbook](../handbook/README.md) · [Library](../README.md)
+
+## Compilation, GPU documentation and author routes
+
+- [Compilation collection audit](compilation-reading.md): all original tabs,
+  source corrections, complete Veitner index and extracted mechanisms.
+- [Official GPU documentation atlas](gpu-docs-atlas.md): Triton/Gluon/Proton,
+  CuTe/CUTLASS/IKET, PTX, alternative DSLs, libraries and serving engines.
+- [Authors and deep study routes](gpu-authors-and-depth.md): specific primary
+  articles, prerequisites, architecture boundaries and concrete learning outputs.
+- [Link graph](gpu-doc-links.jsonl): retrieved pages and discovered outbound links;
+  search with `python3 scripts/source_links.py QUERY` from the skill root.

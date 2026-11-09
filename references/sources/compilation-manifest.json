@@ -1,0 +1,208 @@
+{
+  "review_date": "2026-11-09",
+  "scope": "All 21 Compilation tabs; blog indexes and linked posts; official framework documentation navigation. Fetched does not mean fully reviewed. No local GPU experiments.",
+  "tabs": [
+    {
+      "id": "C01",
+      "original_url": "https://github.com/mit-han-lab/kernelwiki/tree/master",
+      "verified_url": "https://github.com/mit-han-lab/kernelwiki/tree/master",
+      "status": 200,
+      "title": "GitHub - mit-han-lab/KernelWiki · GitHub",
+      "read_scope": "selected relevant passages; index pages used for discovery",
+      "local_performance_validation": "not_run"
+    },
+    {
+      "id": "C02",
+      "original_url": "https://x.com/maharshii/status/2082921705941651595",
+      "verified_url": "https://x.com/maharshii/status/2082921705941651595",
+      "status": 200,
+      "title": "maharshi on X: \"Beware of these CuTeDSL gotchas\" / X",
+      "read_scope": "selected relevant passages; index pages used for discovery",
+      "local_performance_validation": "not_run"
+    },
+    {
+      "id": "C03",
+      "original_url": "https://maharshi.bearblog.dev/blog/",
+      "verified_url": "https://maharshi.bearblog.dev/blog/",
+      "status": 200,
+      "title": "Blog – Maharshi's blog",
+      "read_scope": "selected relevant passages; index pages used for discovery",
+      "local_performance_validation": "not_run"
+    },
+    {
+      "id": "C04",
+      "original_url": "https://enbao.me/posts/tk",
+      "verified_url": "https://www.enbao.me/posts/tk",
+      "status": 200,
+      "title": "Inside ThunderKittens' Python Bindings",
+      "read_scope": "selected relevant passages; index pages used for discovery",
+      "local_performance_validation": "not_run"
+    },
+    {
+      "id": "C05",
+      "original_url": "https://blog.alpindale.net/posts/top_k_cuda",
+      "verified_url": "https://blog.alpindale.net/posts/top_k_cuda/",
+      "status": 200,
+      "title": "Understanding the CUDA Compiler & PTX with a Top-K Kernel | Alpin's Blog",
+      "read_scope": "selected relevant passages; index pages used for discovery",
+      "local_performance_validation": "not_run"
+    },
+    {
+      "id": "C06",
+      "original_url": "https://spatters.ca/mma-matmul",
+      "verified_url": "https://www.spatters.ca/mma-matmul",
+      "status": 200,
+      "title": "Implementing a fast Tensor Core matmul on the Ada Architecture | spatters.ca",
+      "read_scope": "selected relevant passages; index pages used for discovery",
+      "local_performance_validation": "not_run"
+    },
+    {
+      "id": "C07",
+      "original_url": "https://felixsanz.dev/articles/ultimate-guide-to-optimizing-stable-diffusion-xl#torchcompile",
+      "verified_url": "https://www.felixsanz.dev/articles/ultimate-guide-to-optimizing-stable-diffusion-xl",
+      "status": 200,
+      "title": "Ultimate guide to optimizing Stable Diffusion XL - Félix Sanz",
+      "read_scope": "selected relevant passages; index pages used for discovery",
+      "local_performance_validation": "not_run"
+    },
+    {
+      "id": "C08",
+      "original_url": "https://github.com/triton-inference-server/tutorials/tree/main/conceptual_guide/part_4-inference_acceleration",
+      "verified_url": "https://github.com/triton-inference-server/tutorials/blob/main/Conceptual_Guide/Part_4-inference_acceleration/README.md",
+      "status": 200,
+      "title": "tutorials/Conceptual_Guide/Part_4-inference_acceleration/README.md at main · triton-inference-server/tutorials · GitHub",
+      "read_scope": "selected relevant passages; index pages used for discovery",
+      "local_performance_validation": "not_run"
+    },
+    {
+      "id": "C09",
+      "original_url": "https://github.com/triton-inference-server",
+      "verified_url": "https://github.com/triton-inference-server",
+      "status": 200,
+      "title": "Triton Inference Server · GitHub",
+      "read_scope": "selected relevant passages; index pages used for discovery",
+      "local_performance_validation": "not_run"
+    },
+    {
+      "id": "C10",
+      "original_url": "https://pytorch.org/tensorrt/tutorials/_rendered_examples/dynamo/torch_export_flux_dev.html#sphx-glr-tutorials-rendered-examples-dynamo-torch-export-flux-dev-py",
+      "verified_url": "https://docs.pytorch.org/TensorRT/tutorials/_rendered_examples/dynamo/torch_export_flux_dev.html#sphx-glr-tutorials-rendered-examples-dynamo-torch-export-flux-dev-py",
+      "status": 200,
+      "title": "Compiling FLUX.1-dev model using the Torch-TensorRT dynamo backend — Torch-TensorRT",
+      "read_scope": "selected relevant passages; index pages used for discovery",
+      "local_performance_validation": "not_run"
+    },
+    {
+      "id": "C11",
+      "original_url": "https://pytorch.org/tensorrt/tutorials/_rendered_examples/dynamo/torch_compile_stable_diffusion.html",
+      "verified_url": "https://docs.pytorch.org/TensorRT/tutorials/_rendered_examples/dynamo/torch_compile_stable_diffusion.html",
+      "status": 200,
+      "title": "Compiling Stable Diffusion model using the torch.compile backend — Torch-TensorRT",
+      "read_scope": "selected relevant passages; index pages used for discovery",
+      "local_performance_validation": "not_run"
+    },
+    {
+      "id": "C12",
+      "original_url": "https://pytorch.org/tensorrt/tutorials/_rendered_examples/index.html",
+      "verified_url": "https://docs.pytorch.org/TensorRT/tutorials/_rendered_examples/index.html",
+      "status": 200,
+      "title": "Torch-TensorRT Tutorials — Torch-TensorRT v2.12.0.dev0+c0dfd5d documentation",
+      "read_scope": "selected relevant passages; index pages used for discovery",
+      "local_performance_validation": "not_run"
+    },
+    {
+      "id": "C13",
+      "original_url": "https://github.com/pytorch/tensorrt",
+      "verified_url": "https://github.com/pytorch/tensorrt",
+      "status": 200,
+      "title": "GitHub - pytorch/TensorRT: PyTorch/TorchScript/FX compiler for NVIDIA GPUs using TensorRT · GitHub",
+      "read_scope": "selected relevant passages; index pages used for discovery",
+      "local_performance_validation": "not_run"
+    },
+    {
+      "id": "C14",
+      "original_url": "https://github.com/triton-inference-server/model_navigator",
+      "verified_url": "https://github.com/triton-inference-server/model_navigator",
+      "status": 200,
+      "title": "GitHub - triton-inference-server/model_navigator: Triton Model Navigator is an inference toolkit designed for optimizing and deploying Deep Learning models with a focus on NVIDIA GPUs. · GitHub",
+      "read_scope": "selected relevant passages; index pages used for discovery",
+      "local_performance_validation": "not_run"
+    },
+    {
+      "id": "C15",
+      "original_url": "https://pytorch.org/tensorrt",
+      "verified_url": "https://docs.pytorch.org/TensorRT/",
+      "status": 200,
+      "title": "Torch-TensorRT — Torch-TensorRT",
+      "read_scope": "selected relevant passages; index pages used for discovery",
+      "local_performance_validation": "not_run"
+    },
+    {
+      "id": "C16",
+      "original_url": "https://blog.ezyang.com/2026/01/computing-sharding-with-einsum/",
+      "verified_url": "https://blog.ezyang.com/2026/01/computing-sharding-with-einsum/",
+      "status": 200,
+      "title": "Computing sharding with einsum : ezyang's blog",
+      "read_scope": "selected relevant passages; index pages used for discovery",
+      "local_performance_validation": "not_run"
+    },
+    {
+      "id": "C17",
+      "original_url": "https://a-r-r-o-w.github.io/blog/3_blossom/00005_looking_inside_your_kernels/index.html",
+      "verified_url": "https://a-r-r-o-w.github.io/blog/3_blossom/00005_looking_inside_your_kernels/index.html",
+      "status": 200,
+      "title": "Looking inside your kernels - Aryan V S",
+      "read_scope": "selected relevant passages; index pages used for discovery",
+      "local_performance_validation": "not_run"
+    },
+    {
+      "id": "C18",
+      "original_url": "https://triton-inference-server.github.io/model_navigator/0.13.1/quick_start/#optimize-model",
+      "verified_url": "https://triton-inference-server.github.io/model_navigator/0.13.1/quick_start/#optimize-model",
+      "status": 200,
+      "title": "Quick start - Triton Model Navigator",
+      "read_scope": "selected relevant passages; index pages used for discovery",
+      "local_performance_validation": "not_run"
+    },
+    {
+      "id": "C19",
+      "original_url": "https://pytorch.org/tensorrt/getting_started/installation.html",
+      "verified_url": "https://docs.pytorch.org/TensorRT/getting_started/installation.html",
+      "status": 200,
+      "title": "Installation — Torch-TensorRT",
+      "read_scope": "selected relevant passages; index pages used for discovery",
+      "local_performance_validation": "not_run"
+    },
+    {
+      "id": "C20",
+      "original_url": "https://a-r-r-o-w.github.io/blog/3_blossom/00004_productionizing_diffusion-4/index.html",
+      "verified_url": "https://a-r-r-o-w.github.io/blog/3_blossom/00004_productionizing_diffusion-4/index.html",
+      "status": 200,
+      "title": "Optimizing diffusion for production-ready speeds - IV - Aryan V S",
+      "read_scope": "selected relevant passages; index pages used for discovery",
+      "local_performance_validation": "not_run"
+    },
+    {
+      "id": "C21",
+      "original_url": "https://blog.ezyang.com/2025/08/state-of-torch-compile-august-2025",
+      "verified_url": "https://blog.ezyang.com/2025/08/state-of-torch-compile-august-2025/",
+      "status": 200,
+      "title": "State of torch.compile for training (August 2025) : ezyang's blog",
+      "read_scope": "selected relevant passages; index pages used for discovery",
+      "local_performance_validation": "not_run"
+    }
+  ],
+  "article_doc_and_implementation_links": [
+    "https://github.com/triton-lang/triton/blob/main/third_party/proton/Dialect/lib/Analysis/ScopeIdAllocation.cpp",
+    "https://github.com/triton-lang/triton/blob/main/third_party/proton/Dialect/lib/ProtonToProtonGPU/ProtonToProtonGPUPass.cpp",
+    "https://github.com/triton-lang/triton/blob/main/third_party/proton/Dialect/lib/ProtonGPUToLLVM/ProtonNvidiaGPUToLLVM/NvidiaPatternProtonGPUOpToLLVM.cpp",
+    "https://github.com/triton-lang/triton/blob/main/third_party/proton/docs/intra-kernel.md",
+    "https://github.com/triton-lang/triton/blob/main/third_party/proton/Dialect/include/Dialect/ProtonGPU/IR/ProtonGPUOps.td",
+    "https://github.com/triton-lang/triton/blob/main/third_party/proton/Dialect/lib/ProtonGPUToLLVM/Utility.cpp",
+    "https://github.com/triton-lang/triton/blob/main/third_party/proton/common/lib/TraceDataIO/CircularLayoutParser.cpp",
+    "https://github.com/triton-lang/triton/tree/main/third_party/proton/Dialect",
+    "https://docs.nvidia.com/cupti/index.html",
+    "https://docs.nvidia.com/nsight-compute/index.html",
+    "https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#special-registers"
+  ]
+}

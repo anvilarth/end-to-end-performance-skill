@@ -27,3 +27,6 @@ primary explanation or implementation through [sources](../sources/README.md).
 Distinguish a proposed candidate from a result validated on a named workload.
 Create a separate recipe file only when an existing collection no longer offers
 a clear, bounded lookup; update this index and the callers together.
+
+- [Intra-kernel profiling and CuTe correctness](intra-kernel-and-cute.md).
+- [Compilation, engine selection and diffusion delivery](compilation-and-diffusion.md).
