@@ -71,3 +71,7 @@ negative result or caveat, and a question the source can resolve. Search exact
 mechanisms (`mbarrier phase`, `tcgen05 TMEM`, `scale layout`, `SASS register moves`)
 with author domains. Prefer an original measurement over reposts of the same work.
 A title found in a list remains a lead until its body is opened.
+
+## Further blog research
+
+See [additional authors, AMD route and twelve transfer tests](gpu-blog-deep-dive.md).

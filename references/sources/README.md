@@ -163,3 +163,7 @@ videos, papers and every transitive link.
   articles, prerequisites, architecture boundaries and concrete learning outputs.
 - [Link graph](gpu-doc-links.jsonl): retrieved pages and discovered outbound links;
   search with `python3 scripts/source_links.py QUERY` from the skill root.
+
+## Further blog research
+
+See [additional authors, AMD route and twelve transfer tests](gpu-blog-deep-dive.md).

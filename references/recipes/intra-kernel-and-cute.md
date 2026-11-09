@@ -107,3 +107,9 @@ reuses an inverse through a diagonal similarity transform. Check nonzero scales,
 underflow/overflow, numerical conditioning and recurrent state over long sequences;
 prefer solving a system when appropriate to the implementation. An algebraic
 identity in real arithmetic is not bitwise equivalence in low precision.
+
+## Further experiment design
+
+For hierarchical throughput budgets, persistent scheduler regressions, SASS diffs,
+layout conversion and AMD wave/register trade-offs, consult the
+[blog-derived transfer tests](../sources/gpu-blog-deep-dive.md#decisions-to-carry-into-an-optimization-experiment).
