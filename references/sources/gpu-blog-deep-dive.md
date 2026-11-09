@@ -96,3 +96,93 @@ and source-code links are not counted as independent optimization experiments.
 - body retrieved: https://rocm.blogs.amd.com/software-tools-optimization/4wave-fp8gemm/README.html
 - body retrieved: https://rocm.blogs.amd.com/software-tools-optimization/cdna4-gemm-kernels/README.html
 - body retrieved: https://rocm.blogs.amd.com/software-tools-optimization/matrix-cores-cdna/README.html
+
+## Further expansion: attention, compiler inspection and runtime behavior
+
+Additional search on 2026-11-09: 24 of 25 attempted pages returned bodies.
+This includes indexes, project pages and a repository README. Selected technical
+passages were reviewed, not every line of every article. The following routes
+extend the previous collection; they are not all personal blogs.
+
+| Author / engineering collection | Read next | Distinct value and boundary |
+| --- | --- | --- |
+| Hamza Elshafie | [ThunderKittens dissection](https://hamzaelshafie.bearblog.dev/dissecting-thunderkittens-anatomy-of-a-compact-dsl-for-high-performance-ai-kernels/), [H100 worklog](https://hamzaelshafie.bearblog.dev/worklog-optimising-gemm-on-nvidia-h100-for-cublas-like-performance-wip/), [paged attention](https://hamzaelshafie.bearblog.dev/paged-attention-from-first-principles-a-view-inside-vllm/), [AWQ](https://hamzaelshafie.bearblog.dev/awq-activation-aware-weight-quantisation/) | Especially close to Veitner: register/shared/tensor tiles, producer-consumer ownership, TMA, WGMMA, tcgen05 and an attention implementation. H100 worklog explicitly remains WIP; FP32 and mixed-precision phases use different comparators. |
+| Paul Chan | [B200 GEMM worklog](https://www.chanpaul.com/articles/outperforming-cublas-b200) | 2-CTA MMA, double-buffered TMEM, epilogues, Hilbert ordering and Cluster Launch Control. Useful comparative scheduling experiment; do not copy its hardware-spec table without verification against the exact SKU. |
+| Charles Frye, Nathan Wang, Timothy Feng / Modal | [Reverse-engineering FA4](https://modal.com/blog/reverse-engineer-flash-attention-4) | Read actual code by warp role: MMA, softmax, correction, epilogue. Explains polynomial exponentiation and SFU pressure. A pinned historical implementation, with some explicitly speculative explanations; not a specification of every current FA4 kernel. |
+| FlashInfer authors | [Sorting-free sampling](https://flashinfer.ai/2025/03/10/sampling.html), [cascade attention](https://flashinfer.ai/2024/02/02/cascade-inference.html), [autotuner v2](https://flashinfer.ai/2026/09/22/autotuner-v2.html), [MegaMoE](https://flashinfer.ai/2026/09/22/mega-moe.html) | Original engineering articles on sampling semantics/numerics, mergeable attention states, execution-aware tuning and fused communication/computation. Preserve authors and benchmark configurations per article. |
+| Nicholas Wilt / CUDA Handbook | [Asynchronous errors](https://www.cudahandbook.com/blog/asynchronous-error-handling-is-hard), [follow-up on cudaGetLastError](https://www.cudahandbook.com/blog/cudagetlasterror-its-raison-detre) | Runtime API design and error attribution. Read both: the follow-up qualifies the earlier recommendation for triple-chevron launch error reporting. Never convert an author's preference into a universal ban. |
+| Graphics Programming / Nabla | [FFT bloom optimization](https://graphics-programming.org/blog/fft-bloom-optimized-to-the-bone-in-nabla) | A non-LLM route into FFT convolution, subgroup operations, memory footprint, padding and data movement. Small-filter crossover and image boundary semantics matter. |
+| Kevin Huai | [Triton Pass Explorer](https://test.kevinhuai.com/triton/) | Interactive compiler companion, not a benchmark article: recorded Triton/Gluon lowering examples on CUDA and AMD. Landing-page inventory retrieved; individual interactive traces were not inspected in this review. |
+| DefTruth | [LeetCUDA notes and article index](https://github.com/xlite-dev/LeetCUDA/blob/main/README.md) | CUDA/MMA/CuTe implementations and links to Chinese-language technical articles. README reviewed selectively; linked article bodies are discovery leads, not bulk-reviewed content. |
+| Nathan Nguyen | [Projects and measurements](https://nathan.ng/) | Consumer-GPU INT8 KV-cache alignment and attention integration, with links to patches. Project-page claims are leads; linked PRs and benchmark code have not been independently audited here. |
+| vLLM and SGLang contributors | [Kimi K3 decode path](https://vllm-project.github.io/2026/10/16/kimi-k3-megakernel.html), [DeepSeek-V4.1 optimization](https://www.sglang.io/blog/deepseek-v4.1-flash-kernel-optimization) | Connect specialized kernels to serving. Read hardware topology, decode batch range, fallback and accuracy boundaries before transferring a model-specific path. Introductory/scope passages reviewed; headline speedups not reproduced. |
+
+### Additional transfer tests
+
+- **Tune at the execution boundary actually deployed.** FlashInfer's autotuner
+  article separates eager calls from CUDA Graph replay. Measure both when both
+  are used; key persisted choices by compatible environment and timing policy.
+  Evaluate selection on independent samples and report latency regret, not just
+  whether the selected tactic matches the nominal winner.
+- **Sampling optimization must preserve the specified distribution.** From the
+  sorting-free sampling article: distinguish top-k-first and joint filtering;
+  test degenerate/tied distributions, rounding around thresholds and validity
+  of the sampled index. Matching one seed's token output is not a sufficient
+  statistical correctness test, and faster sorting alone may miss the algorithmic opportunity.
+- **Separate attention partitioning from approximation.** Cascade merges partial
+  output and normalization state; preserve stable log-sum-exp scaling and test
+  the merged result within floating-point tolerance. Reuse shared K/V reads,
+  but do not assume queries for different requests are identical.
+- **SFU bottlenecks invite a numerical experiment.** The FA4 code analysis
+  motivates mixing polynomial exponentials with hardware exponentials. Measure
+  the relevant input range, tails and error propagation before applying an
+  approximation; a bf16-specific observation does not establish fp32 parity.
+- **Choose scheduler against the tail, not only steady-state throughput.** Paul
+  Chan's static-persistent/CLC comparison motivates testing awkward tile counts,
+  load imbalance and work-acquisition overhead. Re-prove cluster synchronization
+  and paired-CTA ownership when changing schedules.
+- **Debug asynchronous execution without timing the debug synchronization.**
+  Wilt's articles distinguish launch-time errors from later execution failures.
+  Check immediate launch status and use an explicit completion boundary to
+  attribute execution failures; keep extra diagnostic synchronization out of
+  production benchmark timings.
+- **Algorithm substitutions have crossover points.** The Nabla FFT article
+  motivates comparing direct and FFT convolution across filter/image sizes,
+  including transforms, padding, temporary allocation and output cropping.
+  Preserve linear-versus-circular convolution semantics.
+
+### Unverified lead
+
+[Poppy: Writing PTX for Consumer Blackwell](https://getpoppy.app/blog/writing-ptx-for-consumer-blackwell)
+was discovered through search. Both direct retrieval and the web reader failed
+(the latter returned HTTP 502). Its search excerpt describes a bank-conflict
+removal regression, but this has NOT been promoted to a reviewed optimization
+rule. Retrieve the full article and code before using that claim.
+
+### Additional retrieval inventory
+
+- body retrieved: https://www.chanpaul.com/
+- body retrieved: https://flashinfer.ai/posts/
+- body retrieved: https://test.kevinhuai.com/triton/
+- body retrieved: https://vllm-project.github.io/2026/10/16/kimi-k3-megakernel.html
+- body retrieved: https://www.sglang.io/blog/deepseek-v4.1-flash-kernel-optimization
+- body retrieved: https://hamzaelshafie.bearblog.dev/
+- body retrieved: https://www.cudahandbook.com/blog/
+- body retrieved: https://modal.com/blog/reverse-engineer-flash-attention-4
+- body retrieved: https://deftruth.github.io/
+- body retrieved: https://nathan.ng/
+- body retrieved: https://www.chanpaul.com/articles/outperforming-cublas-b200
+- body retrieved: https://hamzaelshafie.bearblog.dev/blog/
+- body retrieved: https://hamzaelshafie.bearblog.dev/worklog-optimising-gemm-on-nvidia-h100-for-cublas-like-performance-wip/
+- body unavailable: https://getpoppy.app/blog/writing-ptx-for-consumer-blackwell
+- body retrieved: https://flashinfer.ai/2026/09/22/autotuner-v2.html
+- body retrieved: https://flashinfer.ai/2026/09/22/mega-moe.html
+- body retrieved: https://flashinfer.ai/2025/03/10/sampling.html
+- body retrieved: https://flashinfer.ai/2024/02/02/cascade-inference.html
+- body retrieved: https://graphics-programming.org/blog/fft-bloom-optimized-to-the-bone-in-nabla
+- body retrieved: https://www.cudahandbook.com/blog/asynchronous-error-handling-is-hard
+- body retrieved: https://www.cudahandbook.com/blog/cudagetlasterror-its-raison-detre
+- body retrieved: https://github.com/xlite-dev/LeetCUDA/blob/main/README.md
+- body retrieved: https://hamzaelshafie.bearblog.dev/dissecting-thunderkittens-anatomy-of-a-compact-dsl-for-high-performance-ai-kernels/
+- body retrieved: https://hamzaelshafie.bearblog.dev/awq-activation-aware-weight-quantisation/
+- body retrieved: https://hamzaelshafie.bearblog.dev/paged-attention-from-first-principles-a-view-inside-vllm/

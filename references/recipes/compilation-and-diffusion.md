@@ -73,3 +73,6 @@ The ARM64 tokenizer posts in the audit suggest checking CPU preprocessing when i
 is on the critical path. Require exact token IDs, normalization, special tokens,
 Unicode/byte fallback and multilingual parity. A fast unknown-token path is not
 proof of an equivalent tokenizer. Native SIMD changes are architecture-specific.
+
+For execution-aware autotuning, independent selection evaluation and persisted
+cache boundaries, see the [additional blog transfer tests](../sources/gpu-blog-deep-dive.md#additional-transfer-tests).
