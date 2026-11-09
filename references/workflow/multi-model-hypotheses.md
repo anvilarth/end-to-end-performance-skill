@@ -5,6 +5,27 @@ agent prepares the input, launches both CLIs, waits for their results and merges
 them. Do not ask the user to run these commands. Do not recursively invoke this
 skill or launch more agents inside either hypothesis pass.
 
+## Context and communication
+
+The communication path is coordinator → Claude and Codex → coordinator.
+Each CLI starts a fresh session; it does not inherit the coordinator's chat
+history. The coordinator must explicitly put all task-relevant user decisions
+and evidence into `input.md`, which both commands receive through stdin.
+Local CLI configuration may still load instructions; it is not a substitute
+for the shared evidence packet or a guarantee of identical system prompts.
+
+The children reason only from that packet. They do not fetch missing context,
+message one another or read each other's output. Their separate result files
+are the return channel to the coordinator, who owns deduplication, ranking and
+the next experiment. This pass includes no peer-review or automatic debate round.
+
+If context is insufficient, a child lists the specific missing evidence and
+which hypothesis depends on it in its final response. The coordinator resolves
+those gaps from available artifacts, or selects an attribution probe; it does
+not silently turn an assumption into a fact. If corrected context warrants
+another ideation pass within the budget, create a new shared packet and launch
+fresh sessions for both models, preserving the previous packet and results.
+
 ## Prepare one input
 
 Check `command -v claude`, `command -v codex`, `claude --version`,
