@@ -122,6 +122,27 @@ require heavyweight profiling before testing residency or load reuse.
 
 ### Step 4. Lever table
 
+Before the first optimization iteration, generate hypotheses independently with
+both Claude and Codex, using the configured models and available authorized
+interfaces. Run these passes in parallel when supported; multiple agents using
+the same model do not replace the two-model pass. This is a bounded ideation
+step, not parallel implementation or GPU benchmarking.
+
+Give both models the same contract, relevant code, baseline, stage budget and
+prior experiment outcomes from Steps 0–3. Do not show either model the other's
+proposals until both have returned. Ask each for candidate mechanisms, supporting
+evidence, low/central/high end-to-end savings with assumptions, correctness risks,
+the cheapest falsifier and a stop rule. Missing evidence stays unknown.
+
+Merge their proposals into one lever table, deduplicating equivalent mechanisms
+while preserving model provenance and meaningful disagreements in the experiment
+log. Rank by the criteria below, not model agreement; agreement is not measured
+evidence. Keep one owner for the merged table and the next experiment. Reuse this
+pass on subsequent iterations unless the contract or bottleneck materially changes.
+If either model is unavailable or the pass exceeds the authorized budget, record
+which model actually contributed and the limitation; continue with the available
+hypotheses without claiming a completed two-model pass.
+
 Read [references/playbooks/README.md](references/playbooks/README.md), the
 class playbook, and `common.md`; for kernel rows read
 [references/recipes/kernel-backends.md](references/recipes/kernel-backends.md). For each budget row
