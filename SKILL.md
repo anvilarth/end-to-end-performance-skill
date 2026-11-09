@@ -127,6 +127,8 @@ both Claude and Codex, using the configured models and available authorized
 interfaces. Run these passes in parallel when supported; multiple agents using
 the same model do not replace the two-model pass. This is a bounded ideation
 step, not parallel implementation or GPU benchmarking.
+Follow [the multi-model launch procedure](references/workflow/multi-model-hypotheses.md)
+for the exact CLI commands, shared input, result checks and failure handling.
 
 Give both models the same contract, relevant code, baseline, stage budget and
 prior experiment outcomes from Steps 0–3. Do not show either model the other's
