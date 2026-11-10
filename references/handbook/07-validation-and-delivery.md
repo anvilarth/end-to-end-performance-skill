@@ -50,6 +50,14 @@ state and any sampling metadata, not only the outputs. For a served engine, add
 a cross-request contamination check: a candidate that reads or writes cache
 outside its own request can pass single-request parity.
 
+For shared-runtime changes, define a regression matrix from affected callers:
+neighboring models, streaming/non-streaming modes and relevant CPU/GPU budgets.
+Preserve their quality and tail-latency gates; a throughput gain in one lane does
+not excuse a failure elsewhere. Include startup and peak-memory costs when graph
+capture, caching or asynchronous execution changes them. In multi-commit results,
+separate the candidate from image, default-setting and unrelated source changes;
+use a matched ablation before attributing the whole gain to it.
+
 Report expected, completed, missing, duplicate, extra and failed IDs. For each
 field or tensor family, include its evaluated count and failures. Missing
 reference data remains missing with a reason; do not convert it into success,

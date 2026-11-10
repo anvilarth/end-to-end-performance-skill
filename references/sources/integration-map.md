@@ -22,6 +22,7 @@ results is labeled locally GPU-validated.
 | Poppy and failed Stephen Diehl URL | [Unavailable leads](gpu-blog-deep-dive.md) | No body-based decision extracted; search snippets do not establish experiments |
 | LMSYS GLM-5.3-Flash H200 PD case (November 1, added November 10) | [Serving playbook](../playbooks/llm-serving.md#hybrid-models-with-disaggregated-prefill-and-decode) | [Reviewed case and transfer experiments](glm53-h200-pd.md); custom revision, external evidence only |
 | SGLang NVIDIA Mega (reviewed November 10) | [Whole-step decode route](../recipes/intra-kernel-and-cute.md#optimize-a-whole-decode-dependency-chain) | [Pinned code and benchmark review](sgl-nvidia-mega.md); conditional dispatch, synthetic acceptance and composition boundaries |
+| OpenRSI / SGLang-Omni (reviewed November 10) | [Independent promotion](../workflow/experiment-loop.md#independent-promotion-after-automated-search), validation handbook | [Case and inspected PRs](openrsi-sglang-omni.md); shared-runtime regressions and attribution limits |
 | Remaining outbound docs, code, blogs | [Searchable link graph](gpu-doc-links.jsonl) | Explicit discovery records; consult exact target and revision for a live decision |
 
 ## Retrieval from a real task

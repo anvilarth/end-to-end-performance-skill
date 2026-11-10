@@ -50,6 +50,20 @@ exceeds the intended effect, repair that before running more candidates. Disting
 performance noise from stochastic output disagreement; each needs its own gate.
 Do not widen tolerances to rescue a candidate or discard an inconvenient control.
 
+## Independent promotion after automated search
+
+For agent-driven repeated optimization, keep acceptance outside the candidate's
+editable experiment path. Reproduce the exact candidate revision in a fresh
+process/environment using the protected workload manifest, evaluator and gates.
+Candidate-side screening cannot substitute for this run. Separate reproducibility
+from code review; neither alone proves the other.
+
+Advance the accepted baseline only after this check passes, retaining the original
+frozen reference and failed trials for cumulative attribution. An unavailable
+independent run leaves the candidate screened, not promoted. Bound automated search
+by the authorized resource/time budget; this procedure does not authorize new jobs.
+See [the OpenRSI case and limits](../sources/openrsi-sglang-omni.md).
+
 ## Persistent measurement harness
 
 When engine launch, weight loading, autotuning or graph capture dominate each
