@@ -1,0 +1,82 @@
+{
+  "source": {
+    "id": "9dc8422ce8a35e71d21c1d43",
+    "url": "https://github.com/OpenBMB/ForgeKernel",
+    "title": "ForgeKernel: Self-Evolving Kernels Catching and Surpassing Experts and Agents",
+    "reviewed_at": "2026-11-10T09:42:07.931720+00:00",
+    "content_hash": "43b1b765b84d53e0045ebe0cbddb99bc30601ac3696f2f3ff1ae365c919af5f0",
+    "status": "passages_reviewed",
+    "coverage": "Source passages; not exhaustive",
+    "date": null,
+    "date_kind": "unknown"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "R9dc8422ce8a35e71d21c1d43-1",
+      "source": "9dc8422ce8a35e71d21c1d43",
+      "section": "Self-Evolution / Limitations",
+      "author_observation": "Авторы продвигают каждое принятое ядро в эталон. Цепочка останавливается, если прирост не превышает разброса повторных подтверждений.",
+      "author_action": "Порог шума равен разбросу отношений при повторном подтверждении, не менее 1.5%. Эталон и кандидат замеряются в одной GPU-задаче.",
+      "author_outcome": "По данным авторов, прирост достигал +9.9% за поколение. Сами авторы признают, что плато — лишь оценка.",
+      "scope": "Только CuTe DSL, H100/B200",
+      "transfer_test": "Наш эксперимент: замерять эталон и кандидат в одной GPU-задаче и отклонять приросты ниже разброса повторов.",
+      "tags": [
+        "agentic-search",
+        "noise-floor",
+        "same-job-benchmarking",
+        "reference-kernel",
+        "kernel-architecture",
+        "correctness-revert",
+        "negative",
+        "measurement"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R9dc8422ce8a35e71d21c1d43-2",
+      "source": "9dc8422ce8a35e71d21c1d43",
+      "section": "Highlights",
+      "author_observation": "Разбиение ядра, тайлы, роли warp и бюджет регистров и разделяемой памяти задаются на этапе M0. Если структура упирается в предел, M0 пересматривается.",
+      "author_action": "Фиксировать структуру после прохождения гейта M0. Последующие этапы только настраивают параметры внутри неё.",
+      "author_outcome": "unknown: изолированного эффекта в README нет.",
+      "scope": "Агентная разработка ядер",
+      "transfer_test": "Наш эксперимент: сравнить число итераций до плато с фиксацией структуры и без неё.",
+      "tags": [
+        "agentic-search",
+        "noise-floor",
+        "same-job-benchmarking",
+        "reference-kernel",
+        "kernel-architecture",
+        "correctness-revert",
+        "negative",
+        "measurement"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R9dc8422ce8a35e71d21c1d43-3",
+      "source": "9dc8422ce8a35e71d21c1d43",
+      "section": "Limitations",
+      "author_observation": "Отказ: при наличии только PyTorch-реализации и времени на устройстве абляция застопорилась.",
+      "author_action": "Начинать с существующей реализации, а не писать ядро с нуля.",
+      "author_outcome": "По данным авторов, застой на всех трёх проверенных операторах.",
+      "scope": "Абляция в статье; операторы unknown",
+      "transfer_test": "Наш эксперимент: сравнить поиск от исходника эталона и от PyTorch-реализации, дающей только время на устройстве.",
+      "tags": [
+        "agentic-search",
+        "noise-floor",
+        "same-job-benchmarking",
+        "reference-kernel",
+        "kernel-architecture",
+        "correctness-revert",
+        "negative",
+        "measurement"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}
