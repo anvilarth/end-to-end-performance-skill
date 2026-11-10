@@ -87,8 +87,8 @@ def publish(w):
         prior=[json.loads(p.read_text()) for p in (checkout/'references/sources/radar').glob('*.json')]
         existing_decisions=(checkout/'references/decisions/decisions.jsonl').read_text()
         verdict=w.model_call('publication-audit',
-            'Independently decide whether to publish this source-grounded performance decision in a reusable skill. Require a concrete useful addition, missing condition or contradictory evidence beyond the existing library. Check attribution and limitations against original text. Reject unsupported claims, merely promotional descriptions, redundant entries and private information. No local speedup is established. Return {accepted:bool,reasons:[strings]}.',
-            {'proposed':record,'source':evidence[:w.CONFIG['max_document_chars']],
+            'Independently decide whether to publish this source-grounded performance decision in a reusable skill. Require a concrete useful addition, missing condition or contradictory evidence beyond the existing library. Check attribution and limitations against original text. Reject unsupported claims, merely promotional descriptions and private information. Reject redundant entries unless the source was explicitly requested: then a source-specific reference can serve as corroboration, but do not claim the general mechanism is new. No local speedup is established. Return {accepted:bool,reasons:[strings]}.',
+            {'explicitly_requested':item['priority']>=10,'proposed':record,'source':evidence[:w.CONFIG['max_document_chars']],
              'existing_radar':prior[-30:],'existing_library':existing_decisions})
         (w.RUNTIME/'candidates'/f'{item["id"]}-publication-audit.json').write_text(json.dumps(verdict,ensure_ascii=False,indent=2))
         if verdict.get('accepted') is not True:

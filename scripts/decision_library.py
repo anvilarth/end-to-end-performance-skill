@@ -119,7 +119,8 @@ def main():
     else:
         if not args.query.strip():
             parser.error('search requires English keywords')
-        for record in search(decisions + radar_decisions, args.query, args.limit):
+        searchable = [{**r, 'provenance':by_id[r['source']]} for r in decisions + radar_decisions]
+        for record in search(searchable, args.query, args.limit):
             print(json.dumps({**record, 'provenance': by_id[record['source']]}, ensure_ascii=False))
 
 if __name__ == '__main__':
