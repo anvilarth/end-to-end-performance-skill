@@ -10,7 +10,8 @@ import sys
 def public_record(item, review):
     source = {'id':item['id'],'url':item['url'],'title':item['title'],
               'reviewed_at':item['updated'],'content_hash':item['content_hash'],
-              'status':'passages_reviewed','date':item.get('published'),
+              'status':'passages_reviewed','coverage':review.get('coverage','Source passages; not exhaustive'),
+              'date':item.get('published'),
               'date_kind':'source_metadata' if item.get('published') else 'unknown'}
     decisions=[]
     for n,d in enumerate(review['decisions'],1):

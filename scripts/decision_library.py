@@ -67,6 +67,12 @@ def load_radar():
         for record in value['decisions']:
             if set(record) != FIELDS or record['source'] != source['id'] or record['local_validation'] != 'not_run':
                 raise ValueError('Invalid external radar decision')
+            if any(not isinstance(record[k],str) or not record[k] for k in FIELDS-{'tags','alternatives_reported'}):
+                raise ValueError('Radar decision text fields must be nonempty strings')
+            if not isinstance(record['tags'],list) or not record['tags'] or any(not isinstance(t,str) for t in record['tags']):
+                raise ValueError('Radar tags must be strings')
+            if record['alternatives_reported'] is not None and not isinstance(record['alternatives_reported'],list):
+                raise ValueError('Invalid radar alternatives')
             decisions.append(record)
     if len({d['id'] for d in decisions}) != len(decisions):
         raise ValueError('Duplicate radar decisions')

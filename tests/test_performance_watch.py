@@ -45,7 +45,7 @@ class WatchTests(unittest.TestCase):
         text='This observed optimization improves throughput in the measured setup.'
         d={k:'field' for k in ('observation','action','outcome','scope','transfer_test','section')}
         d.update(evidence_quote=text,local_validation='not_run')
-        with patch.object(w,'document',return_value=(text,'body')),patch.object(w,'model_call',side_effect=[{'relevant':True,'decisions':[d]}, {'accepted':False,'reasons':['unsupported']} ]):
+        with patch.object(w,'document',return_value=(text,'body')),patch.object(w,'model_call',side_effect=[{'relevant':True,'decisions':[d]}, {'accepted':False,'reasons':['unsupported']}, {'relevant':True,'decisions':[d]}, {'accepted':False,'reasons':['still unsupported']} ]):
             w.review_batch(1)
         with w.connect() as db:row=db.execute('select * from items where id=?',(ident,)).fetchone()
         self.assertEqual(row['state'],'needs_review');self.assertIsNone(row['report'])
