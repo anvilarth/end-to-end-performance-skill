@@ -104,7 +104,7 @@ def known_urls():
     # The checked-in library is the duplicate reference, not runtime state.
     urls = set()
     for p in (ROOT/'references').rglob('*'):
-        if p.suffix in ('.md', '.json', '.jsonl'):
+        if p.is_file() and not any(part.startswith('.') for part in p.relative_to(ROOT).parts) and p.suffix in ('.md', '.json', '.jsonl'):
             for u in re.findall(r'https?://[^\s<>"\)\]]+', p.read_text()):
                 try:
                     urls.add(canonical(u))

@@ -16,6 +16,13 @@ class WatchTests(unittest.TestCase):
         self.patch.start()
     def tearDown(self):
         self.patch.stop(); self.tmp.cleanup()
+    def test_known_urls_skips_filesystem_metadata(self):
+        root = Path(self.tmp.name)
+        (root/'references').mkdir()
+        (root/'references/a.md').write_text('https://example.org/real')
+        (root/'references/._a.md').write_bytes(b'\x00\xa3')
+        with patch.object(w, 'ROOT', root):
+            self.assertEqual(w.known_urls(), {'https://example.org/real'})
     def test_download_has_wall_clock_deadline(self):
         import types, time, sys
         transport = types.ModuleType('research_core.documents')
