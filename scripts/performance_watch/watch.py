@@ -393,6 +393,7 @@ def digest(send=False):
     with connect() as db:
         rows = [dict(r) for r in db.execute("SELECT * FROM items WHERE state='verified' ORDER BY updated DESC")]
         coverage = [dict(r) for r in db.execute('SELECT * FROM coverage')]
+        publications = {r['id']:r['commit_sha'] for r in db.execute('SELECT * FROM publications')}
         failures = [dict(r) for r in db.execute("SELECT id,url,state,error FROM items WHERE state IN ('failed','retry','needs_review','integration_review')")]
     # Existing durable delivery ledger prevents repeat notifications.
     from research_core.queue import Queue
@@ -401,10 +402,14 @@ def digest(send=False):
         sent = {r[0] for r in db.execute("SELECT id FROM delivery WHERE state='sent'")}
     rows = [r for r in rows if 'perf-item-'+r['id']+':0' not in sent]
     text = '# Новые приёмы ускорения — '+day+'\n\n'
-    text += 'Внешние результаты, не локально подтверждённые ускорения. Кандидаты для общего performance skill; автоматических GPU-запусков нет.\n\n'
+    text += 'Внешние результаты, не локально подтверждённые ускорения. Материалы для общего performance skill; статус публикации указан ниже. Автоматических GPU-запусков нет.\n\n'
     text += f'Новых проверенных источников: {len(rows)}. Источников с неполным покрытием или ошибкой: {sum(c["state"] != "ok" for c in coverage)} из {len(coverage)}.\n\n'
     for r in rows:
-        text += Path(r['report']).read_text().replace('# ', '## ',1)+'\n\n---\n\n'
+        text += Path(r['report']).read_text().replace('# ', '## ',1)+'\n\n'
+        if r['id'] in publications:
+            text += '**Включено в skill:** https://github.com/anvilarth/end-to-end-performance-skill/commit/'+publications[r['id']]+'\n\n'
+        else:text += '**Публикация:** ожидает финального аудита и проверок.\n\n'
+        text += '---\n\n'
     if not rows:
         text += 'Новых проверенных дополнений нет; это не означает отсутствия новых публикаций.\n'
     text += '\n## Требуют разбора\n\n'+('\n'.join('- '+r['url']+' — '+r['state']+': '+(r['error'] or 'Не прошёл проверку доказательств') for r in failures) or 'Нет.')+'\n'
@@ -416,6 +421,7 @@ def digest(send=False):
                                  title='Performance radar — '+day,
                                  summary=f'{len(rows)} новых проверенных источников. Приёмы, ограничения и предлагаемые проверки — в файле.')
         if result.get('status') != 'already_sent':
+            out.with_suffix('.receipt.json').write_text(json.dumps(result, ensure_ascii=False, indent=2))
             with q.connect() as db:
                 for r in rows:
                     db.execute('INSERT OR IGNORE INTO delivery VALUES(?,?,?,?)',('perf-item-'+r['id']+':0','sent',result['message_id'],now()))
