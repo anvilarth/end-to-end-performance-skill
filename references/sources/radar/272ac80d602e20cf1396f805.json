@@ -1,0 +1,82 @@
+{
+  "source": {
+    "id": "272ac80d602e20cf1396f805",
+    "url": "https://www.together.ai/blog/coderforge-preview",
+    "title": "https://www.together.ai/blog/coderforge-preview",
+    "reviewed_at": "2026-11-10T16:01:30.712231+00:00",
+    "content_hash": "13034cc725483c445a20d4e61e89c8e397b93fe832aeb148d141c2c5fecae81b",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Wed, 25 Feb 2026 00:00:00 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "R272ac80d602e20cf1396f805-1",
+      "source": "272ac80d602e20cf1396f805",
+      "section": "Training Setup",
+      "author_observation": "Длины траекторий сильно различаются, а окно составляет 128K.",
+      "author_action": "Авторы упаковывали несколько траекторий в одну последовательность с масками границ примеров.",
+      "author_outcome": "Средняя длина упакованной последовательности около 82% окна. Прирост пропускной способности не измерен.",
+      "scope": "SFT Qwen3-32B, 64 H100, FSDP2 + Ulysses",
+      "transfer_test": "Наш эксперимент: сравнить заполнение окна, токены/с и совпадение лосса упакованных и неупакованных примеров с маской и без неё.",
+      "tags": [
+        "sequence-parallelism",
+        "ulysses",
+        "sequence-packing",
+        "attention-masking",
+        "loss-normalization",
+        "fsdp2",
+        "prompt-caching",
+        "long-context"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R272ac80d602e20cf1396f805-2",
+      "source": "272ac80d602e20cf1396f805",
+      "section": "Training Setup",
+      "author_observation": "При упаковке и SP микробатчи на рангах содержат разное число валидных токенов.",
+      "author_action": "Лосс взвешивался числом токенов и делился на суммарное число токенов по всем рангам.",
+      "author_outcome": "Длинные и короткие последовательности получают единый вес. Эффект на качество не изолирован.",
+      "scope": "FSDP + sequence parallelism, переменные длины",
+      "transfer_test": "Наш эксперимент: сравнить градиенты с эталоном без шардинга при разной упаковке.",
+      "tags": [
+        "sequence-parallelism",
+        "ulysses",
+        "sequence-packing",
+        "attention-masking",
+        "loss-normalization",
+        "fsdp2",
+        "prompt-caching",
+        "long-context"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R272ac80d602e20cf1396f805-3",
+      "source": "272ac80d602e20cf1396f805",
+      "section": "Data Generation Cost",
+      "author_observation": "Многошаговые агентные траектории повторно отправляют длинный префикс.",
+      "author_action": "Авторы применяли агрессивное кэширование промптов при генерации через API.",
+      "author_outcome": "Попадания в кэш около 90%. Стоимость рассчитана по тарифу, сравнения без кэша нет.",
+      "scope": "Генерация через API, Qwen3-Coder-480B",
+      "transfer_test": "Наш эксперимент: воспроизвести агентные сессии, измерить долю попаданий, стоимость и задержку с кэшем и без. Дополняет D091 метрикой стоимости.",
+      "tags": [
+        "sequence-parallelism",
+        "ulysses",
+        "sequence-packing",
+        "attention-masking",
+        "loss-normalization",
+        "fsdp2",
+        "prompt-caching",
+        "long-context"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}
