@@ -1,0 +1,82 @@
+{
+  "source": {
+    "id": "c3c696b5bf6b4f8c7bbbd52e",
+    "url": "https://huggingface.co/blog/local-reachy-mini-conversation",
+    "title": "Reachy Mini goes fully local",
+    "reviewed_at": "2026-11-10T14:01:21.605009+00:00",
+    "content_hash": "cc96c6a0d4b58ce4d6fcaf435349315f72235cbf99c7a7bfae0005483ded0d5b",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Wed, 27 May 2026 00:00:00 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "Rc3c696b5bf6b4f8c7bbbd52e-1",
+      "source": "c3c696b5bf6b4f8c7bbbd52e",
+      "section": "Choosing your LLM",
+      "author_observation": "Авторы называют инференс LLM главным узким местом латентности каскада. Поэтому LLM вынесена в отдельный процесс, связь идёт по HTTP через Responses API.",
+      "author_action": "Выносить LLM в отдельный сервер, чтобы движок можно было менять.",
+      "author_outcome": "unknown: разбивки латентности по стадиям нет.",
+      "scope": "Голосовой каскад VAD/STT/LLM/TTS",
+      "transfer_test": "Наш эксперимент: замерить латентность каждой стадии и сквозную до первого звука, затем проверить, доминирует ли LLM.",
+      "tags": [
+        "cascaded-pipeline",
+        "latency-attribution",
+        "speculative-decoding",
+        "multi-token-prediction",
+        "version-gating",
+        "tool-call-streaming",
+        "negative",
+        "measurement"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "Rc3c696b5bf6b4f8c7bbbd52e-2",
+      "source": "c3c696b5bf6b4f8c7bbbd52e",
+      "section": "Choosing your LLM",
+      "author_observation": "Авторы рекомендуют включать MTP через --speculative-config в vLLM, если модель это поддерживает.",
+      "author_action": "Включать MTP по умолчанию.",
+      "author_outcome": "Авторы заявляют сильное влияние на сквозную латентность, но цифр не приводят. Величина эффекта: unknown.",
+      "scope": "vLLM, Qwen3-4B-Instruct-2507, модели с поддержкой MTP",
+      "transfer_test": "Наш эксперимент: сравнить сквозную латентность и латентность первого токена с MTP и без него при одинаковой нагрузке, проверить идентичность выходов.",
+      "tags": [
+        "cascaded-pipeline",
+        "latency-attribution",
+        "speculative-decoding",
+        "multi-token-prediction",
+        "version-gating",
+        "tool-call-streaming",
+        "negative",
+        "measurement"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "Rc3c696b5bf6b4f8c7bbbd52e-3",
+      "source": "c3c696b5bf6b4f8c7bbbd52e",
+      "section": "Choosing your LLM",
+      "author_observation": "Отказ: vLLM ниже 0.21.0 запускается, но падает при первом вызове инструмента. Причина — неполная поддержка tool-call streaming в Responses API.",
+      "author_action": "Требовать vLLM 0.21.0 или новее.",
+      "author_outcome": "По словам авторов, проблема устраняется. Других данных нет.",
+      "scope": "vLLM + Responses API + потоковые вызовы инструментов",
+      "transfer_test": "Наш эксперимент: в smoke-тест бенчмарка добавить вызов инструмента, а не только успешный запуск сервера.",
+      "tags": [
+        "cascaded-pipeline",
+        "latency-attribution",
+        "speculative-decoding",
+        "multi-token-prediction",
+        "version-gating",
+        "tool-call-streaming",
+        "negative",
+        "measurement"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}
