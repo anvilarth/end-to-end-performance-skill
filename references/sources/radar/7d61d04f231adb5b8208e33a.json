@@ -1,0 +1,88 @@
+{
+  "source": {
+    "id": "7d61d04f231adb5b8208e33a",
+    "url": "https://github.com/sgl-project/sglang-omni/pull/2555",
+    "title": "[Perf][CosyVoice3] Avoid reference-feature list conversion between stages",
+    "reviewed_at": "2026-11-10T09:43:15.018944+00:00",
+    "content_hash": "a0c73a832ba6e3002fa9477810c9cf1b959e2791bb23849c0d1d82e0ba5f4cad",
+    "status": "passages_reviewed",
+    "coverage": "Source passages; not exhaustive",
+    "date": null,
+    "date_kind": "unknown"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "R7d61d04f231adb5b8208e33a-1",
+      "source": "7d61d04f231adb5b8208e33a",
+      "section": "Motivation / Benchmark & Profiling",
+      "author_observation": "Признаки float32 многократно превращаются во вложенные списки между стадиями.",
+      "author_action": "Клонировать подходящие конечные CPU float32-тензоры. Для прочих входов и нестандартных настроек построения тензоров сохранить списки.",
+      "author_outcome": "Прирост инкрементальный: #2524/#2525 зафиксированы в обоих плечах, изолированный эффект не измерен. Запросы/с: +1.98/+11.48/+7.12% (c1/16/48). Среднее c16 включает межаллокационную пару. Ухудшения: c1 p99 TTFA +1.56%, p99 задержки +1.21%; c48 WER 1.2420→1.2839%, C50 seed42 99.17→96.78%.",
+      "scope": "CosyVoice3, стриминг SeedTTS EN, одна H200. Дельта к D070: сериализация, а не синхронизация.",
+      "transfer_test": "Наш эксперимент: профилировать tolist; сравнить среднее, p99 и качество по уровням конкурентности.",
+      "tags": [
+        "serialization",
+        "inter-stage-transport",
+        "tensor-vs-list",
+        "msgpack",
+        "aliasing",
+        "clone",
+        "tail-latency",
+        "allocation-matching",
+        "negative",
+        "measurement"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R7d61d04f231adb5b8208e33a-2",
+      "source": "7d61d04f231adb5b8208e33a",
+      "section": "Historical evidence / Accuracy Test",
+      "author_observation": "Сырой Tensor в финальном сообщении ломал MessagePack; detach().cpu() алиасит CPU-тензор.",
+      "author_action": "Клонировать данные, кодировать финал типизированными байтами, добавить мутационный тест.",
+      "author_outcome": "Прототип отвергнут; мутация ломает все четыре затронутых случая.",
+      "scope": "Сообщения MessagePack; MLX на железе не тестировался.",
+      "transfer_test": "Наш эксперимент: round-trip, независимость памяти, strided-входы.",
+      "tags": [
+        "serialization",
+        "inter-stage-transport",
+        "tensor-vs-list",
+        "msgpack",
+        "aliasing",
+        "clone",
+        "tail-latency",
+        "allocation-matching",
+        "negative",
+        "measurement"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R7d61d04f231adb5b8208e33a-3",
+      "source": "7d61d04f231adb5b8208e33a",
+      "section": "Pinned-base streaming study",
+      "author_observation": "Одна пара c16 снята на разных аллокациях.",
+      "author_action": "Все сиды оставлены в основных таблицах. Дополнительно заранее задан анализ чувствительности по сидам 43/44 внутри одной аллокации.",
+      "author_outcome": "+5.70% внутри аллокации против +11.48% по трём сидам.",
+      "scope": "Методология бенчмарков",
+      "transfer_test": "Наш эксперимент: фиксировать узел для каждой пары, перекрёстные пары показывать отдельно.",
+      "tags": [
+        "serialization",
+        "inter-stage-transport",
+        "tensor-vs-list",
+        "msgpack",
+        "aliasing",
+        "clone",
+        "tail-latency",
+        "allocation-matching",
+        "negative",
+        "measurement"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}
