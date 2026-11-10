@@ -163,3 +163,7 @@ client contract.
 For GLM-5.3-Flash, hybrid state, speculative verification or a P/D supply
 imbalance, read [the H200 case and conditional experiments](../sources/glm53-h200-pd.md).
 Use it to select a falsifier, then apply this playbook's workload and parity gates.
+
+For small-batch decode with exposed operator/collective boundaries, consult the
+[whole-step megakernel route](../recipes/intra-kernel-and-cute.md#optimize-a-whole-decode-dependency-chain).
+Keep static per-user decode measurements separate from aggregate service results.

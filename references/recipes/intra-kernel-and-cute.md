@@ -135,3 +135,11 @@ MMA. Retain the complete shape table and unresolved cases: Daniel Vegamyhre's
 MXFP8 headline best point does not cover every size. Use the same precision,
 alpha/beta, layouts and cache policy for the comparator. Salykov's clock/cache
 controls motivate both controlled diagnostic runs and production-shaped timing.
+
+## Optimize a whole decode dependency chain
+
+When operator boundaries dominate small-batch decode, use the
+[megakernel case and validation protocol](../sources/sgl-nvidia-mega.md).
+Compare the full producer/collective/consumer chain, dispatch by actual token
+rows, and retain measured losing regions on the stock path. Synthetic acceptance
+controls isolate execution cost; promotion still requires real serving outcomes.
