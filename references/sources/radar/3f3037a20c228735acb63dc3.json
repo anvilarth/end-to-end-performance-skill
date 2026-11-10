@@ -1,0 +1,85 @@
+{
+  "source": {
+    "id": "3f3037a20c228735acb63dc3",
+    "url": "https://huggingface.co/blog/gptq-integration",
+    "title": "Making LLMs lighter with AutoGPTQ and transformers",
+    "reviewed_at": "2026-11-10T17:47:20.645792+00:00",
+    "content_hash": "86a1b7a5bd321ddb3f5cbb6c1f2fe2f6d09457611043963fd9c96173e13c5dd7",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Wed, 23 Aug 2023 00:00:00 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "R3f3037a20c228735acb63dc3-1",
+      "source": "3f3037a20c228735acb63dc3",
+      "section": "Native support of GPTQ models in 🤗 Transformers",
+      "author_observation": "Автор: при 4-bit, group128, act_order=False и batch=1 ядро exllama даёт задержку ниже fp16, а autogptq-cuda-old выше. Загрузка у обоих дольше.",
+      "author_action": "Автор сравнил ядра AutoGPTQ с fp16 на A100-80GB: промпт 512, генерация 512 токенов.",
+      "author_outcome": "Память снижается примерно одинаково, знак изменения задержки зависит от ядра. Наша интерпретация, не утверждение автора: это дополняет D033, так как выбор бэкенда внутри одного формата меняет результат.",
+      "scope": "GPTQ 4-bit group128, batch=1, A100.",
+      "transfer_test": "Наш эксперимент: на одном чекпойнте парно замерить задержку, пропускную способность, загрузку и пиковую память каждого ядра против fp16.",
+      "tags": [
+        "weight-only quantization",
+        "GPTQ",
+        "W4A16",
+        "dequantization",
+        "kernel selection",
+        "batch size scaling",
+        "memory footprint",
+        "calibration",
+        "load time"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R3f3037a20c228735acb63dc3-2",
+      "source": "3f3037a20c228735acb63dc3",
+      "section": "Running GPTQ models through Text-Generation-Inference",
+      "author_observation": "Автор: ядро, интегрированное в TGI, плохо масштабируется с ростом батча.",
+      "author_action": "Автор сообщает о добавлении поддержки GPTQ в TGI вместе с динамическим батчингом, paged attention и flash attention.",
+      "author_outcome": "Память экономится, но на больших батчах ожидается замедление. Чисел нет (unknown). Недостающее условие: компромисс между памятью и скоростью зависит от батча.",
+      "scope": "Ядро GPTQ в TGI.",
+      "transfer_test": "Наш эксперимент: батчи от 1 до N против fp16. Учесть, что fp16 может не поместиться в память.",
+      "tags": [
+        "weight-only quantization",
+        "GPTQ",
+        "W4A16",
+        "dequantization",
+        "kernel selection",
+        "batch size scaling",
+        "memory footprint",
+        "calibration",
+        "load time"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R3f3037a20c228735acb63dc3-3",
+      "source": "3f3037a20c228735acb63dc3",
+      "section": "Quantizing models with the Optimum library",
+      "author_observation": "Автор: квантование долгое. Для 175B-модели с большим датасетом (c4) нужно не менее 4 GPU-часов. Готовые модели с Hub избавляют от этого, возможна и доменная калибровка.",
+      "author_action": "Автор советует брать квантованные модели с Hub или квантовать самостоятельно на своих данных.",
+      "author_outcome": "Офлайн-стоимость указана, влияние выбора датасета на качество не измерено (unknown). Дополнение: стоимость подготовки входит в бюджет.",
+      "scope": "GPTQ через Optimum.",
+      "transfer_test": "Наш эксперимент: сравнить общую и доменную калибровку на целевом качестве с учётом GPU-часов.",
+      "tags": [
+        "weight-only quantization",
+        "GPTQ",
+        "W4A16",
+        "dequantization",
+        "kernel selection",
+        "batch size scaling",
+        "memory footprint",
+        "calibration",
+        "load time"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}
