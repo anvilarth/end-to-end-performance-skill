@@ -482,9 +482,10 @@ def library_search(query):
     query += ' '+' '.join(v for k,v in aliases.items() if k in query.lower())
     sys.path.insert(0,str(ROOT/'scripts'))
     import decision_library
-    _, decisions = decision_library.load()
-    _, radar = decision_library.load_radar()
-    decisions += radar
+    sources, decisions = decision_library.load()
+    radar_sources, radar = decision_library.load_radar()
+    by_id = {s['id']:s for s in sources + radar_sources}
+    decisions = [{**r, 'provenance':by_id[r['source']]} for r in decisions + radar]
     return {'radar':search(query), 'skill_decisions':decision_library.search(decisions,query,10)}
 
 
