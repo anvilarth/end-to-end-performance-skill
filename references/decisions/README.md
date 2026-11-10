@@ -51,7 +51,9 @@ series, PyTorch release and engineering blogs, serving case studies, and 2026
 agent/kernel papers. Negative search results are not proof that a source is absent.
 Next: recover unavailable bodies, inspect linked code and earlier/later series
 parts, expand training and input-pipeline coverage, and retain source revisions.
-No background crawler or extraction worker is running.
+This static snapshot does not itself run a crawler. An optional separately deployed
+[private performance radar](../../scripts/performance_watch/README.md) discovers and
+reviews candidates without silently changing this corpus.
 
 Latest broad GPU pass: [search coverage and remaining leads](GPU-SEARCH-2026.md).
 

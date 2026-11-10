@@ -56,6 +56,17 @@ Read only the matching pages, keeping discovery distinct from reviewed evidence.
 
 For operand-delivery/layout/scheduler probes use [kernel diagnostics](references/recipes/intra-kernel-and-cute.md#operand-delivery-layout-and-scheduler-experiments); for sampling, attention-state merging and FFT use [algorithm gates](references/recipes/specialized-bottlenecks.md#attention-states-sampling-and-alternative-algorithms); for eager/graph tactic selection use [execution-aware tuning](references/recipes/compilation-and-diffusion.md#execution-aware-tuning-and-compiler-changes). The [integration map](references/sources/integration-map.md) records where each collected source family is used and what remains only a lead.
 
+## Optional continuous discovery
+
+When the user has enabled a private performance radar, search its verified
+candidates by the current bottleneck alongside the static decision library.
+Use the `performance_search`, `performance_read` and `performance_status` tools
+when connected; source-supported candidates are not locally validated results.
+Automatically published cases also appear in `scripts/decision_library.py search`;
+read their source conditions before proposing local experiments.
+Installation, coverage and integration boundaries:
+[performance radar](scripts/performance_watch/README.md).
+
 ## The loop
 
 ### Step 0. Load the log

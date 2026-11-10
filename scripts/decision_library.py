@@ -51,6 +51,28 @@ def validate(sources, decisions):
         if source['status'] != 'passages_reviewed':
             raise ValueError('Decision requires reviewed source passages')
 
+def load_radar():
+    sources, decisions = [], []
+    directory = ROOT.parent / 'sources' / 'radar'
+    for path in sorted(directory.glob('*.json')):
+        value = json.loads(path.read_text())
+        source = value['source']
+        if not source.get('url', '').startswith('https://') or not source.get('content_hash'):
+            raise ValueError('Radar source requires URL and evidence hash')
+        if value.get('verification') != 'source_supported':
+            raise ValueError('Unverified radar source')
+        if not re.fullmatch(r'[0-9a-f]{24}', source['id']):
+            raise ValueError('Invalid radar source ID')
+        sources.append(source)
+        for record in value['decisions']:
+            if set(record) != FIELDS or record['source'] != source['id'] or record['local_validation'] != 'not_run':
+                raise ValueError('Invalid external radar decision')
+            decisions.append(record)
+    if len({d['id'] for d in decisions}) != len(decisions):
+        raise ValueError('Duplicate radar decisions')
+    return sources, decisions
+
+
 def load():
     sources = json.loads((ROOT / 'sources.json').read_text())
     decisions = [json.loads(line) for line in (ROOT / 'decisions.jsonl').read_text().splitlines() if line]
@@ -76,10 +98,12 @@ def main():
     if args.limit < 1:
         parser.error('--limit must be positive')
     sources, decisions = load()
-    by_id = {source['id']: source for source in sources}
+    radar_sources, radar_decisions = load_radar()
+    by_id = {source['id']: source for source in sources + radar_sources}
     if args.command == 'check':
         print(json.dumps({'sources': len(sources), 'decisions': len(decisions),
                           'source_status': dict(Counter(s['status'] for s in sources)),
+                          'radar_sources': len(radar_sources), 'radar_decisions': len(radar_decisions),
                           'negative_tagged': sum('negative' in d['tags'] for d in decisions)}, indent=2))
     elif args.command == 'catalog':
         counts = Counter(record['source'] for record in decisions)
@@ -89,7 +113,7 @@ def main():
     else:
         if not args.query.strip():
             parser.error('search requires English keywords')
-        for record in search(decisions, args.query, args.limit):
+        for record in search(decisions + radar_decisions, args.query, args.limit):
             print(json.dumps({**record, 'provenance': by_id[record['source']]}, ensure_ascii=False))
 
 if __name__ == '__main__':

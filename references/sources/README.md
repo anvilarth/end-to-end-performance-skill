@@ -21,6 +21,14 @@ The [2026 decision corpus](../decisions/README.md) records observations, actions
 reported outcomes, scope and proposed transfer tests. Its [catalog](../decisions/CATALOG.md)
 distinguishes reviewed passages from pending extraction and inaccessible bodies.
 
+## Continuous performance radar
+
+The optional [private radar](../../scripts/performance_watch/README.md) discovers
+new sources, audits their evidence and publishes bounded documentary records when
+authorized. Published radar records are included by the standard decision search.
+They remain external evidence with `local_validation: not_run`; discovery, source
+support and measured local speedup are separate states.
+
 ## Measurement and numerics
 
 Use with [contract and baseline](../handbook/01-contract-and-baseline.md) and
