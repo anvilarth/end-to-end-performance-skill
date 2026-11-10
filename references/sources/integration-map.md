@@ -20,6 +20,7 @@ results is labeled locally GPU-validated.
 | Nabla graphics/FFT worklog | [Algorithm crossover probe](../recipes/specialized-bottlenecks.md#attention-states-sampling-and-alternative-algorithms) | Includes transform costs and convolution boundary semantics |
 | DefTruth, Nathan Nguyen, vLLM/SGLang project posts | [Discovery graph](gpu-doc-links.jsonl), [review scope](gpu-blog-deep-dive.md) | Useful project/patch leads; unaudited linked code is not promoted to a proven recipe |
 | Poppy and failed Stephen Diehl URL | [Unavailable leads](gpu-blog-deep-dive.md) | No body-based decision extracted; search snippets do not establish experiments |
+| LMSYS GLM-5.3-Flash H200 PD case (November 1, added November 10) | [Serving playbook](../playbooks/llm-serving.md#hybrid-models-with-disaggregated-prefill-and-decode) | [Reviewed case and transfer experiments](glm53-h200-pd.md); custom revision, external evidence only |
 | Remaining outbound docs, code, blogs | [Searchable link graph](gpu-doc-links.jsonl) | Explicit discovery records; consult exact target and revision for a live decision |
 
 ## Retrieval from a real task

@@ -157,3 +157,9 @@ client contract.
 - At batch size 1, decode is bound by weight bandwidth, so a wider tensor
   parallelism that halves per-GPU weight traffic can raise per-user tokens per
   second even where it loses aggregate throughput; measure both.
+
+## Hybrid models with disaggregated prefill and decode
+
+For GLM-5.3-Flash, hybrid state, speculative verification or a P/D supply
+imbalance, read [the H200 case and conditional experiments](../sources/glm53-h200-pd.md).
+Use it to select a falsifier, then apply this playbook's workload and parity gates.
