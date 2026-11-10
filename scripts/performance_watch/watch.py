@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 import re
 import sqlite3
+import signal
 import sys
 import time
 from types import SimpleNamespace
@@ -112,9 +113,18 @@ def known_urls():
     return urls
 
 
-def get(url):
+def get(url, deadline=45):
     from research_core.documents import download
-    return download(url)
+    # Socket read timeouts do not bound redirects or a slowly streaming body.
+    def expired(signum, frame):
+        raise TimeoutError('Source download exceeded wall-clock deadline')
+    previous = signal.signal(signal.SIGALRM, expired)
+    signal.setitimer(signal.ITIMER_REAL, deadline)
+    try:
+        return download(url)
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        signal.signal(signal.SIGALRM, previous)
 
 
 def health(url, state, count, detail):

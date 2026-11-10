@@ -16,6 +16,15 @@ class WatchTests(unittest.TestCase):
         self.patch.start()
     def tearDown(self):
         self.patch.stop(); self.tmp.cleanup()
+    def test_download_has_wall_clock_deadline(self):
+        import types, time, sys
+        transport = types.ModuleType('research_core.documents')
+        transport.download = lambda url: time.sleep(1)
+        with patch.dict(sys.modules, {'research_core.documents': transport}):
+            started = time.monotonic()
+            with self.assertRaises(TimeoutError):
+                w.get('https://example.org/', deadline=0.02)
+            self.assertLess(time.monotonic()-started, 0.5)
     def test_canonical_identity_and_priority(self):
         a=w.add('https://example.org/post/?utm_source=a','Paper')
         b=w.add('https://example.org/post#section','Other title',priority=10)
