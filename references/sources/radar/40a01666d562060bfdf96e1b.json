@@ -1,0 +1,82 @@
+{
+  "source": {
+    "id": "40a01666d562060bfdf96e1b",
+    "url": "https://huggingface.co/blog/Dharma-AI/vocabx-vocabulary-specialization",
+    "title": "How Specializing the Vocabulary of SLMs Can Cut Inference Cost by 77% in Real Applications",
+    "reviewed_at": "2026-11-11T00:04:18.317829+00:00",
+    "content_hash": "68c1fe65710f5182c78f0d06606622694e05d618d86ee315afa0acac8eed5b94",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Wed, 21 Oct 2026 17:35:36 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "R40a01666d562060bfdf96e1b-1",
+      "source": "40a01666d562060bfdf96e1b",
+      "section": "How We Solved It",
+      "author_observation": "В измеренном случае грейдера токен, сэкономленный в ответе, ценился в 7.4 раза выше входного.",
+      "author_action": "Каждый устранённый токен умножали на цену его поля (системный промпт, сообщение пользователя или ответ) и строили словарь по стоимости, а не по частоте.",
+      "author_outcome": "Вклад критерия отдельно не изолирован: unknown.",
+      "scope": "Грейдер Qwen3-4B. Соотношение зависит от железа, батча и контекста.",
+      "transfer_test": "Наш эксперимент: измерить вес decode/prefill на нашем стенде и сравнить отбор по частоте и по стоимости. Дельта к D049: вес фазы вместо суммарного числа вызовов.",
+      "tags": [
+        "tokenizer-specialization",
+        "vocabulary-pruning",
+        "lm-head",
+        "decode-memory-bound",
+        "prefill-vs-decode",
+        "macro-tokens",
+        "output-token-cost",
+        "quality-regression"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R40a01666d562060bfdf96e1b-2",
+      "source": "40a01666d562060bfdf96e1b",
+      "section": "What Changed in the Grader",
+      "author_observation": "Отказ: макро-токен, слитый из оценки и JSON-обёртки, дал качество 0.689, ниже продакшн-уровня 0.703.",
+      "author_action": "Оценку вынесли в отдельный токен ценой +2 токенов на ответ.",
+      "author_outcome": "По данным авторов, качество выросло до 0.810, снижение стоимости составило 77.0% против 73.3% у слитой версии.",
+      "scope": "Структурированный JSON-вывод грейдера",
+      "transfer_test": "Независимый наш тест: проверять качество задачи, если сжатый фрагмент несёт решающий выход модели. В переданных записях аналога нет.",
+      "tags": [
+        "tokenizer-specialization",
+        "vocabulary-pruning",
+        "lm-head",
+        "decode-memory-bound",
+        "prefill-vs-decode",
+        "macro-tokens",
+        "output-token-cost",
+        "quality-regression"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R40a01666d562060bfdf96e1b-3",
+      "source": "40a01666d562060bfdf96e1b",
+      "section": "Reading Is Cheap, Writing Is Expensive",
+      "author_observation": "LM head читается целиком на каждом сгенерированном токене и составляет почти 10% параметров Qwen3-4B.",
+      "author_action": "Размер ограничили заменой базового словаря на доменный и фиксированным бюджетом макросов. Строк выхода стало примерно 65K вместо 152K.",
+      "author_outcome": "Изолированный эффект unknown. Член LM head в критерий отбора VocabX не входит. Авторы предупреждают, что рост словаря может повысить стоимость.",
+      "scope": "Малые модели, memory-bound decode",
+      "transfer_test": "Наш эксперимент: замерить латентность decode при разном размере словаря и фиксированном числе токенов.",
+      "tags": [
+        "tokenizer-specialization",
+        "vocabulary-pruning",
+        "lm-head",
+        "decode-memory-bound",
+        "prefill-vs-decode",
+        "macro-tokens",
+        "output-token-cost",
+        "quality-regression"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}
