@@ -1,0 +1,88 @@
+{
+  "source": {
+    "id": "aec9a806dce077eacfbde941",
+    "url": "https://huggingface.co/blog/hf-bitsandbytes-integration",
+    "title": "A Gentle Introduction to 8-bit Matrix Multiplication for transformers at scale using transformers, accelerate and bitsandbytes",
+    "reviewed_at": "2026-11-11T06:17:04.050697+00:00",
+    "content_hash": "3d2a355d7a2d2b91687cfa4fa59d231e68f2fd97626d84ec8a666145e0e1a85c",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Wed, 17 Aug 2022 00:00:00 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "Raec9a806dce077eacfbde941-1",
+      "source": "aec9a806dce077eacfbde941",
+      "section": "Inside the MatMul",
+      "author_observation": "Автор: классическое int8-квантование деградирует на трансформерах >6B из-за систематических выбросов.",
+      "author_action": "Автор выносит выбросы с модулем ≥6 в fp16-matmul, остальное считает в int8 построчно/постолбцово.",
+      "author_outcome": "Автор: разница ниже std err, кроме BLOOM lambada (int8 лучше). Наша интерпретация: в отличие от R3f (W4A16) и D095 (ядро MXFP8 без оценки качества в записи), здесь разбиение зависит от модуля активаций.",
+      "scope": "OPT-175B, BLOOM-176B; lm-eval-harness; порог 6, развёртки нет.",
+      "transfer_test": "Наш эксперимент: варьировать порог, мерить качество относительно std err и время.",
+      "tags": [
+        "int8 quantization",
+        "LLM.int8",
+        "outlier decomposition",
+        "vector-wise quantization",
+        "mixed precision",
+        "memory footprint",
+        "meta device",
+        "device placement",
+        "OOM",
+        "latency tradeoff"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "Raec9a806dce077eacfbde941-2",
+      "source": "aec9a806dce077eacfbde941",
+      "section": "Is it faster than native models?",
+      "author_observation": "Автор: BLOOM-176B int8 медленнее на 15–23%, у T5-3B/11B замедление сильнее. В таблице одна ячейка oom: int8, 5xA100-40GB, batch 32.",
+      "author_action": "Автор замерил время на токен при batch 1/8/32. int8 шёл на меньшем числе GPU, чем базовая bf16-конфигурация (4 против 8 A100-80GB).",
+      "author_outcome": "Автор: замедление «приемлемо», общего вывода об OOM нет. Наша интерпретация: сравнение ведётся при разном числе GPU.",
+      "scope": "A100/T4, генерация; в тексте база названа fp16, в таблице bf16.",
+      "transfer_test": "Наш эксперимент: int8 и bf16 при равном и при минимальном числе GPU, по батчам, с пиковой памятью.",
+      "tags": [
+        "int8 quantization",
+        "LLM.int8",
+        "outlier decomposition",
+        "vector-wise quantization",
+        "mixed precision",
+        "memory footprint",
+        "meta device",
+        "device placement",
+        "OOM",
+        "latency tradeoff"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "Raec9a806dce077eacfbde941-3",
+      "source": "aec9a806dce077eacfbde941",
+      "section": "accelerate is all you need",
+      "author_observation": "Автор: квантование происходит при переносе на GPU. dispatch_model может вызывать .to несколько раз. Статистики CB/SCB не сохраняются в state dict.",
+      "author_action": "Автор ввёл set_module_8bit_tensor_to_device и загрузку через meta device. Первый PR сломал тесты.",
+      "author_outcome": "Автор: интеграция заработала после второго PR, прирост скорости не заявлен (unknown). Наша производная проверка: квантование должно выполняться ровно один раз; аналога среди полученных записей нет.",
+      "scope": "bitsandbytes Linear8bitLt + accelerate, версия на момент поста.",
+      "transfer_test": "Наш эксперимент: считать вызовы квантования, проверять веса и пиковую память при загрузке.",
+      "tags": [
+        "int8 quantization",
+        "LLM.int8",
+        "outlier decomposition",
+        "vector-wise quantization",
+        "mixed precision",
+        "memory footprint",
+        "meta device",
+        "device placement",
+        "OOM",
+        "latency tradeoff"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}
