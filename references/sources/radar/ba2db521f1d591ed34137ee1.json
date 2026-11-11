@@ -1,0 +1,79 @@
+{
+  "source": {
+    "id": "ba2db521f1d591ed34137ee1",
+    "url": "https://huggingface.co/blog/galore",
+    "title": "GaLore: Advancing Large Model Training on Consumer-grade Hardware",
+    "reviewed_at": "2026-11-11T02:31:35.806260+00:00",
+    "content_hash": "aa9ead5cab88d02ed89f7dcb6d8c05680e31e50c52468012fc7b8e93a845f47a",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Wed, 20 Mar 2024 00:00:00 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "Rba2db521f1d591ed34137ee1-1",
+      "source": "ba2db521f1d591ed34137ee1",
+      "section": "Memory Efficiency in Optimizer States",
+      "author_observation": "Состояния Adam занимают значительную долю памяти обучения.",
+      "author_action": "Градиенты проецируются в низкоранговое подпространство до оптимизатора, состояния хранятся в нём. Опционально сочетается с 8-bit оптимизатором.",
+      "author_outcome": "Со ссылкой на авторов: экономия памяти состояний более 82.5%. Базовая линия, качество и сходимость: unknown.",
+      "scope": "Модули, выбранные через optim_target_modules. Размер модели и условия для цифры 82.5%: unknown.",
+      "transfer_test": "Наш эксперимент: сравнить пиковую память и кривую loss GaLore без 8-bit, 8-bit AdamW и их комбинации против AdamW при равном числе шагов. Дельта к D069: снижение ранга вместо точности. 8-bit вариант пересекается с D069, поэтому вклады нужно изолировать.",
+      "tags": [
+        "low-rank-gradient-projection",
+        "optimizer-state-memory",
+        "subspace-switching",
+        "8bit-optimizer",
+        "layerwise-optimizer-update",
+        "post-accumulation-hooks",
+        "training-memory"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "Rba2db521f1d591ed34137ee1-2",
+      "source": "ba2db521f1d591ed34137ee1",
+      "section": "Subspace Switching and Advanced Projection Techniques",
+      "author_observation": "Фиксированное подпространство ограничивало бы обучение полной параметризацией.",
+      "author_action": "Подпространство проекции динамически переключается.",
+      "author_outcome": "Частота переключения описана как компромисс между стабильностью траектории и адаптацией. Значения и измерения отсутствуют: unknown.",
+      "scope": "Гиперпараметр GaLore. Условия не указаны.",
+      "transfer_test": "Наш эксперимент: развёртка частоты переключения с замером стоимости пересчёта проекции и качества. В переданных записях аналога нет.",
+      "tags": [
+        "low-rank-gradient-projection",
+        "optimizer-state-memory",
+        "subspace-switching",
+        "8bit-optimizer",
+        "layerwise-optimizer-update",
+        "post-accumulation-hooks",
+        "training-memory"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "Rba2db521f1d591ed34137ee1-3",
+      "source": "ba2db521f1d591ed34137ee1",
+      "section": "Layer-wise Updates",
+      "author_observation": "Единый шаг оптимизатора после backward требует хранить все градиенты весов.",
+      "author_action": "Веса обновляются послойно через hooks. Включается суффиксом _layerwise у имени оптимизатора.",
+      "author_outcome": "Заявлено дальнейшее снижение памяти без цифр: unknown.",
+      "scope": "Условия не указаны. Совместимость с накоплением градиентов и распределённым обучением: unknown.",
+      "transfer_test": "Наш эксперимент: сравнить пиковую память и время шага, проверить эквивалентность обновлений и gradient accumulation. Дельта к D055/D068: память градиентов, а не loss или API backward.",
+      "tags": [
+        "low-rank-gradient-projection",
+        "optimizer-state-memory",
+        "subspace-switching",
+        "8bit-optimizer",
+        "layerwise-optimizer-update",
+        "post-accumulation-hooks",
+        "training-memory"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}
