@@ -1,0 +1,60 @@
+{
+  "source": {
+    "id": "41397e50e86ff22441478809",
+    "url": "https://huggingface.co/blog/gradient_accumulation",
+    "title": "Fixing Gradient Accumulation",
+    "reviewed_at": "2026-11-11T06:31:42.327763+00:00",
+    "content_hash": "fb151226c3548a4353424f7b96aa0289b392a830997ac87a7346f02b895e9f2c",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Wed, 16 Oct 2024 00:00:00 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "R41397e50e86ff22441478809-1",
+      "source": "41397e50e86ff22441478809",
+      "section": "Where does it stem from?",
+      "author_observation": "Loss различались между прогонами с накоплением градиентов и без него.",
+      "author_action": "Нормировать суммарный loss шага накопления на общее число непаддинговых токенов всех micro-batch, а не усреднять средние по батчам.",
+      "author_outcome": "Авторы называют это корректным расчётом. Числовой эффект исправления: unknown.",
+      "scope": "Токенные задачи вроде causal LM с паддингом и переменной длиной. Неясно, касается ли это распределения по рангам data parallel: unknown.",
+      "transfer_test": "Наш эксперимент: сравнить loss и градиенты одного шага при полном батче и при N micro-batch разной длины. Дополнить проверку эквивалентности из Rba2db521f1d591ed34137ee1-3 и D055 этим условием нормировки.",
+      "tags": [
+        "gradient-accumulation",
+        "loss-normalization",
+        "token-count-normalization",
+        "padding",
+        "causal-lm",
+        "custom-loss-function",
+        "numerical-equivalence",
+        "training-memory"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R41397e50e86ff22441478809-2",
+      "source": "41397e50e86ff22441478809",
+      "section": "How we're fixing it",
+      "author_observation": "Встроенный loss модели не учитывает контекст накопления градиентов.",
+      "author_action": "Ввести свойство loss_function и пользовательский loss, который получает число элементов, увиденных за батч.",
+      "author_outcome": "Изменения в процессе внедрения через PR. Подтверждений и измерений нет: unknown.",
+      "scope": "Модели, наследующие PreTrainedModel. Поддерживаются популярные модели, остальные позже.",
+      "transfer_test": "Наш эксперимент: проверить, что собственный или fused loss (D055) принимает общий знаменатель шага накопления и сохраняет эквивалентность градиентов.",
+      "tags": [
+        "gradient-accumulation",
+        "loss-normalization",
+        "token-count-normalization",
+        "padding",
+        "causal-lm",
+        "custom-loss-function",
+        "numerical-equivalence",
+        "training-memory"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}
