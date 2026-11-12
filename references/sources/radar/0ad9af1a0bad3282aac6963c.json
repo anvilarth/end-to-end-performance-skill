@@ -1,0 +1,76 @@
+{
+  "source": {
+    "id": "0ad9af1a0bad3282aac6963c",
+    "url": "https://huggingface.co/blog/bert-inferentia-sagemaker",
+    "title": "Accelerate BERT inference with Hugging Face Transformers and AWS Inferentia",
+    "reviewed_at": "2026-11-11T06:32:22.718244+00:00",
+    "content_hash": "a2d772f84fbbc8d8f6e4acfb32c402ce09969ae77795c54ea50e7750e8af16bb",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Wed, 16 Mar 2022 00:00:00 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "R0ad9af1a0bad3282aac6963c-1",
+      "source": "0ad9af1a0bad3282aac6963c",
+      "section": "1. Convert your Hugging Face Transformer to AWS Neuron",
+      "author_observation": "Автор: Neuron SDK требует статических форм. Модель работает только с формой входа, заданной при компиляции.",
+      "author_action": "Автор компилирует модель с фиксированными batch и длиной последовательности.",
+      "author_outcome": "unknown: издержки паддинга и точность не измерены. Отличие от полученных записей: в них нет решения о статических формах.",
+      "scope": "AWS Neuron SDK на момент написания, Inf1, DistilBERT.",
+      "transfer_test": "Наш эксперимент: сравнить паддинг до одной длины и несколько скомпилированных корзин длин по задержке и доле паддинга на реальном распределении длин.",
+      "tags": [
+        "static shapes",
+        "ahead-of-time compilation",
+        "model replication per core",
+        "throughput-latency tradeoff",
+        "load testing",
+        "accelerator inference"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R0ad9af1a0bad3282aac6963c-2",
+      "source": "0ad9af1a0bad3282aac6963c",
+      "section": "2. Create a custom inference.py script for text-classification",
+      "author_observation": "Автор: на чипе 4 Neuron-ядра. Модель на каждом ядре даёт пропускную способность, одна модель на все ядра — меньшую задержку.",
+      "author_action": "Автор задаёт NEURON_RT_NUM_CORES=1, чтобы каждый HTTP-воркер занимал одно ядро.",
+      "author_outcome": "unknown: прирост пропускной способности не измерен, вариант на все ядра не сравнивался.",
+      "scope": "Inf1, SageMaker, HTTP-воркеры.",
+      "transfer_test": "Наш эксперимент: сравнить реплики по ядрам и одну шардированную модель при нескольких уровнях параллельной нагрузки по p50/p99 и пропускной способности.",
+      "tags": [
+        "static shapes",
+        "ahead-of-time compilation",
+        "model replication per core",
+        "throughput-latency tradeoff",
+        "load testing",
+        "accelerator inference"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R0ad9af1a0bad3282aac6963c-3",
+      "source": "0ad9af1a0bad3282aac6963c",
+      "section": "5. Run and evaluate Inference performance of BERT on Inferentia",
+      "author_observation": "Автор: замер — синхронный цикл запросов, средняя задержка 5–6 мс при длине 128 по CloudWatch.",
+      "author_action": "Автор делает вывод о большей пропускной способности, чем у GPU, ссылаясь на 4 параллельные модели.",
+      "author_outcome": "unknown: синхронная нагрузка не нагружает параллельные реплики. Пропускная способность, хвосты и базовые CPU/GPU не измерены.",
+      "scope": "Одна конечная точка SageMaker, синхронные запросы.",
+      "transfer_test": "Наш эксперимент: конкурентная нагрузка с прогревом, p99 и пропускная способность против CPU/GPU при равных формах. Это дополняет парный замер из D005 условием о параллелизме нагрузки.",
+      "tags": [
+        "static shapes",
+        "ahead-of-time compilation",
+        "model replication per core",
+        "throughput-latency tradeoff",
+        "load testing",
+        "accelerator inference"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}
