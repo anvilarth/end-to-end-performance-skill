@@ -1,0 +1,82 @@
+{
+  "source": {
+    "id": "eb050dec3b5e24a27cc91313",
+    "url": "https://www.together.ai/blog/cache-aware-disaggregated-inference",
+    "title": "Cache-aware prefill–decode disaggregation (CPD) for up to 40% faster long-context LLM serving",
+    "reviewed_at": "2026-11-12T03:43:32.213665+00:00",
+    "content_hash": "10fbc87b11a53099299db0ad898f0531446dcc66483c2e258a02b92375b514e1",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Wed, 04 Mar 2026 00:00:00 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "Reb050dec3b5e24a27cc91313-1",
+      "source": "eb050dec3b5e24a27cc91313",
+      "section": "How CPD works",
+      "author_observation": "При PD холодные и тёплые prefill-запросы делят общую ёмкость. Тёплые ждут в одной очереди за холодными промптами на 100K+ токенов.",
+      "author_action": "Роутер оценивает долю кэшируемого промпта. Запросы с низким переиспользованием идут на pre-prefill-узлы.",
+      "author_outcome": "По данным авторов, насыщение наступает при ~1.1–1.15 QPS/GPU против 0.75–0.8 у 2P1D. При малой нагрузке p50 сопоставим.",
+      "scope": "B200, prefill TP4, синтетическая нагрузка. Дельта к D091: там учитывается перекрытие кэша и нагрузка, но нет выделенной ёмкости для холодных запросов.",
+      "transfer_test": "Наше предложение: при равном числе GPU сравнить общий и раздельный пулы. Мерить TTFT тёплых и холодных запросов отдельно и точку насыщения.",
+      "tags": [
+        "prefill-decode disaggregation",
+        "cache-aware routing",
+        "head-of-line blocking",
+        "KV cache hierarchy",
+        "RDMA",
+        "prefix caching",
+        "TTFT",
+        "saturation throughput"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "Reb050dec3b5e24a27cc91313-2",
+      "source": "eb050dec3b5e24a27cc91313",
+      "section": "How CPD works",
+      "author_observation": "Холодный запрос оплачивает полный prefill, но превращает контекст в переиспользуемое состояние.",
+      "author_action": "Pre-prefill записывает KV в распределённый кэш. Обычный prefill забирает блоки по RDMA. Частые контексты перемещаются ближе к GPU.",
+      "author_outcome": "Заявлено: секунды вычислений заменяются сотнями миллисекунд передачи. Вклад иерархии отдельно не измерен.",
+      "scope": "Дельта к D088: там KV передаётся prefill→decode, здесь кэш служит для переиспользования prefill→prefill.",
+      "transfer_test": "Наше предложение: сравнить загрузку KV по RDMA с пересчётом на разных длинах префикса. Учесть стоимость записи и вытеснение.",
+      "tags": [
+        "prefill-decode disaggregation",
+        "cache-aware routing",
+        "head-of-line blocking",
+        "KV cache hierarchy",
+        "RDMA",
+        "prefix caching",
+        "TTFT",
+        "saturation throughput"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "Reb050dec3b5e24a27cc91313-3",
+      "source": "eb050dec3b5e24a27cc91313",
+      "section": "Results",
+      "author_observation": "При умеренной нагрузке p90 TTFT схож с базой. Всплески холодного трафика всё ещё создают очередь в pre-prefill-уровне.",
+      "author_action": "unknown: отдельная мера авторами не предложена.",
+      "author_outcome": "По данным авторов, p90 ниже базы или сопоставим, влияние всплесков в основном локализовано. Decode throughput сопоставим или выше в 1D и 2D.",
+      "scope": "TTFT холодных запросов отдельно не приводится, размеры уровней не варьировались. Недостающее условие к D091: размер изолированного пула.",
+      "transfer_test": "Наша гипотеза: недоразмеренный pre-prefill-уровень может ухудшать холодные запросы. Варьировать соотношение уровней, мерить p90/p99 холодных запросов и глубину очереди.",
+      "tags": [
+        "prefill-decode disaggregation",
+        "cache-aware routing",
+        "head-of-line blocking",
+        "KV cache hierarchy",
+        "RDMA",
+        "prefix caching",
+        "TTFT",
+        "saturation throughput"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}
