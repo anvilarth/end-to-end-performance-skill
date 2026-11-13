@@ -1,0 +1,58 @@
+{
+  "source": {
+    "id": "f8050f1e90a9291cadb4b509",
+    "url": "https://huggingface.co/blog/encrypted-llm",
+    "title": "Towards Encrypted Large Language Models with FHE",
+    "reviewed_at": "2026-11-12T03:48:12.572925+00:00",
+    "content_hash": "498192c648d7ca92ad6ce5ae448fb5fe2787a24a996ebbc33fea0ec59f1ad161",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Wed, 02 Aug 2023 00:00:00 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "Rf8050f1e90a9291cadb4b509-1",
+      "source": "f8050f1e90a9291cadb4b509",
+      "section": "Fully Homomorphic Encryption (FHE) Can Solve LLM Privacy Challenges",
+      "author_observation": "Авторы: время PBS доминирует над линейными операциями. Одна голова при длине 6 требует 11 622 PBS. Число шифрованных умножений растёт квадратично с длиной. Реализация не оптимизирована.",
+      "author_action": "Нелинейности реализованы через PBS (табличный поиск). Использовать число PBS как модель стоимости авторы не предлагают: это наша интерпретация.",
+      "author_outcome": "По словам авторов, работает «за секунды», но требует большой вычислительной мощности. Железо не указано (unknown). Фраза о «нескольких минутах на CPU» относится к прогнозу, а не к замеру.",
+      "scope": "Одна голова внимания GPT2 в TFHE/Concrete. Платформа замера: unknown.",
+      "transfer_test": "Наш эксперимент: на сетке длин последовательности подсчитать PBS и замерить время, затем проверить квадратичный рост и долю PBS. Дельта к D033: там доминирующий этап заменяют библиотекой. Здесь доминирующий примитив незаменим, поэтому дополнение состоит в отслеживании роста его числа с размером входа.",
+      "tags": [
+        "fully-homomorphic-encryption",
+        "programmable-bootstrapping",
+        "quadratic-attention-scaling",
+        "post-training-quantization",
+        "bit-width-sweep",
+        "split-inference",
+        "accuracy-fidelity"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "Rf8050f1e90a9291cadb4b509-2",
+      "source": "f8050f1e90a9291cadb4b509",
+      "section": "Quantization",
+      "author_observation": "Авторы варьировали битность весов и активаций. По их данным, 4 бита сохраняют 96% точности на выборке около 80 предложений. Метрика: сравнение логитов с исходной моделью. Схема скомпилирована с шириной 8 бит.",
+      "author_action": "Посттренировочное квантование без переобучения со свипом битности.",
+      "author_outcome": "96% по метрике авторов. При низкой точности генерация меняется по смыслу. Связь битности со стоимостью PBS не измерена (unknown).",
+      "scope": "GPT2, одна квантованная голова, малая выборка.",
+      "transfer_test": "Наш эксперимент: свип битности с одновременным замером качества задачи и стоимости на выборке больше 80. Дельта к R3f3037a20c228735acb63dc3-3: там рассматриваются калибровка и офлайн-стоимость. Здесь добавлено условие: метрика основана на верности логитам на малой выборке.",
+      "tags": [
+        "fully-homomorphic-encryption",
+        "programmable-bootstrapping",
+        "quadratic-attention-scaling",
+        "post-training-quantization",
+        "bit-width-sweep",
+        "split-inference",
+        "accuracy-fidelity"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}

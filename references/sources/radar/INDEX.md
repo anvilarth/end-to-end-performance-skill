@@ -23,4 +23,5 @@ Source-supported external decisions; local validation has not run. Read comparis
 - [Reachy Mini goes fully local](c3c696b5bf6b4f8c7bbbd52e.md) — https://huggingface.co/blog/local-reachy-mini-conversation
 - [Arm & ExecuTorch 0.7: Bringing Generative AI to the masses](e9017634a5f3b6b7591da26b.md) — https://huggingface.co/blog/Arm/executorch-0-dot-7
 - [Cache-aware prefill–decode disaggregation (CPD) for up to 40% faster long-context LLM serving](eb050dec3b5e24a27cc91313.md) — https://www.together.ai/blog/cache-aware-disaggregated-inference
+- [Towards Encrypted Large Language Models with FHE](f8050f1e90a9291cadb4b509.md) — https://huggingface.co/blog/encrypted-llm
 - [Deploying Hugging Face Models with BentoML: DeepFloyd IF in Action](fe4e53021191b0e9b905a8b5.md) — https://huggingface.co/blog/deploy-deepfloydif-using-bentoml
