@@ -1,0 +1,82 @@
+{
+  "source": {
+    "id": "969cdff003616d877728734c",
+    "url": "https://huggingface.co/blog/ibm-research/model-routing-is-simple-until-it-isnt",
+    "title": "Model Routing Is Simple. Until It Isn’t.",
+    "reviewed_at": "2026-11-12T03:33:52.816084+00:00",
+    "content_hash": "b0009d94545d80914de18046b757ed527ed7dfe1336406a9fe1fad59a9c4e425",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Wed, 15 Jul 2026 17:27:01 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "R969cdff003616d877728734c-1",
+      "source": "969cdff003616d877728734c",
+      "section": "1. Cost Is More Than Model Pricing",
+      "author_observation": "Авторы: AppWorld, 417 задач, CodeAct. Sonnet обошёлся в $79, GPT-4.1 в $155, хотя у Sonnet примерно втрое больше шагов и выше прайс.",
+      "author_action": "Авторы объясняют разницу более дешёвым чтением кэша при высокой доле кэш-попаданий. Саму долю попаданий они не приводят.",
+      "author_outcome": "Ранжирование по фактической стоимости разошлось с ранжированием по прайсу.",
+      "scope": "Агенты с повторным использованием контекста, API-тарифы с кэшем",
+      "transfer_test": "Наш эксперимент: ранжировать модели по стоимости успешной задачи с замером доли кэш-попаданий и тарифа на чтение кэша. Дельта относительно доступных записей: явного условия о тарифе кэша там нет.",
+      "tags": [
+        "model-routing",
+        "prompt-caching",
+        "cache-read-pricing",
+        "cost-per-task",
+        "routing-overhead",
+        "routing-granularity",
+        "pareto-frontier",
+        "latency-cost-tradeoff"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R969cdff003616d877728734c-2",
+      "source": "969cdff003616d877728734c",
+      "section": "So How Did We Handle This?",
+      "author_observation": "Авторы сообщают, что накладные расходы их оптимизатора маршрутизации составляют около 6 мс и 2 кБ на задачу. Гранулярность (на задачу или на шаг) не указана.",
+      "author_action": "Авторы делают оптимизацию лёгкой, чтобы маршрутизатор не стал узким местом.",
+      "author_outcome": "Авторы утверждают, что маршрутизатор не становится узким местом. Разбивка сквозной задержки не показана.",
+      "scope": "Маршрутизация в агентных системах; гранулярность неизвестна",
+      "transfer_test": "Наш эксперимент: замерить накладные расходы маршрутизатора при решении на задачу и на шаг, в долях сквозной задержки. Дельта относительно доступных записей: условие гранулярности решений в них отсутствует.",
+      "tags": [
+        "model-routing",
+        "prompt-caching",
+        "cache-read-pricing",
+        "cost-per-task",
+        "routing-overhead",
+        "routing-granularity",
+        "pareto-frontier",
+        "latency-cost-tradeoff"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R969cdff003616d877728734c-3",
+      "source": "969cdff003616d877728734c",
+      "section": "So How Did We Handle This?",
+      "author_observation": "Авторы: сложность задачи часто не видна в момент маршрутизации. По их рисунку, маршрутизатор по сложности даёт схожую точность при более высокой стоимости. Это нужно проверить визуально.",
+      "author_action": "Авторы оптимизируют стоимость, качество и задержку совместно и получают набор рабочих точек.",
+      "author_outcome": "Конфигурация 1 по данным авторов: 84% точности, $93, 83 с. Против одного Opus: стоимость −21%, задержка −9%, точность −4%.",
+      "scope": "AppWorld, CodeAct; детали алгоритма неизвестны",
+      "transfer_test": "Наш эксперимент: строить фронт стоимость–точность–задержка и выбирать точку под целевую метрику. Дельта относительно доступных записей: многокритериальный выбор маршрута там не описан.",
+      "tags": [
+        "model-routing",
+        "prompt-caching",
+        "cache-read-pricing",
+        "cost-per-task",
+        "routing-overhead",
+        "routing-granularity",
+        "pareto-frontier",
+        "latency-cost-tradeoff"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}
