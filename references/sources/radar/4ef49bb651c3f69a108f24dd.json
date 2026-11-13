@@ -1,0 +1,82 @@
+{
+  "source": {
+    "id": "4ef49bb651c3f69a108f24dd",
+    "url": "https://www.together.ai/blog/new-in-together-gpu-clusters-reliability-and-control-for-production-gpu-clusters",
+    "title": "New in Together GPU Clusters: Reliability and control for production GPU clusters",
+    "reviewed_at": "2026-11-12T03:34:35.740670+00:00",
+    "content_hash": "99a274c7e618ee8e165a098d9376916a240c198c95dfe368ea3a6d226f7030e9",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Wed, 15 Jul 2026 00:00:00 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "R4ef49bb651c3f69a108f24dd-1",
+      "source": "4ef49bb651c3f69a108f24dd",
+      "section": "Together Slurm-on-K8s 2.0: The future of Slurm on Kubernetes",
+      "author_observation": "Автор: демонизированные дочерние процессы переживали задачу и удерживали GPU-память и /dev/shm.",
+      "author_action": "Автор: отслеживание всех потомков задачи на уровне ядра и их очистка по завершении.",
+      "author_outcome": "Автор заявляет чистый узел для следующей задачи. Измерений нет.",
+      "scope": "Slurm-on-K8s Together; unknown вне этой платформы.",
+      "transfer_test": "Наш эксперимент: перед бенчмарком проверять отсутствие чужих процессов, занятой GPU-памяти и сегментов /dev/shm. Дельта к D042: добавляется предусловие чистого узла.",
+      "tags": [
+        "node-health",
+        "thermal-throttling",
+        "orphan-processes",
+        "gpu-memory-leak",
+        "dev-shm",
+        "slurm",
+        "acceptance-testing",
+        "measurement-hygiene"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R4ef49bb651c3f69a108f24dd-2",
+      "source": "4ef49bb651c3f69a108f24dd",
+      "section": "Catching and fixing failures as they happen",
+      "author_observation": "Автор: троттлинг незаметно ограничивает пропускную способность во время реальной нагрузки.",
+      "author_action": "Автор: пассивные проверки по живым нагрузкам, логам и метрикам (троттлинг, Xid, выпадение GPU).",
+      "author_outcome": "Накладные расходы названы почти нулевыми без данных; unknown.",
+      "scope": "Многодневное обучение на больших кластерах.",
+      "transfer_test": "Наш эксперимент: логировать частоты, причины троттлинга и Xid во время замеров и исключать затронутые прогоны. Дельта к D044: новый источник искажения.",
+      "tags": [
+        "node-health",
+        "thermal-throttling",
+        "orphan-processes",
+        "gpu-memory-leak",
+        "dev-shm",
+        "slurm",
+        "acceptance-testing",
+        "measurement-hygiene"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R4ef49bb651c3f69a108f24dd-3",
+      "source": "4ef49bb651c3f69a108f24dd",
+      "section": "External OIDC for Kubernetes RBAC",
+      "author_observation": "Автор: для малых и коротких кластеров приёмочные тесты пропускаются ради скорости.",
+      "author_action": "Автор: тесты по умолчанию выключены; для крупных и долгих задач их рекомендуют включать.",
+      "author_outcome": "Явный компромисс: время готовности против раннего выявления плохих узлов. Цифр нет.",
+      "scope": "Провизионирование Together; unknown вне платформы.",
+      "transfer_test": "Наш эксперимент: сравнить стоимость предварительной валидации узлов с потерями от сбоев в долгих задачах. Дельта: условие применимости валидации.",
+      "tags": [
+        "node-health",
+        "thermal-throttling",
+        "orphan-processes",
+        "gpu-memory-leak",
+        "dev-shm",
+        "slurm",
+        "acceptance-testing",
+        "measurement-hygiene"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}
