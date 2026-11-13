@@ -1,0 +1,58 @@
+{
+  "source": {
+    "id": "19b4fcb1faac9c9bdbccd358",
+    "url": "https://huggingface.co/blog/qvac/botpsy",
+    "title": "BotPsy: On-Device Personal Assistant with a Sub-Billion-Parameter Agentic Language Model",
+    "reviewed_at": "2026-11-12T03:38:25.533442+00:00",
+    "content_hash": "76b249a650daf7a083c887922923327aaf99861d75ce5c47de3a8ca3af37fa1b",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Wed, 11 Nov 2026 05:01:16 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "R19b4fcb1faac9c9bdbccd358-1",
+      "source": "19b4fcb1faac9c9bdbccd358",
+      "section": "Inference efficiency",
+      "author_observation": "Сравнение токенов рассуждения ведётся только на вопросах, решённых всеми моделями. Точность считается по всем вопросам.",
+      "author_action": "Авторы оценивают стоимость как токены на правильный ответ на общем подмножестве.",
+      "author_outcome": "По данным авторов, у BotPsy в 1,4–3,1 раза меньше токенов, чем у базы, при более высокой точности. Время не измерялось.",
+      "scope": "Токены у каждой модели свои, поэтому межмодельное сравнение не равно стоимости. Влияние на латентность: unknown.",
+      "transfer_test": "Наш эксперимент: время декода на успешный ответ на общем подмножестве при фиксированном железе. Дельта к D052: нормировка по успеху и сложности.",
+      "tags": [
+        "reasoning-token-budget",
+        "cost-per-success",
+        "agent-turns",
+        "difficulty-controlled-measurement",
+        "pareto-frontier",
+        "tokenizer-dependence",
+        "negative"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R19b4fcb1faac9c9bdbccd358-2",
+      "source": "19b4fcb1faac9c9bdbccd358",
+      "section": "Inference efficiency",
+      "author_observation": "Отказ: у MiniCPM5 меньше ходов в retail (8,7), но доля пройденных задач низкая.",
+      "author_action": "Авторы оценивают ходы на решённую задачу вместе с долей прохождения по Парето-фронту.",
+      "author_outcome": "Число ходов BotPsy в тексте не приведено (unknown). Задач пройдено в 2,0 раза (retail) и в 2,6 раза (telecom) больше, чем у базы.",
+      "scope": "τ²-bench, многоходовые агентные задачи.",
+      "transfer_test": "Наш эксперимент: в метрику числа посещений D052 добавить отсев по успешности и проверять ходы вместе с долей прохождения.",
+      "tags": [
+        "reasoning-token-budget",
+        "cost-per-success",
+        "agent-turns",
+        "difficulty-controlled-measurement",
+        "pareto-frontier",
+        "tokenizer-dependence",
+        "negative"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}

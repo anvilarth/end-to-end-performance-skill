@@ -4,6 +4,7 @@ Source-supported external decisions; local validation has not run. Read comparis
 
 - [Why we’re switching to Hugging Face Inference Endpoints, and maybe you should too](08e8d5a236e9f6b4863ca16e.md) — https://huggingface.co/blog/mantis-case-study
 - [Accelerate BERT inference with Hugging Face Transformers and AWS Inferentia](0ad9af1a0bad3282aac6963c.md) — https://huggingface.co/blog/bert-inferentia-sagemaker
+- [BotPsy: On-Device Personal Assistant with a Sub-Billion-Parameter Agentic Language Model](19b4fcb1faac9c9bdbccd358.md) — https://huggingface.co/blog/qvac/botpsy
 - [https://www.together.ai/blog/coderforge-preview](272ac80d602e20cf1396f805.md) — https://www.together.ai/blog/coderforge-preview
 - [Making LLMs lighter with AutoGPTQ and transformers](3f3037a20c228735acb63dc3.md) — https://huggingface.co/blog/gptq-integration
 - [How Specializing the Vocabulary of SLMs Can Cut Inference Cost by 77% in Real Applications](40a01666d562060bfdf96e1b.md) — https://huggingface.co/blog/Dharma-AI/vocabx-vocabulary-specialization
