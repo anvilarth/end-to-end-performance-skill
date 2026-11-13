@@ -1,0 +1,79 @@
+{
+  "source": {
+    "id": "87c93bf313061a4a467de191",
+    "url": "https://www.together.ai/blog/introducing-autojudge-streamlined-inference-acceleration-via-automated-dataset-curation",
+    "title": "Introducing AutoJudge: Streamlined inference acceleration via automated dataset curation",
+    "reviewed_at": "2026-11-12T03:45:31.646953+00:00",
+    "content_hash": "693a21816dab8481dfdd000701a5c3840c6bf180fc46419b00f93380f7a39674",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Wed, 03 Dec 2025 00:00:00 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "R87c93bf313061a4a467de191-1",
+      "source": "87c93bf313061a4a467de191",
+      "section": "Accuracy-acceptance tradeoffs",
+      "author_observation": "Строгая проверка отвергает черновик на первом расхождении.",
+      "author_action": "Авторы принимают расхождения, которые классификатор считает некритичными. Порог настраивается.",
+      "author_outcome": "По рисунку 3 (справа) принимается примерно втрое больше черновых токенов за цикл, чем при спекулятивном декодировании без потерь. Падение точности около 1%. Метрика — принятые токены за цикл, а не токены/с.",
+      "scope": "Только GSM8K 0-shot, пара Llama-3.1 8B/70B Instruct.",
+      "transfer_test": "Наш эксперимент: по порогам построить кривую точности и принятых токенов за цикл против варианта без потерь. Отдельно измерить токены/с.",
+      "tags": [
+        "speculative-decoding",
+        "lossy-verification",
+        "draft-acceptance",
+        "token-classifier",
+        "eagle-2",
+        "offloading",
+        "accuracy-throughput-tradeoff"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R87c93bf313061a4a467de191-2",
+      "source": "87c93bf313061a4a467de191",
+      "section": "Offloading scenarios (bandwidth-limited)",
+      "author_observation": "При offloading узким местом становится полоса канала.",
+      "author_action": "Авторы удлиняют окно черновика.",
+      "author_outcome": "Есть только качественное утверждение об усилении ускорения. Цифр в тексте нет: unknown.",
+      "scope": "Offloading с ограниченной полосой.",
+      "transfer_test": "Наш эксперимент: варьировать длину окна с offloading и без него, измерять токены/с.",
+      "tags": [
+        "speculative-decoding",
+        "lossy-verification",
+        "draft-acceptance",
+        "token-classifier",
+        "eagle-2",
+        "offloading",
+        "accuracy-throughput-tradeoff"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R87c93bf313061a4a467de191-3",
+      "source": "87c93bf313061a4a467de191",
+      "section": "Composing with EAGLE-2",
+      "author_observation": "EAGLE-2 строит черновик без отдельной модели.",
+      "author_action": "Авторы применили AutoJudge поверх EAGLE-2.",
+      "author_outcome": "96.8–107.5 против 89.8 токенов/с при точности 81.3–78.1%. Точность базового EAGLE в тексте не указана.",
+      "scope": "Llama-3.1-8B-Instruct, GSM8K 0-shot.",
+      "transfer_test": "Наш эксперимент: сравнить EAGLE с AutoJudge и без него на одной нагрузке, фиксируя точность обоих вариантов.",
+      "tags": [
+        "speculative-decoding",
+        "lossy-verification",
+        "draft-acceptance",
+        "token-classifier",
+        "eagle-2",
+        "offloading",
+        "accuracy-throughput-tradeoff"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}

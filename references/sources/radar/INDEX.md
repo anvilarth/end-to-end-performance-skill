@@ -13,6 +13,7 @@ Source-supported external decisions; local validation has not run. Read comparis
 - [New in Together GPU Clusters: Reliability and control for production GPU clusters](4ef49bb651c3f69a108f24dd.md) — https://www.together.ai/blog/new-in-together-gpu-clusters-reliability-and-control-for-production-gpu-clusters
 - [Parcae: Doing more with fewer parameters using stable looped models](4fa61876ab86598749228a0a.md) — https://www.together.ai/blog/parcae
 - [(Perf)(CosyVoice3) Avoid reference-feature list conversion between stages](7d61d04f231adb5b8208e33a.md) — https://github.com/sgl-project/sglang-omni/pull/2555
+- [Introducing AutoJudge: Streamlined inference acceleration via automated dataset curation](87c93bf313061a4a467de191.md) — https://www.together.ai/blog/introducing-autojudge-streamlined-inference-acceleration-via-automated-dataset-curation
 - [Model Routing Is Simple. Until It Isn’t.](969cdff003616d877728734c.md) — https://huggingface.co/blog/ibm-research/model-routing-is-simple-until-it-isnt
 - [KV Cache from scratch in nanoVLM](9c4d192fd24fc218ac911b0b.md) — https://huggingface.co/blog/kv-cache
 - [ForgeKernel: Self-Evolving Kernels Catching and Surpassing Experts and Agents](9dc8422ce8a35e71d21c1d43.md) — https://github.com/OpenBMB/ForgeKernel
