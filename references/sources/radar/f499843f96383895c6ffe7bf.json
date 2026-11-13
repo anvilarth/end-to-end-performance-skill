@@ -1,0 +1,85 @@
+{
+  "source": {
+    "id": "f499843f96383895c6ffe7bf",
+    "url": "https://huggingface.co/blog/llama-sagemaker-benchmark",
+    "title": "Llama 2 on Amazon SageMaker a Benchmark",
+    "reviewed_at": "2026-11-12T03:57:49.904888+00:00",
+    "content_hash": "36704e8808977cf49db274c5239dbef9253b212f87ce1bd642d7599dfc82d155",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Tue, 26 Sep 2023 00:00:00 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "Rf499843f96383895c6ffe7bf-1",
+      "source": "f499843f96383895c6ffe7bf",
+      "section": "Best Latency Deployment",
+      "author_observation": "Победитель каждого сценария (задержка, стоимость, пропускная способность) измерен при своём единственном уровне конкурентности: 1, 5 или 20 запросов.",
+      "author_action": "Авторы выбирали рекомендации по сценарию использования.",
+      "author_outcome": "Лучшая задержка при 1 запросе: 7B на ml.g5.12xlarge, 16.8 мс/токен. Цель и нагрузка меняются одновременно, поэтому влияние конкурентности не изолировано.",
+      "scope": "SageMaker, TGI 1.0.3, Llama 2, us-west-2",
+      "transfer_test": "Наш эксперимент: зафиксировать цель, менять конкурентность и проверить, меняется ли ранжирование. Близко к D075 (ранжирование зависит от условий). Добавка узкая: указывать нагрузку рядом с победителем.",
+      "tags": [
+        "llm-inference",
+        "serving",
+        "concurrency",
+        "quantization",
+        "gptq",
+        "cost-per-token",
+        "latency",
+        "throughput",
+        "benchmark-validity"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "Rf499843f96383895c6ffe7bf-2",
+      "source": "f499843f96383895c6ffe7bf",
+      "section": "Most Cost-Effective Deployment",
+      "author_observation": "Авторы утверждают, что GPTQ даёт лучшую экономичность и позволяет разместить 13B на одном GPU.",
+      "author_action": "Сравнение по стоимости 1M токенов при 5 запросах. В показанной таблице есть только строки GPTQ.",
+      "author_outcome": "13B GPTQ на g5.2xlarge: 71.7 токенов/с, $5.87 за 1M токенов. Варианта без квантования при той же нагрузке в тексте нет. Качество после квантования не сообщается.",
+      "scope": "g5.2xlarge, 5 одновременных запросов",
+      "transfer_test": "Наш эксперимент: сравнить квантованный и неквантованный варианты при одинаковой нагрузке и вместе с качеством. D040 касается допустимой точности, но не равной нагрузки.",
+      "tags": [
+        "llm-inference",
+        "serving",
+        "concurrency",
+        "quantization",
+        "gptq",
+        "cost-per-token",
+        "latency",
+        "throughput",
+        "benchmark-validity"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "Rf499843f96383895c6ffe7bf-3",
+      "source": "f499843f96383895c6ffe7bf",
+      "section": "Conclusions",
+      "author_observation": "Выводы расходятся с таблицами: $1.55 против $1.52, 688 токенов/с на ml.p4d.24xlarge против 668 на ml.p4d.12xlarge, 16 против 16.8 мс. Строки с 296 токенами/с в показанных таблицах нет. При $7.09/ч такая скорость даёт около $6.65 за 1M токенов, а не $2.21.",
+      "author_action": "unknown",
+      "author_outcome": "Какие числа верны, неизвестно (unknown). Полная таблица могла бы это прояснить.",
+      "scope": "Текст этой статьи",
+      "transfer_test": "Наш эксперимент: сверять итоговые утверждения с сырыми данными и пересчитывать стоимость из цены и пропускной способности. Среди просмотренных записей аналога не найдено.",
+      "tags": [
+        "llm-inference",
+        "serving",
+        "concurrency",
+        "quantization",
+        "gptq",
+        "cost-per-token",
+        "latency",
+        "throughput",
+        "benchmark-validity"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}
