@@ -1,0 +1,36 @@
+{
+  "source": {
+    "id": "b92bfd06bd8fd752db580f22",
+    "url": "https://huggingface.co/blog/safetensors-joins-pytorch-foundation",
+    "title": "Safetensors is Joining the PyTorch Foundation",
+    "reviewed_at": "2026-11-12T03:41:34.332676+00:00",
+    "content_hash": "be00fbfd9a73d8d855b5a8f8c9c03e94ffdaa1093fb26c7fe80c875b5cdff9ba",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Wed, 08 Apr 2026 00:00:00 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "Rb92bfd06bd8fd752db580f22-1",
+      "source": "b92bfd06bd8fd752db580f22",
+      "section": "How we got here",
+      "author_observation": "Авторы описывают формат: JSON-заголовок с метаданными тензоров, за ним сырые данные. Отдельные веса можно читать без десериализации всего чекпойнта.",
+      "author_action": "Тензоры отображаются напрямую с диска без копирования, нужные веса читаются лениво.",
+      "author_outcome": "unknown: авторы не приводят ни измерений времени загрузки, ни данных о памяти.",
+      "scope": "Формат Safetensors. Условия по устройствам, файловым системам и размерам моделей не указаны.",
+      "transfer_test": "Наш эксперимент: сравнить время до первого шага и пиковую память хоста при полной загрузке и при ленивой загрузке только нужного подмножества весов. Замерять на холодном и тёплом кэше страниц и проверять совпадение значений тензоров.",
+      "tags": [
+        "checkpoint-loading",
+        "lazy-loading",
+        "zero-copy",
+        "mmap",
+        "serialization",
+        "io"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}
