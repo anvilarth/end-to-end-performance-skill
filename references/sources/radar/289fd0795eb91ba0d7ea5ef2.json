@@ -1,0 +1,79 @@
+{
+  "source": {
+    "id": "289fd0795eb91ba0d7ea5ef2",
+    "url": "https://huggingface.co/blog/ray-rag",
+    "title": "Retrieval Augmented Generation with Huggingface Transformers and Ray",
+    "reviewed_at": "2026-11-12T03:40:20.209911+00:00",
+    "content_hash": "8ddb484499b4ffb6ec1464e8a3bec73e3a9ecd626337d9d983a52896cfe1861a",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Wed, 10 Feb 2021 00:00:00 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "R289fd0795eb91ba0d7ea5ef2-1",
+      "source": "289fd0795eb91ba0d7ea5ef2",
+      "section": "Ray for Document Retrieval",
+      "author_observation": "Автор: поиск шёл в той же группе процессов, что и обучение, а индекс загружал только rank 0. При data-parallel это становится узким местом.",
+      "author_action": "Автор вынес загрузку индекса и обработку запросов в отдельные акторы Ray вне процессов обучения.",
+      "author_outcome": "По словам автора, поиск перестал быть узким местом, а зависимость от PyTorch исчезла. Дельта к библиотеке: в D028 убирают прокси, здесь общий сервис отделяют от группы обучения.",
+      "scope": "Дообучение RAG, большой индекс, 2–4 GPU.",
+      "transfer_test": "Наш эксперимент: сравнить общий сервис на rank 0 с отдельными процессами, измерить шаг обучения и память хоста.",
+      "tags": [
+        "distributed retrieval",
+        "process group",
+        "rank 0 bottleneck",
+        "stateful actors",
+        "data-parallel training",
+        "scaling",
+        "latency measurement"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R289fd0795eb91ba0d7ea5ef2-2",
+      "source": "289fd0795eb91ba0d7ea5ef2",
+      "section": "Scaling up fine-tuning",
+      "author_observation": "Автор заявляет ускорение 2x, не называя конфигурацию. В таблице варьируются 2–4 GPU и 2 или 4 процесса поиска.",
+      "author_action": "Автор сравнил время одного вызова поиска для torch.distributed и Ray.",
+      "author_outcome": "Наш пересчёт, не авторский: ускорение составляет от ≈1.42x до ≈2.07x; ≈2x достигается только при 4 GPU и 4 процессах. Больше процессов в таблице всегда быстрее. От числа GPU выигрыш зависит немонотонно. Недостающее условие: заявленное ускорение привязано к конкретной конфигурации.",
+      "scope": "500 шагов, батч 8 на GPU, замер на rank 0.",
+      "transfer_test": "Наш эксперимент: сетка «воркеры × процессы поиска» с повторами, публиковать цифры по каждой точке.",
+      "tags": [
+        "distributed retrieval",
+        "process group",
+        "rank 0 bottleneck",
+        "stateful actors",
+        "data-parallel training",
+        "scaling",
+        "latency measurement"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R289fd0795eb91ba0d7ea5ef2-3",
+      "source": "289fd0795eb91ba0d7ea5ef2",
+      "section": "Ray for Document Retrieval",
+      "author_observation": "Автор: замерялось только время поиска на батч на rank 0.",
+      "author_action": "Автор измерял задержку поиска, но не полный шаг обучения.",
+      "author_outcome": "Влияние на полный шаг, пропускную способность и другие ранги: unknown.",
+      "scope": "Только метрика поиска.",
+      "transfer_test": "Наш эксперимент: сквозное время шага на всех рангах, нагрузка CPU и память.",
+      "tags": [
+        "distributed retrieval",
+        "process group",
+        "rank 0 bottleneck",
+        "stateful actors",
+        "data-parallel training",
+        "scaling",
+        "latency measurement"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}
