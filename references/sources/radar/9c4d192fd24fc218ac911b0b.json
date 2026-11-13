@@ -1,0 +1,82 @@
+{
+  "source": {
+    "id": "9c4d192fd24fc218ac911b0b",
+    "url": "https://huggingface.co/blog/kv-cache",
+    "title": "KV Cache from scratch in nanoVLM",
+    "reviewed_at": "2026-11-12T03:44:12.973113+00:00",
+    "content_hash": "30f1916c67645372bbe43192311d29fde91b876e996e4c6f9defdad5ac57c556",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Wed, 04 Jun 2025 00:00:00 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "R9c4d192fd24fc218ac911b0b-1",
+      "source": "9c4d192fd24fc218ac911b0b",
+      "section": "TL;DR",
+      "author_observation": "Авторы реализовали KV-кэш в nanoVLM и сообщают об ускорении генерации на 38%. Железо, длины промпта и генерации, а также батч не указаны.",
+      "author_action": "Для каждого слоя K/V сохраняются в кэше, на каждом шаге вычисляются только K/V нового токена. Генерация разделена на prefill и decode.",
+      "author_outcome": "Ускорение на 38% по данным авторов. Условия замера неизвестны.",
+      "scope": "nanoVLM, чистый PyTorch; железо и нагрузка неизвестны",
+      "transfer_test": "Наш эксперимент: раздельно замерить TTFT и время на токен с кэшем и без него по сетке длин промпта и генерации. Дельта: в просмотренных записях (D085, D088) KV-кэш уже предполагается, зависимость базового выигрыша от длины не выделена.",
+      "tags": [
+        "kv-cache",
+        "prefill-decode-split",
+        "autoregressive-decoding",
+        "rotary-position-embedding",
+        "incremental-attention",
+        "memory-speed-tradeoff",
+        "beam-search-compatibility",
+        "correctness-parity"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R9c4d192fd24fc218ac911b0b-2",
+      "source": "9c4d192fd24fc218ac911b0b",
+      "section": "2. Tracking Cache Across Layers",
+      "author_observation": "Авторы указывают, что при декодировании с кэшем позиция нового токена передаётся через start_pos.",
+      "author_action": "Смещение позиции передаётся в LanguageModel.forward для расчёта RoPE новых токенов.",
+      "author_outcome": "По словам авторов, это обеспечивает корректность позиционного кодирования. Проверка паритета не показана.",
+      "scope": "Модели с RoPE и инкрементальным декодированием",
+      "transfer_test": "Наш эксперимент: сравнить логиты и жадные токены с кэшем и без него на длинных последовательностях. Дельта: D087 касается изоляции слотов, а не позиционной корректности кэша.",
+      "tags": [
+        "kv-cache",
+        "prefill-decode-split",
+        "autoregressive-decoding",
+        "rotary-position-embedding",
+        "incremental-attention",
+        "memory-speed-tradeoff",
+        "beam-search-compatibility",
+        "correctness-parity"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R9c4d192fd24fc218ac911b0b-3",
+      "source": "9c4d192fd24fc218ac911b0b",
+      "section": "Summary: Why KV Caching Matters",
+      "author_observation": "Авторы называют KV-кэш компромиссом между скоростью и памятью. К его недостаткам они относят усложнение кода и ограничение более сложных схем вывода.",
+      "author_action": "Количественная оценка не приводится.",
+      "author_outcome": "unknown",
+      "scope": "Авторегрессионная генерация; влияние на beam search не измерено",
+      "transfer_test": "Наш эксперимент: замерить объём кэша в зависимости от батча и длины, а также проверить совместимость и стоимость beam search с кэшем. Дельта: D077 и D085 касаются ёмкости, но не ограничений на схемы декодирования.",
+      "tags": [
+        "kv-cache",
+        "prefill-decode-split",
+        "autoregressive-decoding",
+        "rotary-position-embedding",
+        "incremental-attention",
+        "memory-speed-tradeoff",
+        "beam-search-compatibility",
+        "correctness-parity"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}

@@ -14,6 +14,7 @@ Source-supported external decisions; local validation has not run. Read comparis
 - [Parcae: Doing more with fewer parameters using stable looped models](4fa61876ab86598749228a0a.md) — https://www.together.ai/blog/parcae
 - [(Perf)(CosyVoice3) Avoid reference-feature list conversion between stages](7d61d04f231adb5b8208e33a.md) — https://github.com/sgl-project/sglang-omni/pull/2555
 - [Model Routing Is Simple. Until It Isn’t.](969cdff003616d877728734c.md) — https://huggingface.co/blog/ibm-research/model-routing-is-simple-until-it-isnt
+- [KV Cache from scratch in nanoVLM](9c4d192fd24fc218ac911b0b.md) — https://huggingface.co/blog/kv-cache
 - [ForgeKernel: Self-Evolving Kernels Catching and Surpassing Experts and Agents](9dc8422ce8a35e71d21c1d43.md) — https://github.com/OpenBMB/ForgeKernel
 - [A Gentle Introduction to 8-bit Matrix Multiplication for transformers at scale using transformers, accelerate and bitsandbytes](aec9a806dce077eacfbde941.md) — https://huggingface.co/blog/hf-bitsandbytes-integration
 - [Safetensors is Joining the PyTorch Foundation](b92bfd06bd8fd752db580f22.md) — https://huggingface.co/blog/safetensors-joins-pytorch-foundation
