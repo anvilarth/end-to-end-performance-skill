@@ -1,0 +1,85 @@
+{
+  "source": {
+    "id": "002a51ad7a45a22e0480aaa6",
+    "url": "https://www.together.ai/blog/aurora",
+    "title": "Aurora",
+    "reviewed_at": "2026-11-12T03:50:57.631336+00:00",
+    "content_hash": "c3b7cdaec8be6b06cbf4285025dadd3080e1f281eaf0ae202c5e8c13a4fa928f",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Tue, 31 Mar 2026 00:00:00 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "R002a51ad7a45a22e0480aaa6-1",
+      "source": "002a51ad7a45a22e0480aaa6",
+      "section": "1. Why the standard train-then-serve pipeline breaks down",
+      "author_observation": "По утверждению авторов, ускорение зависит от ядер, точности FP8/FP4, батчинга и планирования, а не только от acceptance.",
+      "author_action": "Авторы утверждают, что онлайн-работа Aurora позволяет напрямую сравнивать ускорение. Критерий отбора по ускорению не описан, обучение идёт на acceptance- и rejection-лоссах.",
+      "author_outcome": "unknown",
+      "scope": "Спекулятивное декодирование LLM в serving-стеке",
+      "transfer_test": "Наш предлагаемый эксперимент: сравнить ранжирование драфтеров по acceptance length и по end-to-end OTPS при целевых batch size и точности.",
+      "tags": [
+        "speculative decoding",
+        "online draft training",
+        "acceptance length",
+        "asynchronous RL",
+        "weight hot-swap",
+        "distribution shift",
+        "EAGLE",
+        "tree attention",
+        "end-to-end throughput"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R002a51ad7a45a22e0480aaa6-2",
+      "source": "002a51ad7a45a22e0480aaa6",
+      "section": "2. The core idea: A serve-to-train flywheel powered by RL",
+      "author_observation": "Авторы обосновывают дизайн так: частые отправки весов могут вызывать инвалидацию кэша и джиттер. Это довод, а не измерение.",
+      "author_action": "Авторы делают синхронизацию ленивой и неразрушающей, с периодическим hot-swap весов.",
+      "author_outcome": "unknown",
+      "scope": "Обновление весов модели во время сервинга",
+      "transfer_test": "Наш предлагаемый эксперимент: варьировать интервал hot-swap и измерять P95/P99 латентность вместе с acceptance length.",
+      "tags": [
+        "speculative decoding",
+        "online draft training",
+        "acceptance length",
+        "asynchronous RL",
+        "weight hot-swap",
+        "distribution shift",
+        "EAGLE",
+        "tree attention",
+        "end-to-end throughput"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R002a51ad7a45a22e0480aaa6-3",
+      "source": "002a51ad7a45a22e0480aaa6",
+      "section": "3. Adaptation to distribution shift",
+      "author_observation": "На потоках, упорядоченных по домену (5 доменов, 40 000 промптов), задаётся резкий сдвиг. Величина падения в тексте не указана.",
+      "author_action": "Авторы продолжают онлайн-адаптацию драфтера во время сдвигов.",
+      "author_outcome": "По словам авторов, acceptance length восстанавливается в пределах примерно 10 000 запросов после каждого сдвига.",
+      "scope": "Нестационарный трафик при онлайн-адаптации драфтера",
+      "transfer_test": "Наш предлагаемый эксперимент: измерить окно деградации после смены домена на своём трафике и сравнить его с частотой реальных сдвигов.",
+      "tags": [
+        "speculative decoding",
+        "online draft training",
+        "acceptance length",
+        "asynchronous RL",
+        "weight hot-swap",
+        "distribution shift",
+        "EAGLE",
+        "tree attention",
+        "end-to-end throughput"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}

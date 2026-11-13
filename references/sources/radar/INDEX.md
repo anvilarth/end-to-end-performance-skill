@@ -2,6 +2,7 @@
 
 Source-supported external decisions; local validation has not run. Read comparison conditions and proposed transfer tests before reuse. Search with `python3 scripts/decision_library.py search QUERY`.
 
+- [Aurora](002a51ad7a45a22e0480aaa6.md) — https://www.together.ai/blog/aurora
 - [Why we’re switching to Hugging Face Inference Endpoints, and maybe you should too](08e8d5a236e9f6b4863ca16e.md) — https://huggingface.co/blog/mantis-case-study
 - [Accelerate BERT inference with Hugging Face Transformers and AWS Inferentia](0ad9af1a0bad3282aac6963c.md) — https://huggingface.co/blog/bert-inferentia-sagemaker
 - [BotPsy: On-Device Personal Assistant with a Sub-Billion-Parameter Agentic Language Model](19b4fcb1faac9c9bdbccd358.md) — https://huggingface.co/blog/qvac/botpsy
