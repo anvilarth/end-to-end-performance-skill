@@ -1,0 +1,56 @@
+{
+  "source": {
+    "id": "fe4e53021191b0e9b905a8b5",
+    "url": "https://huggingface.co/blog/deploy-deepfloydif-using-bentoml",
+    "title": "Deploying Hugging Face Models with BentoML: DeepFloyd IF in Action",
+    "reviewed_at": "2026-11-12T03:41:05.427265+00:00",
+    "content_hash": "399c57089b6f3a7ba1c51bce7887d2a0109aed4a36848b0c2f5f44c63d79cf4c",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Wed, 09 Aug 2023 00:00:00 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "Rfe4e53021191b0e9b905a8b5-1",
+      "source": "fe4e53021191b0e9b905a8b5",
+      "section": "A brief introduction to DeepFloyd IF",
+      "author_observation": "Авторы: стадии каскада можно масштабировать раздельно, например дать больше подов или более мощные GPU стадии 1.",
+      "author_action": "Авторы предлагают распределять ресурсы по стадиям, а не на весь пайплайн.",
+      "author_outcome": "unknown: замеров нет. Дельта: в полученных записях нет решения о поэтапном масштабировании.",
+      "scope": "Каскад DeepFloyd IF в BentoML.",
+      "transfer_test": "Наш эксперимент: профилировать время каждой стадии и сравнить пропускную способность при равном и при поэтапном числе реплик.",
+      "tags": [
+        "multi-stage pipeline",
+        "cascaded diffusion",
+        "per-stage scaling",
+        "GPU placement",
+        "VRAM capacity",
+        "model serving"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "Rfe4e53021191b0e9b905a8b5-2",
+      "source": "fe4e53021191b0e9b905a8b5",
+      "section": "Starting a BentoML Service",
+      "author_observation": "Авторы приводят схемы размещения стадий в зависимости от VRAM. Для двух T4 по 15GB стадия 1 идёт на первую GPU, стадии 2 и 3 на вторую.",
+      "author_action": "Авторы разносят стадии по устройствам, чтобы уложиться в память.",
+      "author_outcome": "unknown: задержка и стоимость межустройственных передач не измерены. Наша гипотеза: передача между GPU может добавлять задержку.",
+      "scope": "Конфигурации GPU из start-server.py.",
+      "transfer_test": "Наш эксперимент: сравнить пиковую память, полную задержку и долю межустройственных копий при одной GPU и при раздельном размещении.",
+      "tags": [
+        "multi-stage pipeline",
+        "cascaded diffusion",
+        "per-stage scaling",
+        "GPU placement",
+        "VRAM capacity",
+        "model serving"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}

@@ -19,3 +19,4 @@ Source-supported external decisions; local validation has not run. Read comparis
 - [GaLore: Advancing Large Model Training on Consumer-grade Hardware](ba2db521f1d591ed34137ee1.md) — https://huggingface.co/blog/galore
 - [Reachy Mini goes fully local](c3c696b5bf6b4f8c7bbbd52e.md) — https://huggingface.co/blog/local-reachy-mini-conversation
 - [Arm & ExecuTorch 0.7: Bringing Generative AI to the masses](e9017634a5f3b6b7591da26b.md) — https://huggingface.co/blog/Arm/executorch-0-dot-7
+- [Deploying Hugging Face Models with BentoML: DeepFloyd IF in Action](fe4e53021191b0e9b905a8b5.md) — https://huggingface.co/blog/deploy-deepfloydif-using-bentoml
