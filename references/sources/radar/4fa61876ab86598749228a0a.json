@@ -1,0 +1,85 @@
+{
+  "source": {
+    "id": "4fa61876ab86598749228a0a",
+    "url": "https://www.together.ai/blog/parcae",
+    "title": "Parcae: Doing more with fewer parameters using stable looped models",
+    "reviewed_at": "2026-11-12T03:36:39.541834+00:00",
+    "content_hash": "46ed83777f498689a99f7ebde59a140382bf1211fb3fcae15c4810c29f4d076e",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Wed, 15 Apr 2026 00:00:00 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "R4fa61876ab86598749228a0a-1",
+      "source": "4fa61876ab86598749228a0a",
+      "section": "Understanding the instability of looping",
+      "author_observation": "Автор: зацикленные модели дают взрыв residual-состояния и всплески loss. У расходящихся прогонов выученный спектральный радиус ≥1, у сходящихся он <1.",
+      "author_action": "Автор задаёт A как отрицательную диагональ и дискретизирует её (ZOH/Euler), что гарантирует радиус <1. Отдельно применены дополнительные приёмы, описанные в статье.",
+      "author_outcome": "Автор: при переносе сильного Transformer без тюнинга RDM разошёлся. Ограничение A дало val loss 2.97, все приёмы вместе — 2.95. Наша интерпретация: одного ограничения недостаточно. Это новое условие относительно полученных записей.",
+      "scope": "Конфигурации авторов; полная арифметика нелинейных блоков не учтена.",
+      "transfer_test": "Наш эксперимент: логировать спектральный радиус по шагам и сравнить частоту расхождений по сетке гиперпараметров с ограничением и без него.",
+      "tags": [
+        "looped transformer",
+        "layer recurrence",
+        "parameter sharing",
+        "training stability",
+        "loss spikes",
+        "spectral radius",
+        "LTI discretization",
+        "FLOP-matched scaling",
+        "memory footprint"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R4fa61876ab86598749228a0a-2",
+      "source": "4fa61876ab86598749228a0a",
+      "section": "To loop, or not to loop",
+      "author_observation": "Автор: при фиксированных параметрах и FLOP можно обменивать среднюю рекурсию на объём токенов.",
+      "author_action": "Авторы повышали рекурсию, пропорционально сокращая токены, и аппроксимировали оптимум параболой.",
+      "author_outcome": "Автор: на двух масштабах val loss ниже. Оптимумы рекурсии и токенов следуют степенным законам. Стоимость инференса не измерена (unknown).",
+      "scope": "Два масштаба, только обучение.",
+      "transfer_test": "Наш эксперимент: при равных FLOP обучения сравнить качество, задержку и пропускную способность инференса.",
+      "tags": [
+        "looped transformer",
+        "layer recurrence",
+        "parameter sharing",
+        "training stability",
+        "loss spikes",
+        "spectral radius",
+        "LTI discretization",
+        "FLOP-matched scaling",
+        "memory footprint"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R4fa61876ab86598749228a0a-3",
+      "source": "4fa61876ab86598749228a0a",
+      "section": "Back to language modeling: Scaling up Parcae",
+      "author_observation": "Автор: Parcae обходит Transformer на масштабах 140M–1.3B. Модель 770M почти равна вдвое большей.",
+      "author_action": "Авторы сравнивали модели при равных параметрах и данных на FineWeb-Edu.",
+      "author_outcome": "Автор: PPL 13.08→12.49 на 770M. Равенство FLOP в этой таблице не указано (unknown).",
+      "scope": "Обучение по образцу nanochat, до 1.3B.",
+      "transfer_test": "Наш эксперимент: повторить сравнение при равных FLOP и измерить пиковую память и задержку на целевом устройстве.",
+      "tags": [
+        "looped transformer",
+        "layer recurrence",
+        "parameter sharing",
+        "training stability",
+        "loss spikes",
+        "spectral radius",
+        "LTI discretization",
+        "FLOP-matched scaling",
+        "memory footprint"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}
