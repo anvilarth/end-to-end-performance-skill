@@ -1,0 +1,88 @@
+{
+  "source": {
+    "id": "c2fa2b4c9762e8c14d8cf1ec",
+    "url": "https://huggingface.co/blog/tngtech/llm-performance-request-queueing",
+    "title": "Efficient Request Queueing – Optimizing LLM Performance",
+    "reviewed_at": "2026-11-12T03:49:29.234881+00:00",
+    "content_hash": "689ae1c6a8969454c5cd354b84988f225491da761f2831f8f37e146f20237ea7",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Wed, 02 Apr 2025 13:33:53 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "Rc2fa2b4c9762e8c14d8cf1ec-1",
+      "source": "c2fa2b4c9762e8c14d8cf1ec",
+      "section": "Problem: No Backpressure by Backend Queue; Solution: Fetch Metrics",
+      "author_observation": "vLLM не даёт ограничить длину очереди. Если шлюз пересылает всё сразу, запросы A снова копятся в FIFO.",
+      "author_action": "Авторы регулируют отправку по метрике длины очереди (пример: меньше трёх). Статический лимит отвергнут: недогрузка при коротких запросах, трудная калибровка.",
+      "author_outcome": "Качественно: ниже порог — меньше латентность новых, но риск недогрузки батчей. Числа: unknown.",
+      "scope": "vLLM с continuous batching. Порог не равен максимальной конкурентности.",
+      "transfer_test": "Наш эксперимент: развёртка порога, мерить TTFT новых и throughput, фиксируя конкурентность отдельно. Дельта к D052: допуск, а не аналитика.",
+      "tags": [
+        "request-queueing",
+        "fair-scheduling",
+        "round-robin",
+        "backpressure",
+        "admission-control",
+        "priority-scheduling",
+        "preemption",
+        "continuous-batching",
+        "tpot",
+        "vllm"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "Rc2fa2b4c9762e8c14d8cf1ec-2",
+      "source": "c2fa2b4c9762e8c14d8cf1ec",
+      "section": "Solution: Fetch Metrics",
+      "author_observation": "Пороги допуска различаются по приоритету и латентностной метрике.",
+      "author_action": "Отправка прекращается при TPOT выше 150 мс. Batch API допускается только при пустой очереди.",
+      "author_outcome": "Сознательно принят риск кратких простоев GPU. Эффект: unknown.",
+      "scope": "Интерактивный ассистент TNG плюс batch-нагрузки",
+      "transfer_test": "Наш эксперимент: сравнить p95 TPOT и простой GPU с гейтингом и без. Дельта: SLO-метрика как сигнал обратного давления.",
+      "tags": [
+        "request-queueing",
+        "fair-scheduling",
+        "round-robin",
+        "backpressure",
+        "admission-control",
+        "priority-scheduling",
+        "preemption",
+        "continuous-batching",
+        "tpot",
+        "vllm"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "Rc2fa2b4c9762e8c14d8cf1ec-3",
+      "source": "c2fa2b4c9762e8c14d8cf1ec",
+      "section": "Alternative: Backend-Side Priority Scheduling",
+      "author_observation": "Приоритетный планировщик vLLM сортирует очередь и текущий батч. Низкоприоритетные запросы вытесняются.",
+      "author_action": "Авторы предлагают как вариант, а не внедрённое решение: число приоритета растёт с незавершёнными запросами пользователя, то есть фактический приоритет падает.",
+      "author_outcome": "Упрощение шлюза ценой сортировки и вытеснений. Шлюз всё равно нужен. Измерения: unknown. Полный список оговорок не извлечён.",
+      "scope": "vLLM с priority scheduling",
+      "transfer_test": "Наш эксперимент: бэкендные приоритеты против гейтинга в шлюзе. Мерить вытеснения, повторный prefill и throughput низкого приоритета.",
+      "tags": [
+        "request-queueing",
+        "fair-scheduling",
+        "round-robin",
+        "backpressure",
+        "admission-control",
+        "priority-scheduling",
+        "preemption",
+        "continuous-batching",
+        "tpot",
+        "vllm"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}

@@ -20,6 +20,7 @@ Source-supported external decisions; local validation has not run. Read comparis
 - [A Gentle Introduction to 8-bit Matrix Multiplication for transformers at scale using transformers, accelerate and bitsandbytes](aec9a806dce077eacfbde941.md) — https://huggingface.co/blog/hf-bitsandbytes-integration
 - [Safetensors is Joining the PyTorch Foundation](b92bfd06bd8fd752db580f22.md) — https://huggingface.co/blog/safetensors-joins-pytorch-foundation
 - [GaLore: Advancing Large Model Training on Consumer-grade Hardware](ba2db521f1d591ed34137ee1.md) — https://huggingface.co/blog/galore
+- [Efficient Request Queueing – Optimizing LLM Performance](c2fa2b4c9762e8c14d8cf1ec.md) — https://huggingface.co/blog/tngtech/llm-performance-request-queueing
 - [Reachy Mini goes fully local](c3c696b5bf6b4f8c7bbbd52e.md) — https://huggingface.co/blog/local-reachy-mini-conversation
 - [Arm & ExecuTorch 0.7: Bringing Generative AI to the masses](e9017634a5f3b6b7591da26b.md) — https://huggingface.co/blog/Arm/executorch-0-dot-7
 - [Cache-aware prefill–decode disaggregation (CPD) for up to 40% faster long-context LLM serving](eb050dec3b5e24a27cc91313.md) — https://www.together.ai/blog/cache-aware-disaggregated-inference
