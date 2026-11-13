@@ -1,0 +1,56 @@
+{
+  "source": {
+    "id": "08e8d5a236e9f6b4863ca16e",
+    "url": "https://huggingface.co/blog/mantis-case-study",
+    "title": "Why we’re switching to Hugging Face Inference Endpoints, and maybe you should too",
+    "reviewed_at": "2026-11-12T03:35:49.294287+00:00",
+    "content_hash": "77f0ce86ff02609a4aef2f6987ef865407e53b91f6317ceb9960a1954a9f3964",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Wed, 15 Feb 2023 00:00:00 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "R08e8d5a236e9f6b4863ca16e-1",
+      "source": "08e8d5a236e9f6b4863ca16e",
+      "section": "What about Latency and Stability?",
+      "author_observation": "Автор: ECS тестировали мало. Крупный контейнер давал около 200 мс при запросах из инстанса в том же регионе. Эндпоинты замерены через ab.",
+      "author_action": "Автор сравнивает около 200 мс ECS с самым медленным ответом большого эндпоинта.",
+      "author_outcome": "Автор: ванильный контейнер HF более чем вдвое быстрее. Худший ответ большого эндпоинта составил 108 мс.",
+      "scope": "CPU Ice Lake, большой эндпоинт, классификатор RoBERTa. Регион и параметры теста эндпоинтов: unknown.",
+      "transfer_test": "Наша оценка: сравниваются максимум и приблизительная величина, причина разницы unknown. Наш эксперимент: один генератор нагрузки, одинаковые входы, конкурентность и регион, сравнить p50/p99. Дополнение к записи Neuron о нагрузочном тесте: условие паритета базовой линии и статистики.",
+      "tags": [
+        "baseline-parity",
+        "latency-benchmarking",
+        "tail-vs-typical-latency",
+        "managed-inference",
+        "cost-ops-tradeoff",
+        "cpu-inference"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R08e8d5a236e9f6b4863ca16e-2",
+      "source": "08e8d5a236e9f6b4863ca16e",
+      "section": "What about the cost?",
+      "author_observation": "Автор: эндпоинты дороже схемы ECS+Fargate. Выделенной MLOps-команды нет.",
+      "author_action": "Автор принимает доплату ради экономии времени и снижения когнитивной нагрузки. При сотнях микросервисов решение пересмотрел бы.",
+      "author_outcome": "Рост стоимости 24–50%, около $60 в месяц для крупного CPU-инстанса. Экономия времени не измерена.",
+      "scope": "Малое число моделей, небольшая команда.",
+      "transfer_test": "Наш эксперимент: стоимость на запрос при целевом p99 плюс инженерные часы. Найти число сервисов, при котором компромисс меняет знак. В полученных записях компромисса цены и операционной нагрузки нет.",
+      "tags": [
+        "baseline-parity",
+        "latency-benchmarking",
+        "tail-vs-typical-latency",
+        "managed-inference",
+        "cost-ops-tradeoff",
+        "cpu-inference"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}
