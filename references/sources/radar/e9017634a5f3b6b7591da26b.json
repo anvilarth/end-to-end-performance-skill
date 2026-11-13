@@ -1,0 +1,91 @@
+{
+  "source": {
+    "id": "e9017634a5f3b6b7591da26b",
+    "url": "https://huggingface.co/blog/Arm/executorch-0-dot-7",
+    "title": "Arm & ExecuTorch 0.7: Bringing Generative AI to the masses",
+    "reviewed_at": "2026-11-12T03:37:34.025255+00:00",
+    "content_hash": "65237a930be2080f49a3d5a92219fd1a4e66b9c9dbde6d34ffc125c15e3d3d08",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Wed, 13 Aug 2025 14:55:10 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "Re9017634a5f3b6b7591da26b-1",
+      "source": "e9017634a5f3b6b7591da26b",
+      "section": "KleidiAI + ExecuTorch: Bringing it all together",
+      "author_observation": "Авторы отмечают, что SDOT (int8 dot product, Armv8.2+) есть у большинства устройств, а I8MM доступен только с Armv8.6.",
+      "author_action": "Авторы оптимизировали Int4-матмул через SDOT для широкой совместимости, в дополнение к пути через I8MM.",
+      "author_outcome": "Измерений для SDOT нет. Авторы лишь признают, что производительность ниже, чем на флагманах.",
+      "scope": "Arm CPU, Llama 3.2 1B, ExecuTorch/XNNPack. Дельта к библиотеке: запасной путь ядер по ISA, такого решения среди полученных нет.",
+      "transfer_test": "Наш эксперимент: сравнить пути SDOT, I8MM и generic на одном устройстве отдельно для prefill и decode.",
+      "tags": [
+        "arm-cpu",
+        "sdot",
+        "i8mm",
+        "int4-quantization",
+        "int8-dot-product",
+        "matmul-kernels",
+        "isa-dispatch",
+        "prefill-vs-decode",
+        "on-device-inference",
+        "default-backend",
+        "xnnpack"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "Re9017634a5f3b6b7591da26b-2",
+      "source": "e9017634a5f3b6b7591da26b",
+      "section": "KleidiAI + ExecuTorch: Bringing it all together",
+      "author_observation": "Авторы приводят из прошлого поста результат I8MM-ядер Int4 на Galaxy S24+.",
+      "author_action": "Авторы сравнили ядра KleidiAI с ядрами без KleidiAI.",
+      "author_outcome": "Прирост более 20% указан только для prefill. Абсолютные значения: более 350 ток/с на prefill и более 40 ток/с на decode. Прирост на decode и параметры замера не указаны.",
+      "scope": "Одно устройство, вторичная ссылка. Дельта: ускорение одной фазы нельзя переносить на другую.",
+      "transfer_test": "Наш эксперимент: отдельно мерить prefill и decode, фиксировать длину контекста и число потоков.",
+      "tags": [
+        "arm-cpu",
+        "sdot",
+        "i8mm",
+        "int4-quantization",
+        "int8-dot-product",
+        "matmul-kernels",
+        "isa-dispatch",
+        "prefill-vs-decode",
+        "on-device-inference",
+        "default-backend",
+        "xnnpack"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "Re9017634a5f3b6b7591da26b-3",
+      "source": "e9017634a5f3b6b7591da26b",
+      "section": "Arm & ExecuTorch 0.7: Bringing Generative AI to the masses",
+      "author_observation": "Авторы сообщают, что в ExecuTorch 0.7 beta KleidiAI включается по умолчанию, без изменений кода.",
+      "author_action": "Авторы сделали ускоренные ядра поведением по умолчанию.",
+      "author_outcome": "unknown",
+      "scope": "Возможная оговорка (наша проверка): при обновлении версии меняется путь ядер, это может смешаться с другими изменениями.",
+      "transfer_test": "Наш эксперимент: логировать выбранное ядро и ISA, сравнивать при включённом и выключенном KleidiAI внутри одной версии.",
+      "tags": [
+        "arm-cpu",
+        "sdot",
+        "i8mm",
+        "int4-quantization",
+        "int8-dot-product",
+        "matmul-kernels",
+        "isa-dispatch",
+        "prefill-vs-decode",
+        "on-device-inference",
+        "default-backend",
+        "xnnpack"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}

@@ -16,3 +16,4 @@ Source-supported external decisions; local validation has not run. Read comparis
 - [A Gentle Introduction to 8-bit Matrix Multiplication for transformers at scale using transformers, accelerate and bitsandbytes](aec9a806dce077eacfbde941.md) — https://huggingface.co/blog/hf-bitsandbytes-integration
 - [GaLore: Advancing Large Model Training on Consumer-grade Hardware](ba2db521f1d591ed34137ee1.md) — https://huggingface.co/blog/galore
 - [Reachy Mini goes fully local](c3c696b5bf6b4f8c7bbbd52e.md) — https://huggingface.co/blog/local-reachy-mini-conversation
+- [Arm & ExecuTorch 0.7: Bringing Generative AI to the masses](e9017634a5f3b6b7591da26b.md) — https://huggingface.co/blog/Arm/executorch-0-dot-7
