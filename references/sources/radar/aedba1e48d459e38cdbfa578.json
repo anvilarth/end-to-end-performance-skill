@@ -1,0 +1,60 @@
+{
+  "source": {
+    "id": "aedba1e48d459e38cdbfa578",
+    "url": "https://huggingface.co/blog/transformersjs-v3",
+    "title": "Transformers.js v3: WebGPU Support, New Models & Tasks, and More…",
+    "reviewed_at": "2026-11-12T04:07:34.181861+00:00",
+    "content_hash": "b9a59a1689654c2487d481a8c0b67d48c0449fb17ba4829c2ef416de5684c00d",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Tue, 22 Oct 2024 00:00:00 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "Raedba1e48d459e38cdbfa578-1",
+      "source": "aedba1e48d459e38cdbfa578",
+      "section": "Per-module dtypes",
+      "author_observation": "Автор: некоторые encoder-decoder модели (Whisper, Florence-2) очень чувствительны к квантованию, особенно энкодер.",
+      "author_action": "Автор добавил задание dtype для отдельных модулей через отображение «имя модуля → dtype».",
+      "author_outcome": "unknown: автор не приводит измерений качества, задержки или памяти. Наша интерпретация: это дополняет R3f3037a20c228735acb63dc3-1 условием гранулярности. Решение о квантовании может зависеть от модуля, а не только от формата и ядра.",
+      "scope": "Transformers.js v3, encoder-decoder модели.",
+      "transfer_test": "Наш эксперимент: сравнить равномерный q4 с вариантом «энкодер fp16, декодер q4». Метрики: качество, задержка, пиковая память.",
+      "tags": [
+        "WebGPU",
+        "browser inference",
+        "ONNX Runtime Web",
+        "per-module quantization",
+        "mixed precision",
+        "encoder-decoder",
+        "backend availability",
+        "fallback"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "Raedba1e48d459e38cdbfa578-2",
+      "source": "aedba1e48d459e38cdbfa578",
+      "section": "WebGPU support",
+      "author_observation": "Автор: на октябрь 2024 года WebGPU поддерживается примерно у 70% пользователей. У части из них API недоступен или требует включения флага.",
+      "author_action": "Автор включает ускорение параметром device: 'webgpu' при загрузке модели.",
+      "author_outcome": "unknown: прирост скорости не измерен. Наша интерпретация: оценивать производительность нужно с учётом доли клиентов без WebGPU и резервного пути. Полученные записи это условие не покрывают.",
+      "scope": "Браузерный инференс, Transformers.js v3.",
+      "transfer_test": "Наш эксперимент: измерить долю целевых клиентов с WebGPU. Сравнить задержку WebGPU и резервного бэкенда для каждого dtype на одной модели.",
+      "tags": [
+        "WebGPU",
+        "browser inference",
+        "ONNX Runtime Web",
+        "per-module quantization",
+        "mixed precision",
+        "encoder-decoder",
+        "backend availability",
+        "fallback"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}
