@@ -1,0 +1,79 @@
+{
+  "source": {
+    "id": "f76ceca492662342fcb824a6",
+    "url": "https://huggingface.co/blog/train_memory",
+    "title": "Visualize and understand GPU memory in PyTorch",
+    "reviewed_at": "2026-11-12T04:03:44.744844+00:00",
+    "content_hash": "ee7f32b6d3d149c5eb19f4dd46804f973b128546d7b3261c233e8b3fdbf72a00",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Tue, 24 Dec 2024 00:00:00 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "Rf76ceca492662342fcb824a6-1",
+      "source": "f76ceca492662342fcb824a6",
+      "section": "📐 Estimating Memory Requirements",
+      "author_observation": "Автор: при уменьшении batch с 16 до 2 наивысший пик смещается с forward на шаг оптимизатора.",
+      "author_action": "Автор берёт максимум из активаций и суммы «градиенты плюс промежуточные значения оптимизатора».",
+      "author_outcome": "Формула выведена из профилей, погрешность unknown. Итоговая формула противоречит этому выводу.",
+      "scope": "Qwen2.5-1.5B. Оптимизатор unknown: AdamW упомянут лишь как пример. Точность unknown, float32 только предположение по примеру 6 ГБ. Длина последовательности и GPU unknown.",
+      "transfer_test": "Наш эксперимент: снять снимки при нескольких batch и проверить, на какую фазу приходится пик. Дельта к D055: пик может сместиться на оптимизатор, и тогда снижение памяти loss его не уменьшит.",
+      "tags": [
+        "memory snapshot",
+        "peak memory",
+        "activation memory",
+        "optimizer state",
+        "batch size",
+        "memory estimation",
+        "profiling overhead"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "Rf76ceca492662342fcb824a6-2",
+      "source": "f76ceca492662342fcb824a6",
+      "section": "Activations",
+      "author_observation": "Автор: число активаций на токен у LLM примерно линейно зависит от числа параметров.",
+      "author_action": "Активации измеряются forward-хуком, по нескольким моделям подобрана линейная эвристика.",
+      "author_outcome": "Приближение. Ошибка и набор моделей unknown.",
+      "scope": "LLM схожей архитектуры, автор отмечает зависимость от архитектуры.",
+      "transfer_test": "Наш эксперимент: сравнить эвристику с измерением хуком и с пиком снимка. Дельта: в просмотренных записях нет априорной оценки памяти.",
+      "tags": [
+        "memory snapshot",
+        "peak memory",
+        "activation memory",
+        "optimizer state",
+        "batch size",
+        "memory estimation",
+        "profiling overhead"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "Rf76ceca492662342fcb824a6-3",
+      "source": "f76ceca492662342fcb824a6",
+      "section": "📊 Visualizing Memory During Training",
+      "author_observation": "Автор: при профилировании записывается каждое событие памяти, поэтому файл растёт.",
+      "author_action": "Ограничивать число профилируемых шагов.",
+      "author_outcome": "Код примера дал файл 8 МБ. Накладные расходы по времени unknown.",
+      "scope": "Пример с полным циклом обучения LLM. Вывод об удержании тензоров графом autograd (раздел визуализатора, упрощённый пример с одним линейным слоем) сюда не включён.",
+      "transfer_test": "Наш эксперимент: сравнить пик и время шага с записью и без неё. Дельта к D044: D044 касается временной шкалы CPU/GPU, здесь история аллокаций.",
+      "tags": [
+        "memory snapshot",
+        "peak memory",
+        "activation memory",
+        "optimizer state",
+        "batch size",
+        "memory estimation",
+        "profiling overhead"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}

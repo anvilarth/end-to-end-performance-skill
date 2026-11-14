@@ -27,5 +27,6 @@ Source-supported external decisions; local validation has not run. Read comparis
 - [Arm & ExecuTorch 0.7: Bringing Generative AI to the masses](e9017634a5f3b6b7591da26b.md) — https://huggingface.co/blog/Arm/executorch-0-dot-7
 - [Cache-aware prefill–decode disaggregation (CPD) for up to 40% faster long-context LLM serving](eb050dec3b5e24a27cc91313.md) — https://www.together.ai/blog/cache-aware-disaggregated-inference
 - [Llama 2 on Amazon SageMaker a Benchmark](f499843f96383895c6ffe7bf.md) — https://huggingface.co/blog/llama-sagemaker-benchmark
+- [Visualize and understand GPU memory in PyTorch](f76ceca492662342fcb824a6.md) — https://huggingface.co/blog/train_memory
 - [Towards Encrypted Large Language Models with FHE](f8050f1e90a9291cadb4b509.md) — https://huggingface.co/blog/encrypted-llm
 - [Deploying Hugging Face Models with BentoML: DeepFloyd IF in Action](fe4e53021191b0e9b905a8b5.md) — https://huggingface.co/blog/deploy-deepfloydif-using-bentoml
