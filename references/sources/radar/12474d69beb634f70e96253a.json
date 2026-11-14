@@ -1,0 +1,60 @@
+{
+  "source": {
+    "id": "12474d69beb634f70e96253a",
+    "url": "https://www.together.ai/blog/learn-how-cursor-partnered-with-together-ai-to-deliver-real-time-low-latency-inference-at-scale",
+    "title": "Learn how Cursor partnered with Together AI to deliver real-time, low-latency inference at scale",
+    "reviewed_at": "2026-11-13T03:42:35.359038+00:00",
+    "content_hash": "460c8fae7b33f1189d43c67ac3542fd3d377ecf46aee640d2794b0c8fbd3458a",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Tue, 13 Jan 2026 00:00:00 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "R12474d69beb634f70e96253a-1",
+      "source": "12474d69beb634f70e96253a",
+      "section": "Shortening the weights-to-production cycle",
+      "author_observation": "Автор: в коде деградация от квантования может проявляться как тонкие логические или синтаксические ошибки.",
+      "author_action": "Автор: веса квантуются в NVFP4 через TensorRT LLM и проходят валидацию. Затем выполняются внутренние оценки и поэтапное A/B под продакшен-трафиком, после чего следует переключение.",
+      "author_outcome": "Автор: тестовый эндпоинт поднимается за дни. Задержка и качество не приведены (unknown). Дельта: D037 ускоряет перезагрузку кандидатов, но не задаёт гейт качества квантования перед выкладкой.",
+      "scope": "Кодовые модели, Blackwell, продакшен-инференс.",
+      "transfer_test": "Наш эксперимент: сравнить квантованную и исходную модель на задачах с исполнением кода и в A/B, фиксируя задержку и качество.",
+      "tags": [
+        "NVFP4",
+        "quantization",
+        "quality gating",
+        "A/B testing",
+        "A/B cutover",
+        "tail latency",
+        "concurrency",
+        "TensorRT-LLM"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R12474d69beb634f70e96253a-2",
+      "source": "12474d69beb634f70e96253a",
+      "section": "Why latency is different inside an editor",
+      "author_observation": "Автор: если разработчик перешёл к другой части кода, ответ часто уже не соответствует состоянию, для которого был сгенерирован.",
+      "author_action": "Автор формулирует требования к нагрузке, а не принятую или измеренную метрику. Это предсказуемая худшая задержка при конкурентности, согласованная обработка контекста при перекрывающихся запросах и стабильность под длительной нагрузкой.",
+      "author_outcome": "Целевые значения и результаты не указаны (unknown). Дельта: среди полученных записей нет критерия устаревания ответа, хвостовой задержки или согласованности контекста.",
+      "scope": "Интерактивные агенты в редакторе.",
+      "transfer_test": "Наш эксперимент: измерить p99 при росте конкурентности, долю ответов, пришедших после изменения контекста, и ошибки контекста при перекрывающихся запросах.",
+      "tags": [
+        "NVFP4",
+        "quantization",
+        "quality gating",
+        "A/B testing",
+        "A/B cutover",
+        "tail latency",
+        "concurrency",
+        "TensorRT-LLM"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}

@@ -5,6 +5,7 @@ Source-supported external decisions; local validation has not run. Read comparis
 - [Aurora](002a51ad7a45a22e0480aaa6.md) — https://www.together.ai/blog/aurora
 - [Why we’re switching to Hugging Face Inference Endpoints, and maybe you should too](08e8d5a236e9f6b4863ca16e.md) — https://huggingface.co/blog/mantis-case-study
 - [Accelerate BERT inference with Hugging Face Transformers and AWS Inferentia](0ad9af1a0bad3282aac6963c.md) — https://huggingface.co/blog/bert-inferentia-sagemaker
+- [Learn how Cursor partnered with Together AI to deliver real-time, low-latency inference at scale](12474d69beb634f70e96253a.md) — https://www.together.ai/blog/learn-how-cursor-partnered-with-together-ai-to-deliver-real-time-low-latency-inference-at-scale
 - [BotPsy: On-Device Personal Assistant with a Sub-Billion-Parameter Agentic Language Model](19b4fcb1faac9c9bdbccd358.md) — https://huggingface.co/blog/qvac/botpsy
 - [https://www.together.ai/blog/coderforge-preview](272ac80d602e20cf1396f805.md) — https://www.together.ai/blog/coderforge-preview
 - [Retrieval Augmented Generation with Huggingface Transformers and Ray](289fd0795eb91ba0d7ea5ef2.md) — https://huggingface.co/blog/ray-rag
