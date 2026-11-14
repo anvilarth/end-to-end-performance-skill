@@ -1,0 +1,85 @@
+{
+  "source": {
+    "id": "5fe170f8f3b6f060663304c9",
+    "url": "https://huggingface.co/blog/overview-quantization-transformers",
+    "title": "Overview of natively supported quantization schemes in 🤗 Transformers",
+    "reviewed_at": "2026-11-13T03:44:50.064893+00:00",
+    "content_hash": "d02afb52437d01af5f2f4c7253ea53daf1c767563684155b54e4b53e7ac87f33",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Tue, 12 Sep 2023 00:00:00 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "R5fe170f8f3b6f060663304c9-1",
+      "source": "5fe170f8f3b6f060663304c9",
+      "section": "Inference speed (forward pass only)",
+      "author_observation": "Автор: в prefill при bs=1 GPTQ/exllama даёт 33.711 мс против 36.958 мс у fp16. При bs=16: GPTQ 95.41 мс, fp16 69.94 мс, bnb 113.98 мс.",
+      "author_action": "Автор замерил Llama-2-13b на A100-80GB с промптом 512 при bs 1 и 16.",
+      "author_outcome": "Автор: bnb и GPTQ эквивалентны, GPTQ немного быстрее при большом батче. Наш вывод по таблице: при bs=16 оба медленнее fp16. Дельта к R3f3037a20c228735acb63dc3-1 условная: там генерация 512/512 при bs=1, здесь prefill и 13b. Смена знака видна только внутри этого источника.",
+      "scope": "Только prefill, A100, 4-bit, два значения батча.",
+      "transfer_test": "Наш эксперимент: развёртка bs 1–32 для fp16 и W4 отдельно по prefill и decode.",
+      "tags": [
+        "weight-only quantization",
+        "GPTQ",
+        "bitsandbytes",
+        "exllama",
+        "batch size scaling",
+        "prefill",
+        "LoRA fine-tuning",
+        "kernel availability",
+        "quality degradation"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R5fe170f8f3b6f060663304c9-2",
+      "source": "5fe170f8f3b6f060663304c9",
+      "section": "Adapter fine-tuning (forward + backward)",
+      "author_observation": "Автор: для дообучения GPTQ пришлось отключить exllama.",
+      "author_action": "Автор сравнил LoRA-дообучение GPTQ и bnb на Llama-2-7b, A100.",
+      "author_outcome": "Автор: bnb быстрее, величина есть только на графике (unknown). Дельта к R3f…-1 (наша): ядро, быстрое в инференсе, может быть недоступно в обучении.",
+      "scope": "PEFT/LoRA, auto-gptq на момент поста.",
+      "transfer_test": "Наш эксперимент: время шага fwd+bwd с фиксацией фактически включённого ядра.",
+      "tags": [
+        "weight-only quantization",
+        "GPTQ",
+        "bitsandbytes",
+        "exllama",
+        "batch size scaling",
+        "prefill",
+        "LoRA fine-tuning",
+        "kernel availability",
+        "quality degradation"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R5fe170f8f3b6f060663304c9-3",
+      "source": "5fe170f8f3b6f060663304c9",
+      "section": "Performance degradation",
+      "author_observation": "Автор: средний балл 7b — 54.32 / 53.4 (bnb) / 53.23 (GPTQ). Для 13b — 58.66 / 56.9 / 57.56; ревизия actorder_True даёт 58.03.",
+      "author_action": "Автор сравнил модели на Open-LLM leaderboard.",
+      "author_outcome": "Автор: большие модели деградируют меньше. Наш расчёт противоречит этому: потеря bnb растёт с 0.92 до 1.76, у GPTQ около 1.1 на обоих размерах. Причина разницы между ревизиями GPTQ unknown: настройки дефолтной ревизии не указаны. Роль act_order остаётся нашей гипотезой.",
+      "scope": "Одно семейство Llama-2, два размера, средние leaderboard без оценки разброса.",
+      "transfer_test": "Наш эксперимент: целевая метрика по размерам с act_order и без, на одном чекпойнте, с повторами.",
+      "tags": [
+        "weight-only quantization",
+        "GPTQ",
+        "bitsandbytes",
+        "exllama",
+        "batch size scaling",
+        "prefill",
+        "LoRA fine-tuning",
+        "kernel availability",
+        "quality degradation"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}

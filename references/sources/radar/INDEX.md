@@ -14,6 +14,7 @@ Source-supported external decisions; local validation has not run. Read comparis
 - [Fixing Gradient Accumulation](41397e50e86ff22441478809.md) — https://huggingface.co/blog/gradient_accumulation
 - [New in Together GPU Clusters: Reliability and control for production GPU clusters](4ef49bb651c3f69a108f24dd.md) — https://www.together.ai/blog/new-in-together-gpu-clusters-reliability-and-control-for-production-gpu-clusters
 - [Parcae: Doing more with fewer parameters using stable looped models](4fa61876ab86598749228a0a.md) — https://www.together.ai/blog/parcae
+- [Overview of natively supported quantization schemes in 🤗 Transformers](5fe170f8f3b6f060663304c9.md) — https://huggingface.co/blog/overview-quantization-transformers
 - [Optimum+ONNX Runtime - Easier, Faster training for your Hugging Face models](6ed44293e25c59293b8539f2.md) — https://huggingface.co/blog/optimum-onnxruntime-training
 - [(Perf)(CosyVoice3) Avoid reference-feature list conversion between stages](7d61d04f231adb5b8208e33a.md) — https://github.com/sgl-project/sglang-omni/pull/2555
 - [Introducing AutoJudge: Streamlined inference acceleration via automated dataset curation](87c93bf313061a4a467de191.md) — https://www.together.ai/blog/introducing-autojudge-streamlined-inference-acceleration-via-automated-dataset-curation
