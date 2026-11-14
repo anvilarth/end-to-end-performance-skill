@@ -1,0 +1,82 @@
+{
+  "source": {
+    "id": "6ed44293e25c59293b8539f2",
+    "url": "https://huggingface.co/blog/optimum-onnxruntime-training",
+    "title": "Optimum+ONNX Runtime - Easier, Faster training for your Hugging Face models",
+    "reviewed_at": "2026-11-12T04:02:17.050578+00:00",
+    "content_hash": "ebab7944f53a52656f24c577cf89777b724a10b1b42a3998b105ca704ee0e306",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Tue, 24 Jan 2023 00:00:00 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "R6ed44293e25c59293b8539f2-1",
+      "source": "6ed44293e25c59293b8539f2",
+      "section": "Performance results",
+      "author_observation": "Автор: в базовых прогонах PyTorch используется AdamW, в прогонах ORT — Fused Adam.",
+      "author_action": "Автор сравнивает три прогона: PyTorch, только ORT, ORT вместе с ZeRO-1.",
+      "author_outcome": "Автор заявляет ускорение 39–130%. Вклад смены оптимизатора отдельно от бэкенда не выделен: unknown.",
+      "scope": "Отдельные модели HF, один узел 8×A100.",
+      "transfer_test": "Наш эксперимент: менять по одному фактору (оптимизатор, бэкенд, ZeRO) при одинаковом batch. Дельта: в полученных записях нет условия об изоляции смешанных факторов.",
+      "tags": [
+        "ONNX Runtime training",
+        "fused optimizer",
+        "multi-tensor apply",
+        "kernel launch overhead",
+        "DeepSpeed ZeRO-1",
+        "memory planning",
+        "batch size",
+        "benchmark confounding"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R6ed44293e25c59293b8539f2-2",
+      "source": "6ed44293e25c59293b8539f2",
+      "section": "ONNX Runtime Training",
+      "author_observation": "Автор: оптимизации памяти ORT Training позволяют максимизировать batch size.",
+      "author_action": "Автор перечисляет среди оптимизаций эффективное планирование памяти. Какой приём даёт рост batch, не уточняется.",
+      "author_outcome": "Был ли batch одинаковым в сравнениях пропускной способности: unknown.",
+      "scope": "Оптимизации памяти ORT Training. К ZeRO-1 это утверждение не относится.",
+      "transfer_test": "Наш эксперимент: мерить throughput отдельно при равном и при максимальном batch, контролируя сходимость. Дельта: в полученных записях нет условия о выравнивании batch.",
+      "tags": [
+        "ONNX Runtime training",
+        "fused optimizer",
+        "multi-tensor apply",
+        "kernel launch overhead",
+        "DeepSpeed ZeRO-1",
+        "memory planning",
+        "batch size",
+        "benchmark confounding"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "R6ed44293e25c59293b8539f2-3",
+      "source": "6ed44293e25c59293b8539f2",
+      "section": "ONNX Runtime Training",
+      "author_observation": "Автор: multi-tensor apply объединяет поэлементные обновления Adam; FP16-оптимизатор убирает многие копии device→host.",
+      "author_action": "Автор применяет эти приёмы вместе с фьюзингом и удалением узлов графа.",
+      "author_outcome": "Вклад каждого приёма отдельно не измерен: unknown.",
+      "scope": "GPU NVIDIA/AMD.",
+      "transfer_test": "Наш эксперимент: профилировать число запусков ядер и копий D2H на шаге оптимизатора до и после.",
+      "tags": [
+        "ONNX Runtime training",
+        "fused optimizer",
+        "multi-tensor apply",
+        "kernel launch overhead",
+        "DeepSpeed ZeRO-1",
+        "memory planning",
+        "batch size",
+        "benchmark confounding"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}
