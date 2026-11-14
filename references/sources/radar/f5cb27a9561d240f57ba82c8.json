@@ -1,0 +1,88 @@
+{
+  "source": {
+    "id": "f5cb27a9561d240f57ba82c8",
+    "url": "https://huggingface.co/blog/stable-diffusion-inference-intel",
+    "title": "Accelerating Stable Diffusion Inference on Intel CPUs",
+    "reviewed_at": "2026-11-13T03:33:45.512226+00:00",
+    "content_hash": "1252ff0bda7979187661b428d006d6e9956a92654f9d99a55fd705616a398677",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Tue, 28 Mar 2023 00:00:00 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "Rf5cb27a9561d240f57ba82c8-1",
+      "source": "f5cb27a9561d240f57ba82c8",
+      "section": "Optimum Intel and OpenVINO",
+      "author_observation": "Пайплайн OpenVINO поддерживает динамические формы, хотя приложению обычно нужны одно или несколько разрешений.",
+      "author_action": "Пайплайн переформирован под фиксированное разрешение. Для каждого разрешения предлагается отдельный экземпляр.",
+      "author_outcome": "Задержка снизилась с 16.7 до 4.7 с. Время компиляции и память экземпляров не указаны.",
+      "scope": "OpenVINO BF16, CPU. Дельта к D079 (захват графа на GPU): специализация под форму на CPU и пул по разрешениям. Пересечение частичное.",
+      "transfer_test": "Предлагаемый нами эксперимент: сравнить динамическую и статическую формы на реальном распределении разрешений. Отдельно учесть компиляцию и пиковую память при N экземплярах.",
+      "tags": [
+        "cpu-inference",
+        "static-shapes",
+        "bf16",
+        "amx",
+        "memory-allocator",
+        "openmp",
+        "numa-pinning",
+        "channels-last",
+        "scheduler-steps",
+        "diffusion"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "Rf5cb27a9561d240f57ba82c8-2",
+      "source": "f5cb27a9561d240f57ba82c8",
+      "section": "System-level optimization",
+      "author_observation": "Генерация описана как интенсивная по памяти. Упомянуты издержки переключения контекста.",
+      "author_action": "Установлены jemalloc (по тестам автора немного лучше tcmalloc), libiomp и numactl для привязки к ядрам. Код не менялся.",
+      "author_outcome": "FP32: с 32.3 до 11.8 с. Вклад компонентов по отдельности не измерен.",
+      "scope": "32-ядерный Xeon. Аллокатор меняется системно, по словам автора это обратимо. В полученных записях системных CPU-настроек не было.",
+      "transfer_test": "Предлагаемый нами эксперимент: абляция по одному компоненту, измерение разброса, проверка конфликта OpenMP-рантаймов.",
+      "tags": [
+        "cpu-inference",
+        "static-shapes",
+        "bf16",
+        "amx",
+        "memory-allocator",
+        "openmp",
+        "numa-pinning",
+        "channels-last",
+        "scheduler-steps",
+        "diffusion"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "Rf5cb27a9561d240f57ba82c8-3",
+      "source": "f5cb27a9561d240f57ba82c8",
+      "section": "IPEX and BF16",
+      "author_observation": "IPEX использует AMX и AVX512 VNNI на Sapphire Rapids.",
+      "author_action": "Элементы пайплайна оптимизированы через IPEX с переводом в channels-last, включён BF16.",
+      "author_outcome": "С 11.9 до 5.4 с поверх системных настроек. Качество не оценено.",
+      "scope": "Только CPU с AMX. Без AMX перенос unknown. В полученных решениях не было CPU-решений по точности и раскладке памяти.",
+      "transfer_test": "Предлагаемый нами эксперимент: разделить вклад channels-last и BF16. Сравнить изображения с FP32 при фиксированном seed.",
+      "tags": [
+        "cpu-inference",
+        "static-shapes",
+        "bf16",
+        "amx",
+        "memory-allocator",
+        "openmp",
+        "numa-pinning",
+        "channels-last",
+        "scheduler-steps",
+        "diffusion"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}
