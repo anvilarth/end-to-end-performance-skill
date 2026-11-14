@@ -1,0 +1,79 @@
+{
+  "source": {
+    "id": "c0a1c859372790db933f0a43",
+    "url": "https://huggingface.co/blog/Hcompany/holotron-12b",
+    "title": "Holotron-12B - High Throughput Computer Use Agent",
+    "reviewed_at": "2026-11-13T03:37:34.455656+00:00",
+    "content_hash": "bbc2ebb9754ce444afc9988a5a276d083bebffcfe63b036b904412d51d97514e",
+    "status": "passages_reviewed",
+    "coverage": "extracted_text; figures and equations may require visual verification",
+    "date": "Tue, 17 Mar 2026 12:33:39 GMT",
+    "date_kind": "source_metadata"
+  },
+  "verification": "source_supported",
+  "decisions": [
+    {
+      "id": "Rc0a1c859372790db933f0a43-1",
+      "source": "c0a1c859372790db933f0a43",
+      "section": "High Throughput Inference with a Hybrid SSM Architecture",
+      "author_observation": "Авторы сообщают: в контролируемом эксперименте Holotron-12B растёт до 8.9k ток/с при конкурентности 100, а Holo2-8B выходит на плато.",
+      "author_action": "Авторы дообучили унаследованную базу Nemotron, архитектуру не меняли.",
+      "author_outcome": "По данным авторов, 8.9k против 5.1k. Модели различаются размером и весами, латентность не приведена.",
+      "scope": "Только эксперимент с рис. 2; железо и движок unknown. Дельта к D083: там сравниваются варианты спекуляции по конкурентности, здесь потолок авторы объясняют памятью.",
+      "transfer_test": "Наше предложение: снимать кривую по конкурентности вместе с занятой памятью и фактическим батчем.",
+      "tags": [
+        "hybrid SSM",
+        "state-space model",
+        "KV cache memory",
+        "effective batch size",
+        "concurrency sweep",
+        "throughput plateau",
+        "vLLM version pinning"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "Rc0a1c859372790db933f0a43-2",
+      "source": "c0a1c859372790db933f0a43",
+      "section": "High Throughput Inference with a Hybrid SSM Architecture",
+      "author_observation": "Авторы утверждают, что SSM-слои хранят состояние постоянного размера, не зависящее от длины.",
+      "author_action": "unknown",
+      "author_outcome": "unknown: вклад SSM-слоёв отдельно не измерялся.",
+      "scope": "Недостающее условие: в гибриде attention-слои сохраняют KV-кэш.",
+      "transfer_test": "Наша гипотеза: рассчитать память на запрос по слоям и сверить с максимальным батчем.",
+      "tags": [
+        "hybrid SSM",
+        "state-space model",
+        "KV cache memory",
+        "effective batch size",
+        "concurrency sweep",
+        "throughput plateau",
+        "vLLM version pinning"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    },
+    {
+      "id": "Rc0a1c859372790db933f0a43-3",
+      "source": "c0a1c859372790db933f0a43",
+      "section": "High Throughput Inference with a Hybrid SSM Architecture",
+      "author_observation": "Результат WebVoyager получен на vLLM с оптимизациями под SSM.",
+      "author_action": "Авторы указали версию v0.14.1.",
+      "author_outcome": "unknown: зависимость от версии не измерялась.",
+      "scope": "WebVoyager, один H100, 100 воркеров.",
+      "transfer_test": "Наша гипотеза: разрыв может зависеть от зрелости ядер. Предлагаем закрепить версию и повторить на соседних. Среди просмотренных записей близкой не нашлось.",
+      "tags": [
+        "hybrid SSM",
+        "state-space model",
+        "KV cache memory",
+        "effective batch size",
+        "concurrency sweep",
+        "throughput plateau",
+        "vLLM version pinning"
+      ],
+      "alternatives_reported": null,
+      "local_validation": "not_run"
+    }
+  ]
+}

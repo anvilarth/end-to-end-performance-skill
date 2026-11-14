@@ -23,6 +23,7 @@ Source-supported external decisions; local validation has not run. Read comparis
 - [Transformers.js v3: WebGPU Support, New Models & Tasks, and More…](aedba1e48d459e38cdbfa578.md) — https://huggingface.co/blog/transformersjs-v3
 - [Safetensors is Joining the PyTorch Foundation](b92bfd06bd8fd752db580f22.md) — https://huggingface.co/blog/safetensors-joins-pytorch-foundation
 - [GaLore: Advancing Large Model Training on Consumer-grade Hardware](ba2db521f1d591ed34137ee1.md) — https://huggingface.co/blog/galore
+- [Holotron-12B - High Throughput Computer Use Agent](c0a1c859372790db933f0a43.md) — https://huggingface.co/blog/Hcompany/holotron-12b
 - [Efficient Request Queueing – Optimizing LLM Performance](c2fa2b4c9762e8c14d8cf1ec.md) — https://huggingface.co/blog/tngtech/llm-performance-request-queueing
 - [Reachy Mini goes fully local](c3c696b5bf6b4f8c7bbbd52e.md) — https://huggingface.co/blog/local-reachy-mini-conversation
 - [Arm & ExecuTorch 0.7: Bringing Generative AI to the masses](e9017634a5f3b6b7591da26b.md) — https://huggingface.co/blog/Arm/executorch-0-dot-7
